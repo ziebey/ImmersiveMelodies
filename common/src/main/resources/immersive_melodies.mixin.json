@@ -8,7 +8,7 @@
     "AbstractZombieModelMixin",
     "BipedEntityModelMixin",
     "ItemRendererMixin",
-    "ModelLoaderMixin"
+    "ModelLoaderMixin", "PiglinEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
