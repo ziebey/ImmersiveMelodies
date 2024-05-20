@@ -32,7 +32,7 @@ public class MelodyProgress {
         long l = System.currentTimeMillis();
         long delta = l - lastTime;
         if (delta < 150) {
-            time += delta;
+            time += (int) delta;
         }
         lastTime = l;
 

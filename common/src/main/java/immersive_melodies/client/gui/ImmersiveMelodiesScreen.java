@@ -1,5 +1,6 @@
 package immersive_melodies.client.gui;
 
+import immersive_melodies.Common;
 import immersive_melodies.Config;
 import immersive_melodies.client.gui.widget.MelodyListWidget;
 import immersive_melodies.client.gui.widget.TexturedButtonWidget;
@@ -84,7 +85,7 @@ public class ImmersiveMelodiesScreen extends Screen {
         try {
             Util.getOperatingSystem().open(URI.create("https://github.com/Luke100000/ImmersiveMelodies/wiki/Custom-Melodies"));
         } catch (Exception e) {
-            e.printStackTrace();
+            Common.LOGGER.error(e);
         }
     }
 
@@ -109,13 +110,13 @@ public class ImmersiveMelodiesScreen extends Screen {
                             ByteArrayInputStream inputStream = new ByteArrayInputStream(request.getBody());
                             parseMidi(name, inputStream);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Common.LOGGER.error(e);
                             setError(Text.translatable("immersive_melodies.error.empty"));
                         }
                     });
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Common.LOGGER.error(e);
             }
         }
     }

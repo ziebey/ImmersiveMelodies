@@ -4,7 +4,6 @@ import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.c2s.UploadMelodyRequest;
 import immersive_melodies.network.s2c.MelodyResponse;
 import immersive_melodies.resources.Melody;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;

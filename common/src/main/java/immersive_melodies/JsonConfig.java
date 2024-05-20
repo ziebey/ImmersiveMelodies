@@ -29,16 +29,12 @@ public class JsonConfig {
             version = getVersion();
             writer.write(toJsonString());
         } catch (IOException e) {
-            e.printStackTrace();
+            Common.LOGGER.error(e);
         }
     }
 
     public String toJsonString() {
         return GSON.toJson(this);
-    }
-
-    public static Config fromJsonString(String string) {
-        return GSON.fromJson(string, Config.class);
     }
 
     public static Config loadOrCreate() {
@@ -51,7 +47,7 @@ public class JsonConfig {
                 config.save();
                 return config;
             } catch (Exception e) {
-                LOGGER.error("Failed to load Immersive Armors config! Default config is used for now. Delete the file to reset.");
+                LOGGER.error("Failed to load Immersive Melodies config! Default config is used for now. Delete the file to reset.");
                 LOGGER.error(e);
                 return new Config();
             }

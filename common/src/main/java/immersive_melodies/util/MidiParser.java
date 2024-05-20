@@ -1,5 +1,6 @@
 package immersive_melodies.util;
 
+import immersive_melodies.Common;
 import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.Note;
 
@@ -94,7 +95,7 @@ public class MidiParser {
                     }
                 }
 
-                if (notes.size() > 0) {
+                if (!notes.isEmpty()) {
                     trackNr += 1;
 
                     // Sort
@@ -104,7 +105,7 @@ public class MidiParser {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Common.LOGGER.error(e);
         }
 
         return melody;

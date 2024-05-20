@@ -28,7 +28,7 @@ public class ItemRendererMixin {
     private ItemModels models;
 
     @Unique
-    private BakedModel replaceModel;
+    private BakedModel immersive_melodies$replaceModel;
 
     @Inject(method = "getModel(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)Lnet/minecraft/client/render/model/BakedModel;", at = @At("HEAD"), cancellable = true)
     void immersiveMelodies$injectGetModel(ItemStack stack, World world, LivingEntity entity, int seed, CallbackInfoReturnable<BakedModel> cir) {
@@ -41,14 +41,14 @@ public class ItemRendererMixin {
     void immersiveMelodies$modifyVariable(ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo ci) {
         boolean bl = renderMode == ModelTransformationMode.GUI || renderMode == ModelTransformationMode.GROUND || renderMode == ModelTransformationMode.FIXED;
         if (bl && stack.getItem() instanceof InstrumentItem) {
-            replaceModel = this.models.getModelManager().getModel(CustomInventoryModels.getIdentifier(stack.getItem()));
+            immersive_melodies$replaceModel = this.models.getModelManager().getModel(CustomInventoryModels.getIdentifier(stack.getItem()));
         } else {
-            replaceModel = null;
+            immersive_melodies$replaceModel = null;
         }
     }
 
     @ModifyVariable(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     BakedModel immersiveMelodies$modifyVariable(BakedModel model) {
-        return replaceModel == null ? model : replaceModel;
+        return immersive_melodies$replaceModel == null ? model : immersive_melodies$replaceModel;
     }
 }

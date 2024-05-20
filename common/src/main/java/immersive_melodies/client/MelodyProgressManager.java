@@ -60,7 +60,7 @@ public class MelodyProgressManager {
                         } else if (!b1 && b2) {
                             return -1;
                         } else {
-                            return (int) (getProgress(b).time - getProgress(a).time);
+                            return getProgress(b).time - getProgress(a).time;
                         }
                     })
                     .toList();
