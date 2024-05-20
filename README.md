@@ -6,4 +6,6 @@ Hosted on CurseForge: https://www.curseforge.com/minecraft/mc-mods/immersive-mel
 
 Config docu here: https://github.com/Luke100000/ImmersiveMelodies/wiki/Config
 
-Modpack/Datapack Creator help: https://github.com/Luke100000/ImmersiveMelodies/wiki/Datapacks
+Modpack/Datapack Creator help: https://github.com/Luke100000/ImmersiveMelodies/wiki/Custom-Melodies
+
+Maven: https://maven.conczin.net/#/Artifacts/net/conczin/immersive_melodies
