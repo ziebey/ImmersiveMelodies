@@ -125,6 +125,10 @@ public class ImmersiveMelodiesScreen extends Screen {
     }
 
     private void parseMidi(String name, InputStream inputStream) {
+        if (name.isEmpty()) {
+            name = "empty";
+        }
+
         Melody melody = MidiParser.parseMidi(inputStream, name);
         if (!melody.getTracks().isEmpty()) {
             PacketSplitter.sendToServer(name, melody);
