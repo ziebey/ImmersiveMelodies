@@ -1,6 +1,7 @@
 # 0.1.1
 
 * Zombiefied Piglins now also move their arms
+* Added compatibility with Entity Culling
 
 # 0.1.0
 

@@ -11,6 +11,7 @@ import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.Note;
 import immersive_melodies.resources.ServerMelodyManager;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -68,16 +70,7 @@ public class InstrumentItem extends Item {
         return stack.getOrCreateNbt().getBoolean("playing");
     }
 
-    @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        super.inventoryTick(stack, world, entity, slot, selected);
-
-        // autoplay
-        if (!world.isClient && !(entity instanceof PlayerEntity) && !isPlaying(stack)) {
-            Identifier randomMelody = ServerMelodyManager.getRandomMelody();
-            play(stack, randomMelody, world);
-        }
-
+    public void inventoryClientTick(ItemStack stack, ClientWorld world, Entity entity) {
         // check if the item is in the hand, and is the primary instrument as you cant play two at once
         boolean isPrimary = false;
         for (ItemStack handItem : entity.getHandItems()) {
@@ -141,6 +134,14 @@ public class InstrumentItem extends Item {
                     break;
                 }
             }
+        }
+    }
+
+    public void inventoryServerTick(ItemStack stack, ServerWorld world, Entity entity) {
+        // autoplay
+        if (!(entity instanceof PlayerEntity) && !isPlaying(stack)) {
+            Identifier randomMelody = ServerMelodyManager.getRandomMelody();
+            play(stack, randomMelody, world);
         }
     }
 
