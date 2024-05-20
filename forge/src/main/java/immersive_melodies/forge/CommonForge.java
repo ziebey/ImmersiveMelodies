@@ -15,10 +15,12 @@ import static net.minecraft.registry.RegistryKeys.ITEM_GROUP;
 @Mod(Common.MOD_ID)
 @Mod.EventBusSubscriber(modid = Common.MOD_ID, bus = Bus.MOD)
 public final class CommonForge {
-    public CommonForge() {
+    static {
         RegistrationImpl.bootstrap();
         new NetworkHandlerImpl();
+    }
 
+    public CommonForge() {
         Items.bootstrap();
         Messages.bootstrap();
         Sounds.bootstrap();
