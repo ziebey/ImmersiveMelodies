@@ -82,8 +82,8 @@ jobs:
           changelog-file: changelog.md
           version-type: release
           files: |
-            - "fabric/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-fabric.jar"
-            - "fabric/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-fabric-sources.jar"
+            fabric/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-fabric.jar
+            fabric/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-fabric-sources.jar
           loaders: |
             fabric
           game-versions: |
@@ -107,8 +107,8 @@ jobs:
           changelog-file: changelog.md
           version-type: release
           files: |
-            - "forge/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-forge.jar"
-            - "forge/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-forge-sources.jar"
+            forge/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-forge.jar
+            forge/build/libs/immersive_melodies-${{steps.tag.outputs.tag}}-forge-sources.jar
           loaders: |
             forge
           game-versions: |
