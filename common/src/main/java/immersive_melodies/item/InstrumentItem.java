@@ -113,7 +113,7 @@ public class InstrumentItem extends Item {
 
                     // sound
                     Common.soundManager.playSound(entity.getX(), entity.getY(), entity.getZ(),
-                            sound.get(octave), SoundCategory.RECORDS,
+                            sound.get(octave), SoundCategory.NEUTRAL,
                             volume, pitch, length, sustain,
                             note.getTime() - progress.getTime(), entity);
 
