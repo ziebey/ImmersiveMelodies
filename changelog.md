@@ -5,6 +5,7 @@
 * Fixed wrong animations when in side hand
 * Allay now also like music
 * Husks can now also play (on fresh configs)
+* Fixed incompatibility with Sound Physics Remastered
 
 # 0.1.0
 
