@@ -16,6 +16,7 @@ public final class Config extends JsonConfig {
     public int getBufferDelay = 75;
     public Map<String, Float> mobInstrumentFactors = Map.of(
             "minecraft:zombie", 0.01f,
+            "minecraft:husk", 0.01f,
             "minecraft:skeleton", 0.01f,
             "minecraft:wither_skeleton", 0.01f,
             "minecraft:piglin_brute", 0.01f,

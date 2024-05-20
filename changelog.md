@@ -4,6 +4,7 @@
 * Added compatibility with Entity Culling
 * Fixed wrong animations when in side hand
 * Allay now also like music
+* Husks can now also play (on fresh configs)
 
 # 0.1.0
 
