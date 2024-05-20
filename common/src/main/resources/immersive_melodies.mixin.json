@@ -3,7 +3,7 @@
   "minVersion": "0.7",
   "package": "immersive_melodies.mixin",
   "compatibilityLevel": "JAVA_16",
-  "mixins": ["MobEntityMixin", "ParrotEntityMixin", "ServerChunkManagerMixin", "ServerWorldMixin"],
+  "mixins": ["AllayEntityMixin", "MobEntityMixin", "ParrotEntityMixin", "ServerChunkManagerMixin", "ServerWorldMixin"],
   "client": [
     "AbstractZombieModelMixin", "BipedEntityModelMixin", "ClientWorldMixin", "ItemRendererMixin", "ModelLoaderMixin",
     "PiglinEntityModelMixin"
