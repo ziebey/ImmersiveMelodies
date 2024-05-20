@@ -3,6 +3,7 @@
 * Zombiefied Piglins now also move their arms
 * Added compatibility with Entity Culling
 * Fixed wrong animations when in side hand
+* Allay now also like music
 
 # 0.1.0
 
