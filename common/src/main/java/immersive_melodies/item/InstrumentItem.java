@@ -11,7 +11,6 @@ import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.Note;
 import immersive_melodies.resources.ServerMelodyManager;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -70,7 +69,7 @@ public class InstrumentItem extends Item {
         return stack.getOrCreateNbt().getBoolean("playing");
     }
 
-    public void inventoryClientTick(ItemStack stack, ClientWorld world, Entity entity) {
+    public void inventoryClientTick(ItemStack stack, World world, Entity entity) {
         // check if the item is in the hand, and is the primary instrument as you cant play two at once
         boolean isPrimary = false;
         for (ItemStack handItem : entity.getHandItems()) {

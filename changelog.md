@@ -1,3 +1,7 @@
+# 0.1.2
+
+* Fixed dedicated server crash
+
 # 0.1.1
 
 * Zombiefied Piglins now also move their arms
