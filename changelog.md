@@ -1,3 +1,7 @@
+# 0.1.3
+
+* Sounds are now played at twice the distance (32 blocks)
+
 # 0.1.2
 
 * Fixed dedicated server crash

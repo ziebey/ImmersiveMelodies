@@ -1,5 +1,6 @@
 package immersive_melodies.client;
 
+import immersive_melodies.Config;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
@@ -69,7 +70,7 @@ public class MelodyProgressManager {
                 Entity entity0 = list.get(i0);
                 for (int i1 = list.size() - 1; i1 > i0; i1--) {
                     Entity entity1 = list.get(i1);
-                    if (entity0.distanceTo(entity1) < 16.0f) {
+                    if (entity0.distanceTo(entity1) < Config.getInstance().maxAudibleDistance) {
                         // Two entities are close, entity 0 will try to mimic entity 1
                         // Thus, the higher in the order the higher the priority
                         MelodyProgress progress0 = getProgress(entity0);
