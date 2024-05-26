@@ -18,8 +18,8 @@ public class MelodyProgressManager {
         return progress.computeIfAbsent(entity, a -> new MelodyProgress());
     }
 
-    public void setLastIndex(Entity entity, int index) {
-        getProgress(entity).lastIndex = index;
+    public void setLastIndex(Entity entity, int track, int index) {
+        getProgress(entity).setLastIndex(track, index);
     }
 
     public void setLastNote(Entity entity, float volume, float pitch, long length) {

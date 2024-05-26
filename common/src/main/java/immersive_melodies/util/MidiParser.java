@@ -48,9 +48,9 @@ public class MidiParser {
                         byte[] data = metaMessage.getData();
                         int type = metaMessage.getType();
                         if (type == 0x03) {
-                            if (sequence.getTracks().length > 1) {
-                                name = new String(data).strip();
-                            }
+                            name = new String(data).strip();
+                        } else if (type == 0x04) {
+                            String instrument = new String(data).strip();
                         } else if (type == 0x51) {
                             int microsecondsPerBeat = ((data[0] & 0xFF) << 16) | ((data[1] & 0xFF) << 8) | (data[2] & 0xFF);
                             bpm = Math.round(60000000.0f / microsecondsPerBeat);
@@ -63,7 +63,7 @@ public class MidiParser {
 
                         // Convert notes into ms
                         long tick = event.getTick();
-                        int ms = (int) ((tick - lastTick) * 60 * 1000 / sequence.getResolution() / bpm + lastMs);
+                        int ms = (int) ((double) ((tick - lastTick) * 60 * 1000) / sequence.getResolution() / bpm + lastMs);
                         lastTick = tick;
                         lastMs = ms;
 

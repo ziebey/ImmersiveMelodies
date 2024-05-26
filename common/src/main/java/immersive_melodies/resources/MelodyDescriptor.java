@@ -1,5 +1,6 @@
 package immersive_melodies.resources;
 
+import immersive_melodies.Common;
 import net.minecraft.network.PacketByteBuf;
 
 public class MelodyDescriptor {
@@ -10,7 +11,14 @@ public class MelodyDescriptor {
     }
 
     public MelodyDescriptor(PacketByteBuf b) {
-        this.name = b.readString();
+        String name;
+        try {
+            name = b.readString();
+        } catch (Exception e) {
+            Common.LOGGER.error(e);
+            name = "null";
+        }
+        this.name = name;
     }
 
     public String getName() {

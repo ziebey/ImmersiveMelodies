@@ -12,11 +12,17 @@ import java.util.Objects;
 
 public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWidget.MelodyEntry> {
     private final ImmersiveMelodiesScreen currentScreen;
+    private final boolean showSelection;
 
-    public MelodyListWidget(MinecraftClient client, ImmersiveMelodiesScreen currentScreen) {
-        super(client, currentScreen.width, currentScreen.height, (currentScreen.height - 230) / 2 + 22, (currentScreen.height - 230) / 2 + 184, 10);
+    public MelodyListWidget(MinecraftClient client, ImmersiveMelodiesScreen currentScreen, int left, int width, int listY, int listH, boolean showSelection) {
+        super(client, width, currentScreen.height, listY, listY + listH, 10);
 
         this.currentScreen = currentScreen;
+
+        this.left = left;
+        this.right = this.left + width;
+
+        this.showSelection = showSelection;
 
         setRenderBackground(false);
         setRenderHorizontalShadows(false);
@@ -39,29 +45,29 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
 
     @Override
     protected int getScrollbarPositionX() {
-        return super.getScrollbarPositionX() - 50;
+        return left + width + 2;
     }
 
     @Override
     public int getRowWidth() {
-        return 160;
+        return width;
     }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= currentScreen.width / 2.0 - 120 && mouseX <= currentScreen.width / 2.0 + 120 && mouseY >= this.top && mouseY <= this.bottom;
+        return mouseX >= left && mouseX <= left + width + 10 && mouseY >= this.top && mouseY <= this.bottom;
     }
 
     @Override
     protected void enableScissor(DrawContext context) {
-        context.enableScissor(currentScreen.width / 2 - 100, this.top, currentScreen.width / 2 + 70, this.bottom);
+        context.enableScissor(left - 15, this.top, left + width, this.bottom);
     }
 
     @Override
     protected void drawSelectionHighlight(DrawContext context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
-        int x0 = currentScreen.width / 2 - 75;
-        int x1 = currentScreen.width / 2 + 80;
-        context.fill(x0 - 1, y - 1, x1, y + entryHeight + 3, 0x40000000);
+        if (showSelection) {
+            context.fill(left - 1, y - 1, left + width, y + entryHeight + 3, 0x40000000);
+        }
     }
 
     public class MelodyEntry extends AlwaysSelectedEntryListWidget.Entry<MelodyEntry> {
@@ -77,7 +83,7 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
 
         @Override
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            context.drawText(currentScreen.getTextRenderer(), name, currentScreen.width / 2 - 75 + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
+            context.drawText(currentScreen.getTextRenderer(), name, left + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
         }
 
         @Override
@@ -91,7 +97,7 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
 
         @Override
         public Text getNarration() {
-            return Text.translatable("narrator.select", name);
+            return name;
         }
 
         @Override

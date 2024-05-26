@@ -10,10 +10,6 @@ public class Track {
     private final List<Note> notes;
     private final String name;
 
-    public Track() {
-        this("unknown", new LinkedList<>());
-    }
-
     public Track(String name, List<Note> notes) {
         this.name = name;
         this.notes = notes;
@@ -31,6 +27,10 @@ public class Track {
 
     public List<Note> getNotes() {
         return Collections.unmodifiableList(notes);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void encode(PacketByteBuf b) {
