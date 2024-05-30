@@ -29,6 +29,7 @@ public interface Items {
     Supplier<Item> PIANO = register(Common.MOD_ID, "piano", 300, new Vector3f(0.0f, 0.25f, 0.5f));
     Supplier<Item> TRIANGLE = register(Common.MOD_ID, "triangle", 300, new Vector3f(0.0f, 0.0f, 0.6f));
     Supplier<Item> TRUMPET = register(Common.MOD_ID, "trumpet", 100, new Vector3f(0.0f, 0.25f, 1.4f));
+    Supplier<Item> TINY_DRUM = register(Common.MOD_ID, "tiny_drum", 300, new Vector3f(0.0f, 0.25f, 0.5f));
 
     /**
      * Open method to create custom items, for addons

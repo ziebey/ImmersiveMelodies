@@ -54,5 +54,13 @@
   "trumpet.c5": {"sounds": [{"name": "immersive_melodies:instruments/trumpet/c5", "attenuation_distance": 32}]},
   "trumpet.c6": {"sounds": [{"name": "immersive_melodies:instruments/trumpet/c6", "attenuation_distance": 32}]},
   "trumpet.c7": {"sounds": [{"name": "immersive_melodies:instruments/trumpet/c7", "attenuation_distance": 32}]},
-  "trumpet.c8": {"sounds": [{"name": "immersive_melodies:instruments/trumpet/c8", "attenuation_distance": 32}]}
+  "trumpet.c8": {"sounds": [{"name": "immersive_melodies:instruments/trumpet/c8", "attenuation_distance": 32}]},
+  "tiny_drum.c1": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c1", "attenuation_distance": 32}]},
+  "tiny_drum.c2": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c2", "attenuation_distance": 32}]},
+  "tiny_drum.c3": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c3", "attenuation_distance": 32}]},
+  "tiny_drum.c4": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c4", "attenuation_distance": 32}]},
+  "tiny_drum.c5": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c5", "attenuation_distance": 32}]},
+  "tiny_drum.c6": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c6", "attenuation_distance": 32}]},
+  "tiny_drum.c7": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c7", "attenuation_distance": 32}]},
+  "tiny_drum.c8": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c8", "attenuation_distance": 32}]}
 }

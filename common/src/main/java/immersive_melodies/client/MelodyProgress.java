@@ -18,6 +18,7 @@ public class MelodyProgress {
     long worldTime;
     final Map<Integer, Integer> lastIndex = new HashMap<>();
 
+    long lastNoteLongTime;
     int lastNoteTime;
     float lastVolume;
     float lastPitch;
@@ -107,7 +108,11 @@ public class MelodyProgress {
     }
 
     public boolean isPlaying() {
-        return (System.currentTimeMillis() - lastTime) < 1000;
+        return delta() < 1000;
+    }
+
+    public long delta() {
+        return System.currentTimeMillis() - lastNoteLongTime;
     }
 
     public Melody getMelody() {

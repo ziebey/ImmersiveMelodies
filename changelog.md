@@ -1,6 +1,7 @@
 # 0.2.0
 
 * Added midi track selection
+* Added a tiny drum
 * Sounds are now played at twice the distance (32 blocks)
 
 # 0.1.2

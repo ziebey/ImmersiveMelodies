@@ -25,6 +25,7 @@ public class MelodyProgressManager {
     public void setLastNote(Entity entity, float volume, float pitch, long length) {
         MelodyProgress progress = getProgress(entity);
 
+        progress.lastNoteLongTime = System.currentTimeMillis();
         progress.lastNoteTime = entity.age;
         progress.lastVolume = volume;
         progress.lastPitch = pitch;
