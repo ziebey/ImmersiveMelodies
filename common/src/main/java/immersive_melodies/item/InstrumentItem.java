@@ -108,7 +108,7 @@ public class InstrumentItem extends Item {
                 for (int i = lastIndex; i < notes.size(); i++) {
                     Note note = notes.get(i);
                     if (progress.getTime() >= note.getTime()) {
-                        if (enabledTracks.contains(track)) {
+                        if (enabledTracks.isEmpty() || enabledTracks.contains(track)) {
                             float volume = note.getVelocity() / 255.0f * 2.0f;
                             float pitch = (float) Math.pow(2, (note.getNote() - 24) / 12.0);
                             int octave = 1;

@@ -16,7 +16,7 @@ public class MelodyProgress {
     String currentlyPlaying = "";
     String overwritten = null;
     long worldTime;
-    Map<Integer, Integer> lastIndex = new HashMap<>();
+    final Map<Integer, Integer> lastIndex = new HashMap<>();
 
     int lastNoteTime;
     float lastVolume;

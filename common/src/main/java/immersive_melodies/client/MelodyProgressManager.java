@@ -79,7 +79,8 @@ public class MelodyProgressManager {
                         if (Math.abs(progress0.time - progress1.time) > 100) {
                             progress0.overwrite(progress1.getCurrentlyPlaying());
                             progress0.time = progress1.time;
-                            progress0.lastIndex = progress1.lastIndex;
+                            progress0.lastIndex.clear();
+                            progress0.lastIndex.putAll(progress1.lastIndex);
                         }
 
                         break;
