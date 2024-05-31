@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "钢琴",
   "item.immersive_melodies.triangle": "三角铁",
   "item.immersive_melodies.trumpet": "小号",
+  "item.immersive_melodies.tiny_drum": "小鼓",
   "immersive_melodies.playing": "正在演奏",
   "immersive_melodies.error.empty": "无法解析文件。",
   "immersive_melodies.close": "关闭",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "取消收藏",
   "immersive_melodies.delete": "删除",
   "immersive_melodies.play": "演奏",
+  "immersive_melodies.tracks": "曲目列表",
   "immersive_melodies.help": "打开帮助",
   "immersive_melodies.pause": "暂停",
   "immersive_melodies.read": "点击了解如何上传！"

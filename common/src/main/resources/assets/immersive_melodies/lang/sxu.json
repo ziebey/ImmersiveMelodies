@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Klavier",
   "item.immersive_melodies.triangle": "Dreieck",
   "item.immersive_melodies.trumpet": "Trompete",
+  "item.immersive_melodies.tiny_drum": "Winzige Trommel",
   "immersive_melodies.playing": "Spielen",
   "immersive_melodies.error.empty": "Die Datei kann nicht geparst werden.",
   "immersive_melodies.close": "Schließen",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Favorit entfernen",
   "immersive_melodies.delete": "löschen",
   "immersive_melodies.play": "Spielen",
+  "immersive_melodies.tracks": "Titelliste",
   "immersive_melodies.help": "Hilfe öffnen",
   "immersive_melodies.pause": "Pause",
   "immersive_melodies.read": "Klicke hier, um zu erfahren, wie du hochladen kannst!"

@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Klavieres",
   "item.immersive_melodies.triangle": "Trīsstūris",
   "item.immersive_melodies.trumpet": "Trompete",
+  "item.immersive_melodies.tiny_drum": "Tiny Drum",
   "immersive_melodies.playing": "Spēlējot",
   "immersive_melodies.error.empty": "Failu nav iespējams analizēt.",
   "immersive_melodies.close": "Aizvērt",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Noņemt iecienītāko",
   "immersive_melodies.delete": "Dzēst",
   "immersive_melodies.play": "Spēlēt",
+  "immersive_melodies.tracks": "Dziesmu saraksts",
   "immersive_melodies.help": "Atvērt palīdzību",
   "immersive_melodies.pause": "Pauze",
   "immersive_melodies.read": "Noklikšķiniet, lai uzzinātu, kā augšupielādēt!"

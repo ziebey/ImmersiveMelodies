@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Klavír",
   "item.immersive_melodies.triangle": "Trojuholník",
   "item.immersive_melodies.trumpet": "Trúbka",
+  "item.immersive_melodies.tiny_drum": "Drobný bubon",
   "immersive_melodies.playing": "Hranie na",
   "immersive_melodies.error.empty": "Nemožno analyzovať súbor.",
   "immersive_melodies.close": "Zatvoriť",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Odstrániť obľúbené",
   "immersive_melodies.delete": "Odstrániť",
   "immersive_melodies.play": "Prehrávanie",
+  "immersive_melodies.tracks": "Zoznam skladieb",
   "immersive_melodies.help": "Otvoriť pomoc",
   "immersive_melodies.pause": "Pauza",
   "immersive_melodies.read": "Kliknutím sa dozviete, ako nahrávať!"

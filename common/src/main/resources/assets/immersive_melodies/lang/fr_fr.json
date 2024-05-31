@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Piano",
   "item.immersive_melodies.triangle": "Triangle",
   "item.immersive_melodies.trumpet": "Trompette",
+  "item.immersive_melodies.tiny_drum": "Tambour minuscule",
   "immersive_melodies.playing": "Jouer",
   "immersive_melodies.error.empty": "Impossible d'analyser le fichier.",
   "immersive_melodies.close": "Fermer",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Enlever le favori",
   "immersive_melodies.delete": "Supprimer",
   "immersive_melodies.play": "Jouer",
+  "immersive_melodies.tracks": "Liste des pistes",
   "immersive_melodies.help": "Ouvrir l'aide",
   "immersive_melodies.pause": "Pause",
   "immersive_melodies.read": "Clique pour savoir comment télécharger !"

@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Fortepian",
   "item.immersive_melodies.triangle": "Trójkąt",
   "item.immersive_melodies.trumpet": "Trąbka",
+  "item.immersive_melodies.tiny_drum": "Tiny Drum",
   "immersive_melodies.playing": "Granie",
   "immersive_melodies.error.empty": "Nie można przeanalizować pliku.",
   "immersive_melodies.close": "Zamknij",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Usuń ulubione",
   "immersive_melodies.delete": "Usuń",
   "immersive_melodies.play": "Graj",
+  "immersive_melodies.tracks": "Lista utworów",
   "immersive_melodies.help": "Otwórz pomoc",
   "immersive_melodies.pause": "Pauza",
   "immersive_melodies.read": "Kliknij, aby dowiedzieć się, jak przesyłać pliki!"

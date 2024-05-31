@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Piyano",
   "item.immersive_melodies.triangle": "Üçgen",
   "item.immersive_melodies.trumpet": "Trompet",
+  "item.immersive_melodies.tiny_drum": "Minik Davul",
   "immersive_melodies.playing": "Oynamak",
   "immersive_melodies.error.empty": "Dosya ayrıştırılamıyor.",
   "immersive_melodies.close": "Kapat",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Favoriyi Kaldır",
   "immersive_melodies.delete": "Silme",
   "immersive_melodies.play": "Oyun",
+  "immersive_melodies.tracks": "Parça Listesi",
   "immersive_melodies.help": "Açık yardım",
   "immersive_melodies.pause": "Duraklat",
   "immersive_melodies.read": "Nasıl yükleme yapacağınızı öğrenmek için tıklayın!"

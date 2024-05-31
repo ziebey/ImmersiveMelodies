@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Пиано",
   "item.immersive_melodies.triangle": "Триъгълник",
   "item.immersive_melodies.trumpet": "Тромпет",
+  "item.immersive_melodies.tiny_drum": "Малък барабан",
   "immersive_melodies.playing": "Играе",
   "immersive_melodies.error.empty": "Не може да анализира файла.",
   "immersive_melodies.close": "Затвори",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Премахване на любими",
   "immersive_melodies.delete": "Изтриване на",
   "immersive_melodies.play": "Играйте",
+  "immersive_melodies.tracks": "Списък с песни",
   "immersive_melodies.help": "Отворена помощ",
   "immersive_melodies.pause": "Пауза",
   "immersive_melodies.read": "Кликнете, за да научите как да качвате!"

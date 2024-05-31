@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Piano",
   "item.immersive_melodies.triangle": "Kolmio",
   "item.immersive_melodies.trumpet": "Trumpetti",
+  "item.immersive_melodies.tiny_drum": "Pieni rumpu",
   "immersive_melodies.playing": "Pelaaminen",
   "immersive_melodies.error.empty": "Tiedostoa ei voida analysoida.",
   "immersive_melodies.close": "Sulje",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Poista suosikki",
   "immersive_melodies.delete": "Poista",
   "immersive_melodies.play": "Pelaa",
+  "immersive_melodies.tracks": "Kappaleluettelo",
   "immersive_melodies.help": "Avaa ohje",
   "immersive_melodies.pause": "Tauko",
   "immersive_melodies.read": "Klikkaa saadaksesi lisätietoja lataamisesta!"

@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Pian",
   "item.immersive_melodies.triangle": "Triunghi",
   "item.immersive_melodies.trumpet": "Trompetă",
+  "item.immersive_melodies.tiny_drum": "Tiny Drum",
   "immersive_melodies.playing": "Joc",
   "immersive_melodies.error.empty": "Nu se poate analiza fișierul.",
   "immersive_melodies.close": "Închideți",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Eliminați favoritul",
   "immersive_melodies.delete": "Ștergeți",
   "immersive_melodies.play": "Joacă",
+  "immersive_melodies.tracks": "Lista de piese",
   "immersive_melodies.help": "Deschideți ajutorul",
   "immersive_melodies.pause": "Pauză",
   "immersive_melodies.read": "Faceți clic pentru a învăța cum să încărcați!"

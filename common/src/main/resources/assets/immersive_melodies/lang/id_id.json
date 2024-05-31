@@ -7,6 +7,7 @@
   "item.immersive_melodies.piano": "Piano",
   "item.immersive_melodies.triangle": "Segitiga",
   "item.immersive_melodies.trumpet": "Terompet",
+  "item.immersive_melodies.tiny_drum": "Tiny Drum",
   "immersive_melodies.playing": "Bermain",
   "immersive_melodies.error.empty": "Tidak dapat mengurai file.",
   "immersive_melodies.close": "Tutup",
@@ -15,6 +16,7 @@
   "immersive_melodies.remove_favorite": "Hapus Favorit",
   "immersive_melodies.delete": "Hapus",
   "immersive_melodies.play": "Bermain",
+  "immersive_melodies.tracks": "Daftar Lagu",
   "immersive_melodies.help": "Buka bantuan",
   "immersive_melodies.pause": "Jeda",
   "immersive_melodies.read": "Klik untuk mempelajari cara mengunggah!"
