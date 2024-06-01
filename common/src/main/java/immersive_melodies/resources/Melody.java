@@ -36,6 +36,14 @@ public class Melody extends MelodyDescriptor {
         return Collections.unmodifiableList(tracks);
     }
 
+    public int getLength() {
+        int length = 0;
+        for (Track track : tracks) {
+            length = Math.max(length, track.getLength());
+        }
+        return length;
+    }
+
     public void addTrack(Track track) {
         tracks.add(track);
         primaryTrack = null;

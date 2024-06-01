@@ -2,8 +2,11 @@ package immersive_melodies.resources;
 
 import immersive_melodies.Common;
 import io.netty.buffer.Unpooled;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -149,20 +152,20 @@ public class ServerMelodyManager {
      * Stores the settings for the melody tracks.
      */
     public static class MelodyTrackSettings extends PersistentState {
-        final Map<Identifier, Map<UUID, Set<Integer>>> enabledTracks = new HashMap<>();
+        final Map<Identifier, Map<String, Set<Integer>>> enabledTracks = new HashMap<>();
 
         public static MelodyTrackSettings fromNbt(NbtCompound nbt) {
             MelodyTrackSettings c = new MelodyTrackSettings();
             for (String key : nbt.getKeys()) {
                 NbtCompound map = nbt.getCompound(key);
-                Map<UUID, Set<Integer>> m = new HashMap<>();
+                Map<String, Set<Integer>> m = new HashMap<>();
                 for (String k : map.getKeys()) {
                     NbtCompound set = map.getCompound(k);
                     Set<Integer> s = new HashSet<>();
                     for (String i : set.getKeys()) {
                         s.add(set.getInt(i));
                     }
-                    m.put(UUID.fromString(k), s);
+                    m.put(k, s);
                 }
                 c.enabledTracks.put(new Identifier(key), m);
             }
@@ -172,36 +175,46 @@ public class ServerMelodyManager {
         @Override
         public NbtCompound writeNbt(NbtCompound nbt) {
             NbtCompound c = new NbtCompound();
-            for (Map.Entry<Identifier, Map<UUID, Set<Integer>>> entry : enabledTracks.entrySet()) {
+            for (Map.Entry<Identifier, Map<String, Set<Integer>>> entry : enabledTracks.entrySet()) {
                 NbtCompound map = new NbtCompound();
-                for (Map.Entry<UUID, Set<Integer>> e : entry.getValue().entrySet()) {
+                for (Map.Entry<String, Set<Integer>> e : entry.getValue().entrySet()) {
                     NbtCompound set = new NbtCompound();
                     for (int i : e.getValue()) {
-                        set.putInt(e.getKey().toString(), i);
+                        set.putInt(e.getKey(), i);
                     }
-                    map.put(e.getKey().toString(), set);
+                    map.put(e.getKey(), set);
                 }
                 c.put(entry.getKey().toString(), map);
             }
             return c;
         }
 
-        public void enableTrack(Identifier melody, UUID player, int track) {
-            enabledTracks.computeIfAbsent(melody, k -> new HashMap<>()).computeIfAbsent(player, k -> new HashSet<>()).add(track);
+        public void enableTrack(Identifier melody, String identifier, int track) {
+            enabledTracks.computeIfAbsent(melody, k -> new HashMap<>()).computeIfAbsent(identifier, k -> new HashSet<>()).add(track);
             setDirty(true);
         }
 
-        public void disableTrack(Identifier melody, UUID player, int track) {
-            Map<UUID, Set<Integer>> uuidSetMap = enabledTracks.computeIfAbsent(melody, k -> new HashMap<>());
-            uuidSetMap.computeIfAbsent(player, k -> new HashSet<>()).remove(track);
+        public void disableTrack(Identifier melody, String identifier, int track) {
+            Map<String, Set<Integer>> uuidSetMap = enabledTracks.computeIfAbsent(melody, k -> new HashMap<>());
+            uuidSetMap.computeIfAbsent(identifier, k -> new HashSet<>()).remove(track);
             setDirty(true);
         }
 
-        public Set<Integer> getEnabledTracks(Identifier name, UUID player) {
+        public Set<Integer> getEnabledTracks(Identifier name, String identifier) {
             Melody melody = getMelody(name);
             int primaryId = melody.getTracks().indexOf(melody.getPrimaryTrack());
-            Map<UUID, Set<Integer>> playerSettings = enabledTracks.getOrDefault(name, Collections.emptyMap());
-            return playerSettings.getOrDefault(player, playerSettings.values().stream().findFirst().orElse(Set.of(primaryId)));
+            Map<String, Set<Integer>> playerSettings = enabledTracks.getOrDefault(name, Collections.emptyMap());
+            return playerSettings.getOrDefault(identifier, playerSettings.values().stream().findFirst().orElse(Set.of(primaryId)));
         }
+    }
+
+    public static String getIdentifier(Entity entity, Item item) {
+        return getIdentifier(entity, Registries.ITEM.getId(item));
+    }
+
+    public static String getIdentifier(Entity entity, Identifier instrument) {
+        // Here I use only the instrument
+        // That means track lists are managed globally, which is a "security issue" but usually more convenient
+        return instrument.toString();
     }
 }

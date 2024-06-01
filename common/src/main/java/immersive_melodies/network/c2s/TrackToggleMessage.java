@@ -33,14 +33,16 @@ public class TrackToggleMessage extends Message {
 
     @Override
     public void receive(PlayerEntity e) {
-        if (enabled) {
-            ServerMelodyManager.getSettings().enableTrack(melody, e.getUuid(), track);
-        } else {
-            ServerMelodyManager.getSettings().disableTrack(melody, e.getUuid(), track);
-        }
-
         e.getHandItems().forEach(stack -> {
             if (stack.getItem() instanceof InstrumentItem item) {
+                ServerMelodyManager.MelodyTrackSettings settings = ServerMelodyManager.getSettings();
+                String identifier = ServerMelodyManager.getIdentifier(e, item);
+                if (enabled) {
+                    settings.enableTrack(melody, identifier, track);
+                } else {
+                    settings.disableTrack(melody, identifier, track);
+                }
+
                 item.refreshTracks(stack, e);
             }
         });

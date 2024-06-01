@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -137,19 +138,20 @@ public class InstrumentItem extends Item {
                             MelodyProgressManager.INSTANCE.setLastNote(entity, volume, pitch, length);
                         }
 
+                        // Mark as done
                         if (i == notes.size() - 1) {
-                            if (entity instanceof PlayerEntity) {
-                                MelodyProgressManager.INSTANCE.setLastIndex(entity, track, i + 1);
-                            } else {
-                                // other entities loop
-                                rewind(stack, world);
-                            }
+                            MelodyProgressManager.INSTANCE.setLastIndex(entity, track, i + 1);
                         }
                     } else {
                         MelodyProgressManager.INSTANCE.setLastIndex(entity, track, i);
                         break;
                     }
                 }
+            }
+
+            // Rewind
+            if (!(entity instanceof PlayerEntity) && progress.getTime() > melody.getLength()) {
+                rewind(stack, world);
             }
         }
     }
@@ -175,7 +177,8 @@ public class InstrumentItem extends Item {
     }
 
     public void refreshTracks(ItemStack stack, Entity entity) {
-        Set<Integer> enabledTracks = ServerMelodyManager.getSettings().getEnabledTracks(getMelody(stack), entity.getUuid());
+        String identifier = ServerMelodyManager.getIdentifier(entity, Registries.ITEM.getId(this));
+        Set<Integer> enabledTracks = ServerMelodyManager.getSettings().getEnabledTracks(getMelody(stack), identifier);
         stack.getOrCreateNbt().putIntArray(TAG_TRACKS, enabledTracks.stream().mapToInt(i -> i).toArray());
     }
 

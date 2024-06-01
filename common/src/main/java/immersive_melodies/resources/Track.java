@@ -41,4 +41,10 @@ public class Track {
             note.encode(b);
         }
     }
+
+    public int getLength() {
+        if (notes.isEmpty()) return 0;
+        Note note = notes.get(notes.size() - 1);
+        return note.getTime() + note.getLength();
+    }
 }
