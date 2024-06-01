@@ -86,6 +86,14 @@ public class ImmersiveMelodiesScreen extends Screen {
         trackList = new MelodyListWidget(this.client, this, this.width / 2 + 100, 85, y + 8, 142, false);
 
         refreshPage();
+
+        // Select the current melody
+        if (client != null && client.player != null) {
+            ItemStack stack = client.player.getStackInHand(Hand.MAIN_HAND);
+            if (stack.getItem() instanceof InstrumentItem item) {
+                selected = item.getMelody(stack);
+            }
+        }
     }
 
     private void updateTrackList() {
