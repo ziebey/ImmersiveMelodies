@@ -3,6 +3,7 @@
 * Added midi track selection
 * Added a tiny drum
 * Sounds are now played at twice the distance (32 blocks)
+* Fixed issues with updating/reuploading tracks
 
 # 0.1.2
 
