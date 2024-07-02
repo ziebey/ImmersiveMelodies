@@ -4,6 +4,7 @@ import immersive_melodies.item.InstrumentItem;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Arm;
 
 import java.util.Optional;
 
@@ -20,7 +21,11 @@ public interface ModelAccessor<T extends Entity> {
     }
 
     default boolean flipHands() {
-        return isInMainHand();
+        return isInMainHand() == isLeftHanded();
+    }
+
+    default boolean isLeftHanded() {
+        return getEntity() instanceof LivingEntity livingEntity && livingEntity.getMainArm() == Arm.LEFT;
     }
 
     default Optional<ModelPart> getHead() {

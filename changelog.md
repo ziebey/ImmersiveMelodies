@@ -1,6 +1,7 @@
 # 0.3.0
 
 * Fixed the recipe of tiny drum
+* Left-handed players now hold the instruments correctly
 * Technical improvements related to animations
     * E.g., Pillagers can now hold instruments
 
