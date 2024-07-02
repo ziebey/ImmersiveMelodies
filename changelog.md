@@ -1,3 +1,10 @@
+# 0.1.1
+
+* Backported a handful of critical issues from 0.2.0
+    * Fixed issues with updating/reuploading tracks
+    * Fixed incompatibility with Sound Physics Remastered
+    * Removed warnings from log
+
 # 0.1.0
 
 * Added plugin API (thanks NerjalNosk!)

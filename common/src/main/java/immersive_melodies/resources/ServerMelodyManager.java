@@ -74,6 +74,7 @@ public class ServerMelodyManager {
             // Write to disk
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getFile(identifier.toString())));
             bos.write(buffer.array());
+            bos.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +104,7 @@ public class ServerMelodyManager {
             try {
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getFile(identifier.toString())));
                 melody = new Melody(new PacketByteBuf(Unpooled.wrappedBuffer(bis.readAllBytes())));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Common.LOGGER.error("Couldn't load melody {} ({})", identifier, e);
             }
             return melody;
