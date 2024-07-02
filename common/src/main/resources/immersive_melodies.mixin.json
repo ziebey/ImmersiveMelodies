@@ -4,7 +4,7 @@
   "package": "immersive_melodies.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "AllayEntityMixin", "MobEntityMixin", "ParrotEntityMixin", "ServerChunkManagerMixin",
+    "AllayEntityMixin", "MobEntityMixin", "ParrotEntityMixin", "PillagerEntityMixin", "ServerChunkManagerMixin",
     "ServerWorldMixin"
   ],
   "client": [
