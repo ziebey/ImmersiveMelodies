@@ -5,8 +5,8 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": ["AllayEntityMixin", "MobEntityMixin", "ParrotEntityMixin", "ServerChunkManagerMixin", "ServerWorldMixin"],
   "client": [
-    "AbstractZombieModelMixin", "BipedEntityModelMixin", "ClientWorldMixin", "ItemRendererMixin", "ModelLoaderMixin",
-    "PiglinEntityModelMixin"
+    "AbstractZombieModelMixin", "BipedEntityModelMixin", "ClientWorldMixin", "IllagerEntityModelMixin",
+    "ItemRendererMixin", "ModelLoaderMixin", "PiglinEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

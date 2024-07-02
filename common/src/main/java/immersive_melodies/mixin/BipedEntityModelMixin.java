@@ -1,6 +1,7 @@
 package immersive_melodies.mixin;
 
-import immersive_melodies.client.animation.BipedEntityModelAnimator;
+import immersive_melodies.client.animation.EntityModelAnimator;
+import immersive_melodies.client.animation.accessors.BipedModelAccessor;
 import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.ModelWithArms;
@@ -16,6 +17,6 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
     @Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At("TAIL"))
     public void immersiveMelodies$injectSetAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
         //noinspection unchecked
-        BipedEntityModelAnimator.setAngles((BipedEntityModel<T>) (Object) this, entity);
+        EntityModelAnimator.setAngles(new BipedModelAccessor<>((BipedEntityModel<T>) (Object) this, entity));
     }
 }

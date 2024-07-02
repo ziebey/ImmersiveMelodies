@@ -1,3 +1,9 @@
+# 0.3.0
+
+* Fixed the recipe of tiny drum
+* Technical improvements related to animations
+    * E.g., Pillagers can now hold instruments
+
 # 0.2.0
 
 * Added midi track selection

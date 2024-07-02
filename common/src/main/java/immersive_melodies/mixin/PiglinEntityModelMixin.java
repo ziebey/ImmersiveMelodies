@@ -1,6 +1,6 @@
 package immersive_melodies.mixin;
 
-import immersive_melodies.client.animation.BipedEntityModelAnimator;
+import immersive_melodies.client.animation.EntityModelAnimator;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.PiglinEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -18,7 +18,7 @@ public abstract class PiglinEntityModelMixin<T extends MobEntity>extends PlayerE
 
     @Inject(method = "setAngles(Lnet/minecraft/entity/mob/MobEntity;FFFFF)V", at = @At("HEAD"), cancellable = true)
     public void immersiveMelodies$injectSetAngles(T entity, float f, float g, float h, float i, float j, CallbackInfo ci) {
-        if (BipedEntityModelAnimator.getInstrument(entity) != null) {
+        if (EntityModelAnimator.getInstrument(entity) != null) {
             super.setAngles(entity, f, g, h, i, j);
             ci.cancel();
         }
