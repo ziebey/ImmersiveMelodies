@@ -1,3 +1,7 @@
+# 0.1.2
+
+* Refmap is now a map with refs again
+
 # 0.1.1
 
 * Backported a handful of critical issues from 0.2.0
