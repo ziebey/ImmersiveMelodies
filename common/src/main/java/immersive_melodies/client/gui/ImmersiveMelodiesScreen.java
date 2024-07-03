@@ -25,7 +25,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
-import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -53,7 +52,6 @@ public class ImmersiveMelodiesScreen extends Screen {
         this.search.setSuggestion(null);
     }
 
-    @Nullable
     private Identifier selected = null;
 
     public ImmersiveMelodiesScreen() {
