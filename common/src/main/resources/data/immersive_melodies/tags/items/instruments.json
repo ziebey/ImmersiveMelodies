@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "immersive_melodies:bagpipe",
+    "immersive_melodies:didgeridoo",
+    "immersive_melodies:flute",
+    "immersive_melodies:lute",
+    "immersive_melodies:piano",
+    "immersive_melodies:triangle",
+    "immersive_melodies:trumpet",
+    "immersive_melodies:tiny_drum"
+  ]
+}
