@@ -5,14 +5,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MelodyProgressManager {
     public static final MelodyProgressManager INSTANCE = new MelodyProgressManager();
 
-    Map<Entity, MelodyProgress> progress = new HashMap<>();
+    Map<Entity, MelodyProgress> progress = new ConcurrentHashMap<>();
 
     public MelodyProgress getProgress(Entity entity) {
         return progress.computeIfAbsent(entity, a -> new MelodyProgress());
