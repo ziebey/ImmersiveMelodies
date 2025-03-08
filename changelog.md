@@ -1,6 +1,7 @@
 # 0.4.0
 
 * Added a few more songs
+* Fixed playing melodies while riding
 
 # 0.3.0
 
