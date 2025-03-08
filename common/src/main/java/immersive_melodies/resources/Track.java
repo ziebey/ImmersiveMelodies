@@ -47,4 +47,9 @@ public class Track {
         Note note = notes.get(notes.size() - 1);
         return note.getTime() + note.getLength();
     }
+
+    public void setNotes(List<Note> notes) {
+        this.notes.clear();
+        this.notes.addAll(notes);
+    }
 }

@@ -35,12 +35,19 @@ public class MidiParser {
 
                 double bpm = 120;
                 long lastTick = 0;
-                double lastMs = 0;
+                double time = 0;
                 String name = "Track " + trackNr;
                 List<Note> notes = new LinkedList<>();
                 HashMap<Integer, Note.Builder> currentNotes = new HashMap<>();
 
                 for (MidiEvent event : events) {
+                    // Convert notes into ms
+                    long tick = event.getTick();
+                    double deltaMs = ((tick - lastTick) * 60000.0) / (sequence.getResolution() * bpm);
+                    time += deltaMs;
+                    lastTick = tick;
+                    int ms = (int) time;
+
                     MidiMessage message = event.getMessage();
 
                     // Parse meta events
@@ -48,9 +55,10 @@ public class MidiParser {
                         byte[] data = metaMessage.getData();
                         int type = metaMessage.getType();
                         if (type == 0x03) {
-                            name = new String(data).strip();
-                        } else if (type == 0x04) {
-                            String instrument = new String(data).strip();
+                            String newName = new String(data).strip();
+                            if (!newName.isEmpty()) {
+                                name = newName;
+                            }
                         } else if (type == 0x51) {
                             int microsecondsPerBeat = ((data[0] & 0xFF) << 16) | ((data[1] & 0xFF) << 8) | (data[2] & 0xFF);
                             bpm = Math.round(60000000.0f / microsecondsPerBeat);
@@ -61,15 +69,7 @@ public class MidiParser {
                     if (message instanceof ShortMessage sm) {
                         int command = sm.getCommand();
 
-                        // Convert notes into ms
-                        long tick = event.getTick();
-                        double deltaMs = ((tick - lastTick) * 60000.0) / (sequence.getResolution() * bpm);
-                        double rms = (int) (deltaMs + lastMs);
-                        lastTick = tick;
-                        lastMs = rms;
-                        int ms = (int) rms;
-
-                        // Another way to decode note offs are note ons with velocity 0
+                        // Another way to decode note offs is note ons with velocity 0
                         if (command == ShortMessage.NOTE_ON && sm.getData2() == 0) {
                             command = ShortMessage.NOTE_OFF;
                         }
@@ -109,6 +109,8 @@ public class MidiParser {
         } catch (Exception e) {
             Common.LOGGER.error(e);
         }
+
+        melody.trim();
 
         return melody;
     }

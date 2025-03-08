@@ -204,10 +204,8 @@ public class ServerMelodyManager {
         }
 
         public Set<Integer> getEnabledTracks(Identifier name, String identifier) {
-            Melody melody = getMelody(name);
-            int primaryId = melody.getTracks().indexOf(melody.getPrimaryTrack());
             Map<String, Set<Integer>> playerSettings = enabledTracks.getOrDefault(name, Collections.emptyMap());
-            return playerSettings.getOrDefault(identifier, playerSettings.values().stream().findFirst().orElse(Set.of(primaryId)));
+            return playerSettings.getOrDefault(identifier, playerSettings.values().stream().findFirst().orElse(Set.of()));
         }
     }
 
