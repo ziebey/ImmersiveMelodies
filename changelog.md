@@ -1,3 +1,7 @@
+# 0.4.0
+
+* Added a few more songs
+
 # 0.3.0
 
 * Fixed the recipe of tiny drum
