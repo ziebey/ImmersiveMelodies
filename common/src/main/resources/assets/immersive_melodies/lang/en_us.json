@@ -23,5 +23,6 @@
   "immersive_melodies.tracks": "Track List",
   "immersive_melodies.help": "Open help",
   "immersive_melodies.pause": "Pause",
-  "immersive_melodies.read": "Click to learn how to upload!"
+  "immersive_melodies.read": "Click to learn how to upload!",
+  "immersive_melodies.error.upload.no_permission": "You don't have permission to upload files!"
 }

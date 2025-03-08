@@ -28,4 +28,5 @@ public final class Config extends JsonConfig {
     public boolean forceMobsToPickUp = true;
 
     public boolean clickedHelp = false;
+    public boolean disableUpload = false;
 }
