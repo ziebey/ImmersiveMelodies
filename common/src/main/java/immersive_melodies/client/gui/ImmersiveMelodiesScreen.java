@@ -144,6 +144,8 @@ public class ImmersiveMelodiesScreen extends Screen {
                             setError(Text.translatable("immersive_melodies.error.empty"));
                         }
                     });
+                } else {
+                    setError(Text.translatable("immersive_melodies.error.unknown_file_type"));
                 }
             } catch (Exception e) {
                 Common.LOGGER.error(e);
