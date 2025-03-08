@@ -36,7 +36,7 @@ public interface Items {
      *
      * @param namespace Your addon's namespace
      * @param name      Your addon's item name
-     * @param animator  Your item's animator. Allows to define how the entity
+     * @param animator  Your item's animator. Allows defining how the entity
      *                  model should be animated when playing the instrument.
      * @param sustain   The instruments sustain, in ticks.
      * @param offset    Determines the offset from the player's location

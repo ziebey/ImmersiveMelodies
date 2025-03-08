@@ -47,14 +47,6 @@ public class EntityModelAnimator {
             MelodyProgress progress = MelodyProgressManager.INSTANCE.getProgress(entity);
             progress.visualTick(time);
 
-            // todo @deprecated, remove in 0.3.0
-            if (accessor instanceof BipedModelAccessor<?> bipedModelAccessor && entity instanceof LivingEntity livingEntity) {
-                BipedEntityModel<?> bipedModel = bipedModelAccessor.getModel();
-                ModelPart left = getLeftArm(bipedModel, livingEntity);
-                ModelPart right = getRightArm(bipedModel, livingEntity);
-                ItemAnimators.get(Registries.ITEM.getId(item)).setAngles(left, right, bipedModel, livingEntity, progress, time);
-            }
-
             // Apply animations
             ItemAnimators.get(Registries.ITEM.getId(item)).setAngles(accessor, progress, time);
         }

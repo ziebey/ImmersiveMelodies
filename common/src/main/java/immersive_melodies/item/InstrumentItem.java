@@ -41,7 +41,6 @@ public class InstrumentItem extends Item {
     public static final String TAG_START_TIME = "start_time";
     public static final String TAG_TRACKS = "enabled_tracks";
 
-
     private final Sounds.Instrument sound;
     private final long sustain;
 
