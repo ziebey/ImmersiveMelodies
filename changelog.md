@@ -2,6 +2,8 @@
 
 * Added a few more songs
 * Fixed playing melodies while riding
+* Added config flags
+    * `uploadPermissionLevel` (2 for example, only allows OPs to upload)
 
 # 0.3.0
 
@@ -34,7 +36,7 @@
 
 * Added plugin API (thanks NerjalNosk!)
 * Fixed midis upload not working on Windows
-* Added error message when file cannot be parsed
+* Added error message when the file cannot be parsed
 
 # 0.0.5
 
@@ -54,7 +56,7 @@
 * Added support for tempo changes mid-play
 * Streamed melody transfer for extra large midis
 * Changed data format
-    * Midi now store tracks (no GUI to actually select specific tracks, but the technical capacities are here now)
+    * Midi now stores tracks (no GUI to actually select specific tracks, but the technical capacities are here now)
     * One .dat per melody to scale better
 * Lazy loading of datapacks to speed up starting time
 

@@ -12,9 +12,9 @@ public final class Config extends JsonConfig {
     @SuppressWarnings("unused")
     public String README = "https://github.com/Luke100000/ImmersiveMelodies/wiki/Config";
 
-    public boolean showOtherPlayersMelodies = true;
     public int getBufferDelay = 75;
     public int maxAudibleDistance = 48;
+
     public Map<String, Float> mobInstrumentFactors = Map.of(
             "minecraft:zombie", 0.01f,
             "minecraft:husk", 0.01f,
@@ -25,8 +25,9 @@ public final class Config extends JsonConfig {
             "minecraft:zombified_piglin", 0.01f,
             "minecraft:pillager", 0.01f
     );
-    public boolean forceMobsToPickUp = true;
 
+    public boolean showOtherPlayersMelodies = true;
+    public boolean forceMobsToPickUp = true;
     public boolean clickedHelp = false;
-    public boolean disableUpload = false;
+    public int uploadPermissionLevel = 0;
 }
