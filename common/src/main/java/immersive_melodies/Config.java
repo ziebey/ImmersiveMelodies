@@ -2,6 +2,8 @@ package immersive_melodies;
 
 import java.util.Map;
 
+import static net.minecraft.entity.mob.MobEntity.DEFAULT_DROP_CHANCE;
+
 public final class Config extends JsonConfig {
     private static final Config INSTANCE = loadOrCreate();
 
@@ -25,6 +27,7 @@ public final class Config extends JsonConfig {
             "minecraft:zombified_piglin", 0.01f,
             "minecraft:pillager", 0.01f
     );
+    public float mobInstrumentDropFactor = DEFAULT_DROP_CHANCE;
 
     public boolean showOtherPlayersMelodies = true;
     public boolean forceMobsToPickUp = true;

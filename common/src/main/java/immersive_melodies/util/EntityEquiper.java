@@ -4,6 +4,7 @@ import immersive_melodies.Config;
 import immersive_melodies.Items;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -13,6 +14,9 @@ public class EntityEquiper {
         if (shouldEquip(entity)) {
             Item item = Items.items.get(entity.getWorld().getRandom().nextInt(Items.items.size())).get();
             entity.equipStack(EquipmentSlot.MAINHAND, new ItemStack(item));
+            if (entity instanceof MobEntity mobEntity) {
+                mobEntity.setEquipmentDropChance(EquipmentSlot.MAINHAND, Config.getInstance().mobInstrumentDropFactor);
+            }
         }
     }
 

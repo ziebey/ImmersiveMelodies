@@ -54,6 +54,9 @@ public class ServerMelodyManager {
     public static Identifier getRandomMelody() {
         Object[] datapack = getDatapackMelodies().keySet().toArray();
         Object[] custom = getIndex().melodies.keySet().toArray();
+        if (datapack.length + custom.length == 0) {
+            return Common.locate("missing");
+        }
         int i = RANDOM.nextInt(datapack.length + custom.length);
         if (i < datapack.length) {
             return (Identifier) datapack[i];

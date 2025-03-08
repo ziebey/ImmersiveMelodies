@@ -5,6 +5,7 @@
 * Added config flags
     * `uploadPermissionLevel` (2 for example, only allows OPs to upload)
     * `loadInbuiltMidis` To allow disabling the inbuilt midis
+    * `mobInstrumentDropFactor` To adjust the chance of mobs dropping their instrument
 
 # 0.3.0
 
