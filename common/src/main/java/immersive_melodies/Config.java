@@ -33,5 +33,7 @@ public final class Config extends JsonConfig {
     public boolean forceMobsToPickUp = true;
     public boolean clickedHelp = false;
     public boolean loadInbuiltMidis = true;
+    public boolean stopGameMusicForPlayers = true;
+    public boolean stopGameMusicForMobs = false;
     public int uploadPermissionLevel = 0;
 }

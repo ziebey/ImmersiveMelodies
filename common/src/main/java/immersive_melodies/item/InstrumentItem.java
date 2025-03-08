@@ -1,6 +1,7 @@
 package immersive_melodies.item;
 
 import immersive_melodies.Common;
+import immersive_melodies.Config;
 import immersive_melodies.Sounds;
 import immersive_melodies.client.MelodyProgress;
 import immersive_melodies.client.MelodyProgressManager;
@@ -124,6 +125,13 @@ public class InstrumentItem extends Item {
                                     sound.get(octave), SoundCategory.NEUTRAL,
                                     volume, pitch, length, sustain,
                                     note.getTime() - progress.getTime(), entity);
+
+                            // Stop game music
+                            if (entity instanceof PlayerEntity && Config.getInstance().stopGameMusicForPlayers) {
+                                Common.soundManager.pauseGameMusic();
+                            } else if (Config.getInstance().stopGameMusicForMobs) {
+                                Common.soundManager.pauseGameMusic();
+                            }
 
                             // particle
                             if (entity instanceof LivingEntity livingEntity && !Common.soundManager.isFirstPerson(entity)) {

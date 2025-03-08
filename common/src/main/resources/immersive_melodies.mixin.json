@@ -9,7 +9,7 @@
   ],
   "client": [
     "AbstractZombieModelMixin", "BipedEntityModelMixin", "ClientWorldMixin", "IllagerEntityModelMixin",
-    "ItemRendererMixin", "ModelLoaderMixin", "PiglinEntityModelMixin"
+    "ItemRendererMixin", "ModelLoaderMixin", "MusicTrackerAccessor", "PiglinEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

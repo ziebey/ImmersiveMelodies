@@ -10,4 +10,6 @@ public interface SoundManager {
     boolean isFirstPerson(Entity entity);
 
     boolean audible(Entity entity);
+
+    void pauseGameMusic();
 }

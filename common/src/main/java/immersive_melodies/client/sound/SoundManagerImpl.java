@@ -1,6 +1,7 @@
 package immersive_melodies.client.sound;
 
 import immersive_melodies.Config;
+import immersive_melodies.mixin.MusicTrackerAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
@@ -36,5 +37,13 @@ public class SoundManagerImpl implements SoundManager {
     public boolean audible(Entity entity) {
         Entity cameraEntity = MinecraftClient.getInstance().getCameraEntity();
         return cameraEntity != null && cameraEntity.distanceTo(entity) < Config.getInstance().maxAudibleDistance;
+    }
+
+    @Override
+    public void pauseGameMusic() {
+        MusicTrackerAccessor musicTrackerAccessor = (MusicTrackerAccessor) this.client.getMusicTracker();
+        if (musicTrackerAccessor.getCurrent() != null) {
+            this.client.getMusicTracker().stop();
+        }
     }
 }

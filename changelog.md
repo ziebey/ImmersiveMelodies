@@ -6,6 +6,8 @@
     * `uploadPermissionLevel` (2 for example, only allows OPs to upload)
     * `loadInbuiltMidis` To allow disabling the inbuilt midis
     * `mobInstrumentDropFactor` To adjust the chance of mobs dropping their instrument
+    * `stopGameMusicForPlayers` To pause the game music when a player is playing a melody
+    * `stopGameMusicForMobs` To also pause when a mob is playing (disabled by default)
 * Silence is now trimmed from the beginning of the midi
 * Removed automatic track selection to avoid confusion, tracks are now all enabled by default
 * Finally fixed de-syncs between tracks
