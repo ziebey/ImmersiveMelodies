@@ -147,6 +147,7 @@ public class ImmersiveMelodiesScreen extends Screen {
                 }
             } catch (Exception e) {
                 Common.LOGGER.error(e);
+                setError(Text.literal(e.getLocalizedMessage()));
             }
         }
     }
@@ -177,7 +178,7 @@ public class ImmersiveMelodiesScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.renderBackground(context);
 
-        // Draw track selection background
+        // Draw the track selection background
         int x = (this.width - 192) / 2;
         int y = (this.height - 230) / 2;
         if (showTrackSelection) {
@@ -214,7 +215,7 @@ public class ImmersiveMelodiesScreen extends Screen {
         addDrawableChild(search);
         addDrawableChild(list);
 
-        // Build melody list
+        // Build the melody list
         list.clearEntries();
         String lastPath = "";
         for (Map.Entry<Identifier, MelodyDescriptor> entry : ClientMelodyManager.getMelodiesList().entrySet().stream()
@@ -249,7 +250,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             }
         }
 
-        // Build track list
+        // Build the track list
         trackList.clearEntries();
         if (selected != null && showTrackSelection) {
             addDrawableChild(trackList);
