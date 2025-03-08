@@ -149,7 +149,7 @@ public class InstrumentItem extends Item {
             }
 
             // Rewind
-            if (!(entity instanceof PlayerEntity) && progress.getTime() > melody.getLength()) {
+            if (progress.getTime() > melody.getLength()) {
                 rewind(stack, world);
             }
         }
