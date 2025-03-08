@@ -4,6 +4,7 @@
 * Fixed playing melodies while riding
 * Added config flags
     * `uploadPermissionLevel` (2 for example, only allows OPs to upload)
+    * `loadInbuiltMidis` To allow disabling the inbuilt midis
 
 # 0.3.0
 

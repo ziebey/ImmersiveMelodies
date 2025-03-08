@@ -29,5 +29,6 @@ public final class Config extends JsonConfig {
     public boolean showOtherPlayersMelodies = true;
     public boolean forceMobsToPickUp = true;
     public boolean clickedHelp = false;
+    public boolean loadInbuiltMidis = true;
     public int uploadPermissionLevel = 0;
 }

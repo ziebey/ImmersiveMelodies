@@ -3,6 +3,7 @@ package immersive_melodies.resources;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonParseException;
 import com.mojang.logging.LogUtils;
+import immersive_melodies.Config;
 import immersive_melodies.util.MidiParser;
 import immersive_melodies.util.Utils;
 import net.minecraft.resource.Resource;
@@ -59,6 +60,9 @@ public class MelodyLoader extends SinglePreparationResourceReloader<Map<Identifi
 
         Map<Identifier, Resource> resources = manager.findResources(dataType, path -> path.getPath().endsWith(".midi") || path.getPath().endsWith(".mid"));
         for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
+            if (!Config.getInstance().loadInbuiltMidis && entry.getKey().getNamespace().equals("immersive_melodies")) {
+                continue;
+            }
             try {
                 String name = Utils.toTitle(Utils.removeLastPart(Utils.getLastPart(entry.getKey().getPath(), "/"), "."));
                 Identifier identifier = new Identifier(entry.getKey().getNamespace(), entry.getKey().getPath());
