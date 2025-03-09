@@ -62,5 +62,13 @@
   "tiny_drum.c5": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c5", "attenuation_distance": 32}]},
   "tiny_drum.c6": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c6", "attenuation_distance": 32}]},
   "tiny_drum.c7": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c7", "attenuation_distance": 32}]},
-  "tiny_drum.c8": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c8", "attenuation_distance": 32}]}
+  "tiny_drum.c8": {"sounds": [{"name": "immersive_melodies:instruments/tiny_drum/c8", "attenuation_distance": 32}]},
+  "vielle.c1": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c1", "attenuation_distance": 32}]},
+  "vielle.c2": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c2", "attenuation_distance": 32}]},
+  "vielle.c3": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c3", "attenuation_distance": 32}]},
+  "vielle.c4": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c4", "attenuation_distance": 32}]},
+  "vielle.c5": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c5", "attenuation_distance": 32}]},
+  "vielle.c6": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c6", "attenuation_distance": 32}]},
+  "vielle.c7": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c7", "attenuation_distance": 32}]},
+  "vielle.c8": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c8", "attenuation_distance": 32}]}
 }

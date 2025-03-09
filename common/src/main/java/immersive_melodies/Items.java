@@ -22,14 +22,15 @@ public interface Items {
     List<Supplier<Item>> items = new LinkedList<>();
     List<Identifier> customInventoryModels = new LinkedList<>();
 
-    Supplier<Item> BAGPIPE = register(Common.MOD_ID, "bagpipe", 200, new Vector3f(0.5f, 0.6f, 0.05f));
-    Supplier<Item> DIDGERIDOO = register(Common.MOD_ID, "didgeridoo", 200, new Vector3f(0.0f, -0.45f, 1.0f));
+    Supplier<Item> BAGPIPE = register(Common.MOD_ID, "bagpipe", 300, new Vector3f(0.5f, 0.6f, 0.05f));
+    Supplier<Item> DIDGERIDOO = register(Common.MOD_ID, "didgeridoo", 400, new Vector3f(0.0f, -0.45f, 1.0f));
     Supplier<Item> FLUTE = register(Common.MOD_ID, "flute", 100, new Vector3f(0.0f, 0.15f, 0.9f));
-    Supplier<Item> LUTE = register(Common.MOD_ID, "lute", 200, new Vector3f(0.0f, 0.0f, 0.5f));
-    Supplier<Item> PIANO = register(Common.MOD_ID, "piano", 300, new Vector3f(0.0f, 0.25f, 0.5f));
+    Supplier<Item> LUTE = register(Common.MOD_ID, "lute", 300, new Vector3f(0.0f, 0.0f, 0.5f));
+    Supplier<Item> PIANO = register(Common.MOD_ID, "piano", 500, new Vector3f(0.0f, 0.25f, 0.5f));
     Supplier<Item> TRIANGLE = register(Common.MOD_ID, "triangle", 300, new Vector3f(0.0f, 0.0f, 0.6f));
     Supplier<Item> TRUMPET = register(Common.MOD_ID, "trumpet", 100, new Vector3f(0.0f, 0.25f, 1.4f));
-    Supplier<Item> TINY_DRUM = register(Common.MOD_ID, "tiny_drum", 300, new Vector3f(0.0f, 0.25f, 0.5f));
+    Supplier<Item> TINY_DRUM = register(Common.MOD_ID, "tiny_drum", 500, new Vector3f(0.0f, 0.25f, 0.5f));
+    Supplier<Item> VIELLE = register(Common.MOD_ID, "vielle", 200, new Vector3f(-0.25f, 0.4f, 0.35f));
 
     /**
      * Open method to create custom items, for addons

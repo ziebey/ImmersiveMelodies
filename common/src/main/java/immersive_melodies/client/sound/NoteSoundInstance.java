@@ -14,12 +14,9 @@ public class NoteSoundInstance extends EntityTrackingSoundInstance {
     public NoteSoundInstance(SoundEvent sound, SoundCategory category, float volume, float pitch, long length, long sustain, Entity entity) {
         super(sound, category, volume, pitch, entity, 1);
 
-        // The minimum time one need to e.g., repress a key
-        long minSustain = 50;
-
         this.length = length + sustain;
         this.sustain = sustain;
-        this.fallOff = Math.min(minSustain, sustain);
+        this.fallOff = Math.max(50, sustain);
     }
 
     @Override
@@ -28,7 +25,7 @@ public class NoteSoundInstance extends EntityTrackingSoundInstance {
 
         // Fade out
         age += 50;
-        if (age > length) {
+        if (age >= length) {
             this.setDone();
         }
 

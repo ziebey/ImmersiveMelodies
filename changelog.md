@@ -1,5 +1,7 @@
 # 0.4.0
 
+* Added a vielle
+* Fixed instrument sustain math, instruments sound a bit smoother now
 * Added a few more songs
 * Fixed playing melodies while riding
 * Added config flags
