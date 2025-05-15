@@ -1,3 +1,7 @@
+# Dev
+
+* Added Bad Apple
+
 # 0.4.0
 
 * Added a vielle
