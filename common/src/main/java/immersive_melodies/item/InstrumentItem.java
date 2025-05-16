@@ -120,6 +120,11 @@ public class InstrumentItem extends Item {
                             long length = note.getLength();
                             long sustain = Math.min(this.sustain, note.getSustain());
 
+                            // adjust volume based on perceived loudness
+                            float factor = Config.getInstance().perceivedLoudnessAdjustmentFactor;
+                            float adjustedVolume = (float) (volume / Math.sqrt(pitch * Math.pow(2, octave - 4)));
+                            volume = volume * (1.0f - factor) + adjustedVolume * factor;
+
                             // sound
                             Common.soundManager.playSound(entity.getX(), entity.getY(), entity.getZ(),
                                     sound.get(octave), SoundCategory.NEUTRAL,

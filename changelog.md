@@ -1,5 +1,8 @@
 # 0.5.0
 
+* Added perceived loudness adjustment for pitch
+    * This makes lower frequencies louder, and higher frequencies quieter, making instruments sound more balanced
+    * Configurable via `perceivedLoudnessAdjustmentFactor`, 0.5 by default
 * Added Bad Apple and a bit of Sus
 * Added Handpan
 * Added the Ender Bass

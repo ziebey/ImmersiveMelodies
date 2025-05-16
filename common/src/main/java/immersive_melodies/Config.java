@@ -17,6 +17,7 @@ public final class Config extends JsonConfig {
     public int getBufferDelay = 75;
     public int maxAudibleDistance = 48;
     public float instrumentVolumeFactor = 1.0f;
+    public float perceivedLoudnessAdjustmentFactor = 0.5f;
 
     public Map<String, Float> mobInstrumentFactors = Map.of(
             "minecraft:zombie", 0.01f,
