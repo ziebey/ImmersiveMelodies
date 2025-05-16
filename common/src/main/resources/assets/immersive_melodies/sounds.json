@@ -70,5 +70,21 @@
   "vielle.c5": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c5", "attenuation_distance": 32}]},
   "vielle.c6": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c6", "attenuation_distance": 32}]},
   "vielle.c7": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c7", "attenuation_distance": 32}]},
-  "vielle.c8": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c8", "attenuation_distance": 32}]}
+  "vielle.c8": {"sounds": [{"name": "immersive_melodies:instruments/vielle/c8", "attenuation_distance": 32}]},
+  "ender_bass.c1": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c1", "attenuation_distance": 32}]},
+  "ender_bass.c2": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c2", "attenuation_distance": 32}]},
+  "ender_bass.c3": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c3", "attenuation_distance": 32}]},
+  "ender_bass.c4": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c4", "attenuation_distance": 32}]},
+  "ender_bass.c5": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c5", "attenuation_distance": 32}]},
+  "ender_bass.c6": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c6", "attenuation_distance": 32}]},
+  "ender_bass.c7": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c7", "attenuation_distance": 32}]},
+  "ender_bass.c8": {"sounds": [{"name": "immersive_melodies:instruments/ender_bass/c8", "attenuation_distance": 32}]},
+  "handpan.c1": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c1", "attenuation_distance": 32}]},
+  "handpan.c2": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c2", "attenuation_distance": 32}]},
+  "handpan.c3": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c3", "attenuation_distance": 32}]},
+  "handpan.c4": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c4", "attenuation_distance": 32}]},
+  "handpan.c5": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c5", "attenuation_distance": 32}]},
+  "handpan.c6": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c6", "attenuation_distance": 32}]},
+  "handpan.c7": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c7", "attenuation_distance": 32}]},
+  "handpan.c8": {"sounds": [{"name": "immersive_melodies:instruments/handpan/c8", "attenuation_distance": 32}]}
 }

@@ -1,6 +1,8 @@
-# Dev
+# 0.5.0
 
-* Added Bad Apple
+* Added Bad Apple and a bit of Sus
+* Added Handpan
+* Added the Ender Bass
 
 # 0.4.0
 

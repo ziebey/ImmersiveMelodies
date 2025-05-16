@@ -29,5 +29,7 @@ public class ItemAnimators {
         register(Common.locate("trumpet"), new TrumpetAnimator());
         register(Common.locate("tiny_drum"), new TinyDrumAnimator());
         register(Common.locate("vielle"), new VielleAnimator());
+        register(Common.locate("ender_bass"), new EnderBassAnimator());
+        register(Common.locate("handpan"), new HandpanAnimator());
     }
 }

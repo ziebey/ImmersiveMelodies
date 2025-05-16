@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "CCC",
+    "   "
+  ],
+  "key": {
+    "B": [
+      {
+        "item": "minecraft:copper_ingot"
+      }
+    ],
+    "C": [
+      {
+        "item": "minecraft:copper_block"
+      }
+    ]
+  },
+  "result": {
+    "item": "immersive_melodies:handpan"
+  }
+}
