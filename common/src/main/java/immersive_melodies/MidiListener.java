@@ -1,6 +1,9 @@
 package immersive_melodies;
 
+import io.netty.util.internal.ConcurrentSet;
+
 import javax.sound.midi.*;
+import java.util.Set;
 
 public class MidiListener {
     public static void launch() {
@@ -8,44 +11,70 @@ public class MidiListener {
     }
 
     static class MidiListenerThread implements Runnable {
+        private final Set<MidiDevice.Info> connectedDevices = new ConcurrentSet<>();
+
         @Override
         public void run() {
-            try {
-                MidiDevice.Info[] midiDevices = MidiSystem.getMidiDeviceInfo();
-                for (MidiDevice.Info info : midiDevices) {
-                    try {
-                        MidiDevice device = MidiSystem.getMidiDevice(info);
-                        Common.LOGGER.info("MIDI Device: {} - {}", info.getName(), info.getDescription());
-
-                        if (device.getMaxTransmitters() != 0) {
-                            device.open();
-                            Transmitter transmitter = device.getTransmitter();
-                            transmitter.setReceiver(new MidiReceiver());
-                        }
-                    } catch (MidiUnavailableException e) {
-                        Common.LOGGER.warn("MIDI Device unavailable: {}", info.getName(), e);
-                    }
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-            } catch (Exception e) {
-                Common.LOGGER.error("Error initializing MIDI devices", e);
+
+                try {
+                    MidiDevice.Info[] midiDevices = MidiSystem.getMidiDeviceInfo();
+                    for (MidiDevice.Info info : midiDevices) {
+                        try {
+                            if (connectedDevices.contains(info)) continue;
+                            MidiDevice device = MidiSystem.getMidiDevice(info);
+                            if (device.getMaxTransmitters() != 0) {
+                                device.open();
+                                Transmitter transmitter = device.getTransmitter();
+                                transmitter.setReceiver(new MidiReceiver(connectedDevices, info));
+
+                                Common.LOGGER.info("MIDI Device: {} - {}", info.getName(), info.getDescription());
+                                connectedDevices.add(info);
+                            }
+                        } catch (MidiUnavailableException e) {
+                            Common.LOGGER.warn("MIDI Device unavailable: {}", info.getName(), e);
+                        }
+                    }
+                } catch (Exception e) {
+                    Common.LOGGER.error("Error initializing MIDI devices", e);
+                }
             }
         }
     }
 
     static class MidiReceiver implements Receiver {
+        private final Set<MidiDevice.Info> connectedDevices;
+        private final MidiDevice.Info info;
+
+        public MidiReceiver(Set<MidiDevice.Info> connectedDevices, MidiDevice.Info info) {
+            this.connectedDevices = connectedDevices;
+            this.info = info;
+        }
+
         @Override
         public void send(MidiMessage message, long timeStamp) {
-            byte[] data = message.getMessage();
-            StringBuilder sb = new StringBuilder("MIDI message received: ");
-            for (byte b : data) {
-                sb.append(String.format("%02X ", b));
+            if (message instanceof ShortMessage sm) {
+                int command = sm.getCommand();
+                if (command == ShortMessage.NOTE_ON) {
+                    int note = sm.getData1();
+                    int velocity = sm.getData2();
+                    Client.playNote(note, velocity);
+                } else if (command == ShortMessage.NOTE_OFF) {
+                    int note = sm.getData1();
+                    Client.playNote(note, 0);
+                }
             }
-            Common.LOGGER.info(sb.toString());
         }
 
         @Override
         public void close() {
-            // Clean up resources if necessary
+            connectedDevices.remove(info);
         }
     }
 }

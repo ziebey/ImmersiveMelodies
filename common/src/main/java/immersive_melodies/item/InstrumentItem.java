@@ -5,6 +5,7 @@ import immersive_melodies.Config;
 import immersive_melodies.Sounds;
 import immersive_melodies.client.MelodyProgress;
 import immersive_melodies.client.MelodyProgressManager;
+import immersive_melodies.client.sound.CancelableSoundInstance;
 import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.network.s2c.OpenGuiRequest;
@@ -110,44 +111,7 @@ public class InstrumentItem extends Item {
                     Note note = notes.get(i);
                     if (progress.getTime() >= note.getTime()) {
                         if (enabledTracks.isEmpty() || enabledTracks.contains(track)) {
-                            float volume = note.getVelocity() / 255.0f * 2.0f * Config.getInstance().instrumentVolumeFactor;
-                            float pitch = (float) Math.pow(2, (note.getNote() - 24) / 12.0);
-                            int octave = 1;
-                            while (octave < 8 && pitch > 4.0 / 3.0) {
-                                pitch /= 2;
-                                octave++;
-                            }
-                            long length = note.getLength();
-                            long sustain = Math.min(this.sustain, note.getSustain());
-
-                            // adjust volume based on perceived loudness
-                            float factor = Config.getInstance().perceivedLoudnessAdjustmentFactor;
-                            float adjustedVolume = (float) (volume / Math.sqrt(pitch * Math.pow(2, octave - 4)));
-                            volume = volume * (1.0f - factor) + adjustedVolume * factor;
-
-                            // sound
-                            Common.soundManager.playSound(entity.getX(), entity.getY(), entity.getZ(),
-                                    sound.get(octave), SoundCategory.NEUTRAL,
-                                    volume, pitch, length, sustain,
-                                    note.getTime() - progress.getTime(), entity);
-
-                            // Stop game music
-                            if (entity instanceof PlayerEntity && Config.getInstance().stopGameMusicForPlayers) {
-                                Common.soundManager.pauseGameMusic();
-                            } else if (Config.getInstance().stopGameMusicForMobs) {
-                                Common.soundManager.pauseGameMusic();
-                            }
-
-                            // particle
-                            if (entity instanceof LivingEntity livingEntity && !Common.soundManager.isFirstPerson(entity)) {
-                                double x = Math.sin(-livingEntity.bodyYaw / 180.0 * Math.PI);
-                                double z = Math.cos(-livingEntity.bodyYaw / 180.0 * Math.PI);
-                                world.addParticle(ParticleTypes.NOTE,
-                                        entity.getX() + x * offset.z + z * offset.x, entity.getY() + entity.getHeight() / 2.0 + offset.y, entity.getZ() + z * offset.z - x * offset.x,
-                                        x * 5.0, 0.0, z * 5.0);
-                            }
-
-                            MelodyProgressManager.INSTANCE.setLastNote(entity, volume, pitch, length);
+                            playNote(entity, note, progress.getTime());
                         }
 
                         // Mark as done
@@ -166,6 +130,49 @@ public class InstrumentItem extends Item {
                 rewind(stack, world);
             }
         }
+    }
+
+    public CancelableSoundInstance playNote(Entity entity, Note note, long time) {
+        float volume = note.getVelocity() / 255.0f * 2.0f * Config.getInstance().instrumentVolumeFactor;
+        float pitch = (float) Math.pow(2, (note.getNote() - 24) / 12.0);
+        int octave = 1;
+        while (octave < 8 && pitch > 4.0 / 3.0) {
+            pitch /= 2;
+            octave++;
+        }
+        long length = note.getLength();
+        long sustain = Math.min(this.sustain, note.getSustain());
+
+        // adjust volume based on perceived loudness
+        float factor = Config.getInstance().perceivedLoudnessAdjustmentFactor;
+        float adjustedVolume = (float) (volume / Math.sqrt(pitch * Math.pow(2, octave - 4)));
+        volume = volume * (1.0f - factor) + adjustedVolume * factor;
+
+        // sound
+        CancelableSoundInstance soundInstance = Common.soundManager.playSound(entity.getX(), entity.getY(), entity.getZ(),
+                sound.get(octave), SoundCategory.NEUTRAL,
+                volume, pitch, length, sustain,
+                note.getTime() - time, entity);
+
+        // Stop game music
+        if (entity instanceof PlayerEntity && Config.getInstance().stopGameMusicForPlayers) {
+            Common.soundManager.pauseGameMusic();
+        } else if (Config.getInstance().stopGameMusicForMobs) {
+            Common.soundManager.pauseGameMusic();
+        }
+
+        // particle
+        if (entity instanceof LivingEntity livingEntity && !Common.soundManager.isFirstPerson(entity)) {
+            double x = Math.sin(-livingEntity.bodyYaw / 180.0 * Math.PI);
+            double z = Math.cos(-livingEntity.bodyYaw / 180.0 * Math.PI);
+            entity.getWorld().addParticle(ParticleTypes.NOTE,
+                    entity.getX() + x * offset.z + z * offset.x, entity.getY() + entity.getHeight() / 2.0 + offset.y, entity.getZ() + z * offset.z - x * offset.x,
+                    x * 5.0, 0.0, z * 5.0);
+        }
+
+        MelodyProgressManager.INSTANCE.setLastNote(entity, volume, pitch, length);
+
+        return soundInstance;
     }
 
     public void inventoryServerTick(ItemStack stack, ServerWorld world, Entity entity) {

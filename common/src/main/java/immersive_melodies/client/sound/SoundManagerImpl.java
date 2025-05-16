@@ -20,12 +20,13 @@ public class SoundManagerImpl implements SoundManager {
         this.executor = new ScheduledThreadPoolExecutor(1);
     }
 
-    public void playSound(double x, double y, double z, SoundEvent event, SoundCategory category, float volume, float pitch, long length, long sustain, long delay, Entity entity) {
+    public CancelableSoundInstance playSound(double x, double y, double z, SoundEvent event, SoundCategory category, float volume, float pitch, long length, long sustain, long delay, Entity entity) {
         delay = Math.max(0, delay + Config.getInstance().getBufferDelay);
+        NoteSoundInstance positionedSoundInstance = new NoteSoundInstance(event, category, volume, pitch, length, sustain, entity);
         executor.schedule(() -> {
-            NoteSoundInstance positionedSoundInstance = new NoteSoundInstance(event, category, volume, pitch, length, sustain, entity);
             this.client.execute(() -> this.client.getSoundManager().play(positionedSoundInstance));
         }, delay, TimeUnit.MILLISECONDS);
+        return positionedSoundInstance;
     }
 
     @Override

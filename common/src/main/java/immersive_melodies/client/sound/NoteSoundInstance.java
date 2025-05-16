@@ -5,7 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
-public class NoteSoundInstance extends EntityTrackingSoundInstance {
+public class NoteSoundInstance extends EntityTrackingSoundInstance implements CancelableSoundInstance {
     long age;
     long length;
     long sustain;
@@ -41,5 +41,10 @@ public class NoteSoundInstance extends EntityTrackingSoundInstance {
     @Override
     public float getPitch() {
         return pitch;
+    }
+
+    @Override
+    public void stop() {
+        this.age = length - fallOff;
     }
 }
