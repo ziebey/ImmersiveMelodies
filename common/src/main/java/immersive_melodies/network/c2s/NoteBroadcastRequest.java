@@ -31,7 +31,7 @@ public class NoteBroadcastRequest extends Message {
     public void receive(PlayerEntity e) {
         if (e instanceof ServerPlayerEntity se) {
             se.getServerWorld().getPlayers().stream()
-                    .filter(player -> player == e && player.squaredDistanceTo(e) < 64)
+                    .filter(player -> player != e && player.squaredDistanceTo(e) < 64)
                     .forEach(player -> {
                         NetworkHandler.sendToPlayer(new NoteMessage(player.getId(), tone, velocity), player);
                     });
