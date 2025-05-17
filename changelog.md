@@ -1,5 +1,6 @@
 # 0.5.0
 
+* Added Keyboard and MIDI device support
 * Added perceived loudness adjustment for pitch
     * This makes lower frequencies louder, and higher frequencies quieter, making instruments sound more balanced
     * Configurable via `perceivedLoudnessAdjustmentFactor`, 0.5 by default

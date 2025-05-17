@@ -38,4 +38,22 @@ public final class Config extends JsonConfig {
     public boolean stopGameMusicForPlayers = true;
     public boolean stopGameMusicForMobs = false;
     public int uploadPermissionLevel = 0;
+
+    public Map<Integer, Integer> scancodeToMidi = Map.ofEntries(
+            Map.entry(38, 60), // A -> C4
+            Map.entry(39, 62), // S -> D4
+            Map.entry(40, 64), // D -> E4
+            Map.entry(41, 65), // F -> F4
+            Map.entry(42, 67), // G -> G4
+            Map.entry(43, 69), // H -> A4
+            Map.entry(44, 71), // J -> B4
+            Map.entry(45, 72), // K -> C5
+            Map.entry(24, 61), // Q -> C#4
+            Map.entry(25, 63), // W -> D#4
+            Map.entry(27, 66), // E -> F#4
+            Map.entry(28, 68), // R -> G#4
+            Map.entry(29, 70), // T -> A#4
+            Map.entry(30, 73)  // Y -> C#5
+    );
+
 }

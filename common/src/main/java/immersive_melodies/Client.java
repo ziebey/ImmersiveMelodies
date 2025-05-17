@@ -32,10 +32,12 @@ public class Client {
                     NetworkHandler.sendToServer(new ItemActionMessage(ItemActionMessage.State.PAUSE));
 
                     if (velocity > 0) {
-                        Note note = new Note(tone, velocity, 0, 10_000, 200);
-                        CancelableSoundInstance soundInstance = instrument.playNote(client.player, note, 0);
-                        playingSounds.put(tone, soundInstance);
-                        // TODO: Also send to server
+                        if (!playingSounds.containsKey(tone)) {
+                            Note note = new Note(tone, velocity, 0, 10_000, 200);
+                            CancelableSoundInstance soundInstance = instrument.playNote(client.player, note, 0);
+                            playingSounds.put(tone, soundInstance);
+                            // TODO: Also send to server
+                        }
                     } else {
                         CancelableSoundInstance soundInstance = playingSounds.get(tone);
                         if (soundInstance != null) {

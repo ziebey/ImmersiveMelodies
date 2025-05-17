@@ -280,29 +280,36 @@ public class ImmersiveMelodiesScreen extends Screen {
             close();
         }, () -> List.of(Text.translatable("immersive_melodies.close").asOrderedText())));
 
-        // Delete
-        if (selected != null && (Utils.canDelete(selected, MinecraftClient.getInstance().player))) {
-            addDrawableChild(new TexturedButtonWidget(width / 2 + 25, y, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 16, 256, 256, Text.of(null), button -> {
-                NetworkHandler.sendToServer(new MelodyDeleteRequest(selected));
-                selected = null;
-            }, () -> List.of(Text.translatable("immersive_melodies.delete").asOrderedText())));
-        }
+        // Track selection
+        addDrawableChild(new TexturedButtonWidget(width / 2 - 55, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 16, 256, 256, Text.of(null), button -> {
+            this.showTrackSelection = !this.showTrackSelection;
+            refreshPage();
+        }, () -> List.of(Text.translatable("immersive_melodies.tracks").asOrderedText())));
+
+        // Free playing
+        addDrawableChild(new TexturedButtonWidget(width / 2 - 33, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 0, 256, 256, Text.of(null), button -> {
+            if (client != null) {
+                client.setScreen(new ImmersiveMelodiesFreePlayingScreen());
+            }
+        }, () -> List.of(Text.translatable("immersive_melodies.keyboard").asOrderedText())));
 
         // Pause
-        addDrawableChild(new TexturedButtonWidget(width / 2 - 10 - 8, y, 16, 16, BACKGROUND_TEXTURE, 256 - 32, 32, 256, 256, Text.of(null), button -> {
+        addDrawableChild(new TexturedButtonWidget(width / 2 - 8, y, 16, 16, BACKGROUND_TEXTURE, 256 - 32, 32, 256, 256, Text.of(null), button -> {
             NetworkHandler.sendToServer(new ItemActionMessage(ItemActionMessage.State.PAUSE));
         }, () -> List.of(Text.translatable("immersive_melodies.pause").asOrderedText())));
 
         // Play
-        addDrawableChild(new TexturedButtonWidget(width / 2, y, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 32, 256, 256, Text.of(null), button -> {
+        addDrawableChild(new TexturedButtonWidget(width / 2 + 8, y, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 32, 256, 256, Text.of(null), button -> {
             NetworkHandler.sendToServer(new ItemActionMessage(ItemActionMessage.State.CONTINUE));
         }, () -> List.of(Text.translatable("immersive_melodies.play").asOrderedText())));
 
-        // Track selection
-        addDrawableChild(new TexturedButtonWidget(width / 2 - 40, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 16, 256, 256, Text.of(null), button -> {
-            this.showTrackSelection = !this.showTrackSelection;
-            refreshPage();
-        }, () -> List.of(Text.translatable("immersive_melodies.tracks").asOrderedText())));
+        // Delete
+        if (selected != null && (Utils.canDelete(selected, MinecraftClient.getInstance().player))) {
+            addDrawableChild(new TexturedButtonWidget(width / 2 + 30, y, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 16, 256, 256, Text.of(null), button -> {
+                NetworkHandler.sendToServer(new MelodyDeleteRequest(selected));
+                selected = null;
+            }, () -> List.of(Text.translatable("immersive_melodies.delete").asOrderedText())));
+        }
 
         // Help
         addDrawableChild(new TexturedButtonWidget(width / 2 + 50, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 32, 256, 256, Text.of(null), button -> {
