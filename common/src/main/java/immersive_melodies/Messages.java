@@ -5,6 +5,7 @@ import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.c2s.*;
 import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.network.s2c.MelodyResponse;
+import immersive_melodies.network.s2c.NoteMessage;
 import immersive_melodies.network.s2c.OpenGuiRequest;
 
 public class Messages {
@@ -21,5 +22,7 @@ public class Messages {
         NetworkHandler.registerMessage(ItemActionMessage.class, ItemActionMessage::new);
         NetworkHandler.registerMessage(MelodyDeleteRequest.class, MelodyDeleteRequest::new);
         NetworkHandler.registerMessage(TrackToggleMessage.class, TrackToggleMessage::new);
+        NetworkHandler.registerMessage(NoteBroadcastRequest.class, NoteBroadcastRequest::new);
+        NetworkHandler.registerMessage(NoteMessage.class, NoteMessage::new);
     }
 }

@@ -1,10 +1,13 @@
 package immersive_melodies.network;
 
+import immersive_melodies.Client;
 import immersive_melodies.client.gui.ImmersiveMelodiesScreen;
 import immersive_melodies.network.s2c.MelodyListMessage;
+import immersive_melodies.network.s2c.NoteMessage;
 import immersive_melodies.network.s2c.OpenGuiRequest;
 import immersive_melodies.resources.ClientMelodyManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 
 public class ClientNetworkManager implements NetworkManager {
     @Override
@@ -21,6 +24,15 @@ public class ClientNetworkManager implements NetworkManager {
 
         if (MinecraftClient.getInstance().currentScreen instanceof ImmersiveMelodiesScreen screen) {
             screen.refreshPage();
+        }
+    }
+
+    @Override
+    public void handleNoteMessage(NoteMessage e) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Entity entity = client.world != null ? client.world.getEntityById(e.entity) : null;
+        if (entity != null) {
+            Client.playNote(entity, e.tone, e.velocity);
         }
     }
 }
