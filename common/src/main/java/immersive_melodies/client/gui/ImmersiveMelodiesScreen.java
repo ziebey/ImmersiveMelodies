@@ -23,6 +23,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -241,7 +242,10 @@ public class ImmersiveMelodiesScreen extends Screen {
                 lastPath = path;
             }
 
-            list.addEntry(entry.getKey(), Text.literal(entry.getValue().getName()), () -> {
+            String key = entry.getKey().getPath().replace(".midi", "").replace(".mid", "");
+            String[] split = key.split("/", 2);
+            MutableText name = Text.translatableWithFallback("immersive_melodies.melodies." + split[split.length - 1], entry.getValue().getName());
+            list.addEntry(entry.getKey(), name, () -> {
                 NetworkHandler.sendToServer(new ItemActionMessage(ItemActionMessage.State.PLAY, entry.getKey()));
                 selected = entry.getKey();
                 refreshPage();

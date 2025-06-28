@@ -1,6 +1,7 @@
 # 0.5.1
 
 * Melodies are now grouped by namespaces as well
+* Melody names can now be translated via key `immersive_melodies.melodies.<file_name>`
 
 # 0.5.0
 
