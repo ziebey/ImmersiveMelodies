@@ -228,7 +228,7 @@ public class ImmersiveMelodiesScreen extends Screen {
                     if (primarySortA != primarySortB) {
                         return primarySortB - primarySortA;
                     } else {
-                        return a.getValue().getName().compareTo(b.getValue().getName());
+                        return a.getKey().compareTo(b.getKey());
                     }
                 })
                 .toList()) {

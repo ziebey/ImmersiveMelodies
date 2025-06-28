@@ -1,3 +1,7 @@
+# 0.5.1
+
+* Melodies are now grouped by namespaces as well
+
 # 0.5.0
 
 * Added Keyboard and MIDI device support
