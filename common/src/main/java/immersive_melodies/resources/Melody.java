@@ -1,10 +1,9 @@
 package immersive_melodies.resources;
 
-import net.minecraft.network.PacketByteBuf;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.network.FriendlyByteBuf;
 
 
 public class Melody extends MelodyDescriptor {
@@ -21,7 +20,7 @@ public class Melody extends MelodyDescriptor {
         super(name);
     }
 
-    public Melody(PacketByteBuf b) {
+    public Melody(FriendlyByteBuf b) {
         super(b);
 
         int trackCount = b.readInt();
@@ -46,7 +45,7 @@ public class Melody extends MelodyDescriptor {
         tracks.add(track);
     }
 
-    public void encode(PacketByteBuf b) {
+    public void encode(FriendlyByteBuf b) {
         super.encodeLite(b);
 
         b.writeInt(tracks.size());

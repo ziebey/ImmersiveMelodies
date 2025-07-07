@@ -3,11 +3,10 @@ package immersive_melodies.client;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.resources.ClientMelodyManager;
 import immersive_melodies.resources.Melody;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class MelodyProgress {
     long lastTime;
@@ -42,8 +41,8 @@ public class MelodyProgress {
         lastTime = l;
 
         // reset progress on change
-        String identifier = stack.getOrCreateNbt().getString(InstrumentItem.TAG_MELODY);
-        long startTime = stack.getOrCreateNbt().getLong(InstrumentItem.TAG_START_TIME);
+        String identifier = stack.getOrCreateTag().getString(InstrumentItem.TAG_MELODY);
+        long startTime = stack.getOrCreateTag().getLong(InstrumentItem.TAG_START_TIME);
 
         // reset if the melody changed
         if (!currentlyPlaying.equals(identifier)) {
@@ -116,6 +115,6 @@ public class MelodyProgress {
     }
 
     public Melody getMelody() {
-        return ClientMelodyManager.getMelody(new Identifier(getCurrentlyPlaying()));
+        return ClientMelodyManager.getMelody(new ResourceLocation(getCurrentlyPlaying()));
     }
 }

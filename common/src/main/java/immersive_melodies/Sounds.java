@@ -1,18 +1,17 @@
 package immersive_melodies;
 
 import immersive_melodies.cobalt.registration.Registration;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 
 public class Sounds {
     static Supplier<SoundEvent> register(String namespace, String path) {
-        Identifier id = Identifier.of(namespace, path);
-        return Registration.register(Registries.SOUND_EVENT, id, () -> SoundEvent.of(id));
+        ResourceLocation id = ResourceLocation.tryBuild(namespace, path);
+        return Registration.register(BuiltInRegistries.SOUND_EVENT, id, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
     public static void bootstrap() {

@@ -2,7 +2,7 @@ package immersive_melodies.client.animation.animators;
 
 import immersive_melodies.client.MelodyProgress;
 import immersive_melodies.client.animation.accessors.ModelAccessor;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class EnderBassAnimator implements Animator {
     @Override

@@ -3,13 +3,13 @@ package immersive_melodies.fabric.resources;
 import immersive_melodies.Common;
 import immersive_melodies.resources.MelodyLoader;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class FabricMelody extends MelodyLoader implements IdentifiableResourceReloadListener {
-    private static final Identifier ID = Common.locate("melodies");
+    private static final ResourceLocation ID = Common.locate("melodies");
 
     @Override
-    public Identifier getFabricId() {
+    public ResourceLocation getFabricId() {
         return ID;
     }
 }

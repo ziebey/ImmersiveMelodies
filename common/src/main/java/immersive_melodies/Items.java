@@ -4,10 +4,6 @@ import immersive_melodies.client.animation.ItemAnimators;
 import immersive_melodies.client.animation.animators.Animator;
 import immersive_melodies.cobalt.registration.Registration;
 import immersive_melodies.item.InstrumentItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -16,11 +12,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 @SuppressWarnings("unused")
 public interface Items {
     List<Supplier<Item>> items = new LinkedList<>();
-    List<Identifier> customInventoryModels = new LinkedList<>();
+    List<ResourceLocation> customInventoryModels = new LinkedList<>();
 
     Supplier<Item> BAGPIPE = register(Common.MOD_ID, "bagpipe", 300, new Vector3f(0.5f, 0.6f, 0.05f));
     Supplier<Item> DIDGERIDOO = register(Common.MOD_ID, "didgeridoo", 400, new Vector3f(0.0f, -0.45f, 1.0f));
@@ -48,7 +48,7 @@ public interface Items {
      */
     static @Nullable Supplier<Item> register(@NotNull String namespace, @NotNull String name, Animator animator,
                                              long sustain, Vector3f offset) {
-        Identifier identifier = new Identifier(namespace, name);
+        ResourceLocation identifier = new ResourceLocation(namespace, name);
         Supplier<Item> supplier = register(namespace, name, sustain, offset);
         ItemAnimators.register(identifier, animator);
         return supplier;
@@ -67,10 +67,10 @@ public interface Items {
      */
     static @Nullable Supplier<Item> register(@NotNull String namespace, @NotNull String name,
                                              long sustain, Vector3f offset) {
-        Identifier identifier = new Identifier(namespace, name);
+        ResourceLocation identifier = new ResourceLocation(namespace, name);
         Sounds.Instrument instrument = new Sounds.Instrument(namespace, name);
         Supplier<Item> itemSupplier = () -> new InstrumentItem(baseProps(), instrument, sustain, offset);
-        Supplier<Item> supplier = Registration.register(Registries.ITEM, identifier, itemSupplier);
+        Supplier<Item> supplier = Registration.register(BuiltInRegistries.ITEM, identifier, itemSupplier);
         items.add(supplier);
         customInventoryModels.add(identifier);
         return supplier;
@@ -80,11 +80,11 @@ public interface Items {
         // nop
     }
 
-    static Item.Settings baseProps() {
-        return new Item.Settings().maxCount(1);
+    static Item.Properties baseProps() {
+        return new Item.Properties().stacksTo(1);
     }
 
     static Collection<ItemStack> getSortedItems() {
-        return items.stream().map(i -> i.get().getDefaultStack()).toList();
+        return items.stream().map(i -> i.get().getDefaultInstance()).toList();
     }
 }

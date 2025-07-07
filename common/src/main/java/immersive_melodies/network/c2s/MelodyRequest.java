@@ -4,30 +4,30 @@ import immersive_melodies.cobalt.network.Message;
 import immersive_melodies.network.PacketSplitter;
 import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.ServerMelodyManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class MelodyRequest extends Message {
-    private final Identifier identifier;
+    private final ResourceLocation identifier;
 
-    public MelodyRequest(Identifier identifier) {
+    public MelodyRequest(ResourceLocation identifier) {
         this.identifier = identifier;
     }
 
-    public MelodyRequest(PacketByteBuf b) {
-        this.identifier = b.readIdentifier();
+    public MelodyRequest(FriendlyByteBuf b) {
+        this.identifier = b.readResourceLocation();
     }
 
     @Override
-    public void encode(PacketByteBuf b) {
-        b.writeIdentifier(identifier);
+    public void encode(FriendlyByteBuf b) {
+        b.writeResourceLocation(identifier);
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive(Player e) {
         Melody melody = ServerMelodyManager.getMelody(identifier);
-        PacketSplitter.sendToPlayer(identifier, melody, (ServerPlayerEntity) e);
+        PacketSplitter.sendToPlayer(identifier, melody, (ServerPlayer) e);
     }
 }

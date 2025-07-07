@@ -1,20 +1,20 @@
 package immersive_melodies;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemGroups {
-    public static Identifier getIdentifier() {
+    public static ResourceLocation getIdentifier() {
         return Common.locate(Common.MOD_ID + "_tab");
     }
 
-    public static Text getDisplayName() {
-        return Text.translatable("itemGroup." + ItemGroups.getIdentifier().toTranslationKey());
+    public static Component getDisplayName() {
+        return Component.translatable("itemGroup." + ItemGroups.getIdentifier().toLanguageKey());
     }
 
     public static ItemStack getIcon() {
         assert Items.LUTE != null;
-        return Items.LUTE.get().getDefaultStack();
+        return Items.LUTE.get().getDefaultInstance();
     }
 }

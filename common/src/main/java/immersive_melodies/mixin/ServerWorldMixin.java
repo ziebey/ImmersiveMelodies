@@ -2,8 +2,8 @@ package immersive_melodies.mixin;
 
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.util.EntityEquiper;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,16 +11,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = ServerWorld.class, priority = 900)
+@Mixin(value = ServerLevel.class, priority = 900)
 public class ServerWorldMixin {
-    @Inject(method = "addEntity(Lnet/minecraft/entity/Entity;)Z",
-            at = @At("HEAD")
-    )
+    @Inject(method = "addEntity", at = @At("HEAD"))
     private void onAddEntity(Entity entity, CallbackInfoReturnable<Boolean> info) {
         EntityEquiper.equip(entity);
     }
 
-    @Inject(method = "tickEntity", at = @At("HEAD"))
+    @Inject(method = "tickNonPassenger", at = @At("HEAD"))
     public void immersiveMelodies$injectTickEntity(Entity entity, CallbackInfo ci) {
         immersiveMelodies$tick(entity);
     }
@@ -32,9 +30,9 @@ public class ServerWorldMixin {
 
     @Unique
     private void immersiveMelodies$tick(Entity entity) {
-        entity.getHandItems().forEach(itemStack -> {
+        entity.getHandSlots().forEach(itemStack -> {
             if (itemStack.getItem() instanceof InstrumentItem item) {
-                item.inventoryServerTick(itemStack, (ServerWorld) (Object) this, entity);
+                item.inventoryServerTick(itemStack, (ServerLevel) (Object) this, entity);
             }
         });
     }

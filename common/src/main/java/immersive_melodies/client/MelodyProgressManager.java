@@ -1,13 +1,12 @@
 package immersive_melodies.client;
 
 import immersive_melodies.Config;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class MelodyProgressManager {
     public static final MelodyProgressManager INSTANCE = new MelodyProgressManager();
@@ -26,7 +25,7 @@ public class MelodyProgressManager {
         MelodyProgress progress = getProgress(entity);
 
         progress.lastNoteLongTime = System.currentTimeMillis();
-        progress.lastNoteTime = entity.age;
+        progress.lastNoteTime = entity.tickCount;
         progress.lastVolume = volume;
         progress.lastPitch = pitch;
         progress.lastLength = length;
@@ -35,9 +34,9 @@ public class MelodyProgressManager {
         progress.attackTime = Math.min(5.0f, progress.decayTime / 2.0f);
     }
 
-    public boolean isClose(Vec3d pos, float distance) {
+    public boolean isClose(Vec3 pos, float distance) {
         for (Map.Entry<Entity, MelodyProgress> entry : progress.entrySet()) {
-            if (entry.getValue().isPlaying() && entry.getKey().squaredDistanceTo(pos) < distance * distance) {
+            if (entry.getValue().isPlaying() && entry.getKey().distanceToSqr(pos) < distance * distance) {
                 return true;
             }
         }
@@ -55,8 +54,8 @@ public class MelodyProgressManager {
                     .filter(m -> m.getValue().isPlaying())
                     .map(Map.Entry::getKey)
                     .sorted((a, b) -> {
-                        boolean b1 = a instanceof PlayerEntity;
-                        boolean b2 = b instanceof PlayerEntity;
+                        boolean b1 = a instanceof Player;
+                        boolean b2 = b instanceof Player;
                         if (b1 && !b2) {
                             return 1;
                         } else if (!b1 && b2) {

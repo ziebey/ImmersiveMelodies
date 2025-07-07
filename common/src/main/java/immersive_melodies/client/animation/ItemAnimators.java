@@ -2,20 +2,19 @@ package immersive_melodies.client.animation;
 
 import immersive_melodies.Common;
 import immersive_melodies.client.animation.animators.*;
-import net.minecraft.util.Identifier;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.resources.ResourceLocation;
 
 public class ItemAnimators {
-    private static final Map<Identifier, Animator> ANIMATORS = new HashMap<>();
+    private static final Map<ResourceLocation, Animator> ANIMATORS = new HashMap<>();
     private static final Animator DEFAULT = new FluteAnimator();
 
-    public static void register(Identifier id, Animator animator) {
+    public static void register(ResourceLocation id, Animator animator) {
         ANIMATORS.put(id, animator);
     }
 
-    public static Animator get(Identifier id) {
+    public static Animator get(ResourceLocation id) {
         return ANIMATORS.getOrDefault(id, DEFAULT);
     }
 

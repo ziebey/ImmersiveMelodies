@@ -5,33 +5,33 @@ import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.resources.ServerMelodyManager;
 import immersive_melodies.util.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class MelodyDeleteRequest extends Message {
-    private final Identifier identifier;
+    private final ResourceLocation identifier;
 
-    public MelodyDeleteRequest(Identifier identifier) {
+    public MelodyDeleteRequest(ResourceLocation identifier) {
         this.identifier = identifier;
     }
 
-    public MelodyDeleteRequest(PacketByteBuf b) {
-        this.identifier = b.readIdentifier();
+    public MelodyDeleteRequest(FriendlyByteBuf b) {
+        this.identifier = b.readResourceLocation();
     }
 
     @Override
-    public void encode(PacketByteBuf b) {
-        b.writeIdentifier(identifier);
+    public void encode(FriendlyByteBuf b) {
+        b.writeResourceLocation(identifier);
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive(Player e) {
         if (Utils.canDelete(identifier, e)) {
             ServerMelodyManager.deleteMelody(identifier);
 
-            NetworkHandler.sendToPlayer(new MelodyListMessage(e), (ServerPlayerEntity) e);
+            NetworkHandler.sendToPlayer(new MelodyListMessage(e), (ServerPlayer) e);
         }
     }
 }

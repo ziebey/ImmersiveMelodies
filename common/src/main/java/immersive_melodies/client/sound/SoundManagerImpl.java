@@ -2,25 +2,24 @@ package immersive_melodies.client.sound;
 
 import immersive_melodies.Config;
 import immersive_melodies.mixin.MusicTrackerAccessor;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 
 public class SoundManagerImpl implements SoundManager {
-    private final MinecraftClient client;
+    private final Minecraft client;
     private final ScheduledExecutorService executor;
 
-    public SoundManagerImpl(MinecraftClient client) {
+    public SoundManagerImpl(Minecraft client) {
         this.client = client;
         this.executor = new ScheduledThreadPoolExecutor(1);
     }
 
-    public CancelableSoundInstance playSound(double x, double y, double z, SoundEvent event, SoundCategory category, float volume, float pitch, long length, long sustain, long delay, Entity entity) {
+    public CancelableSoundInstance playSound(double x, double y, double z, SoundEvent event, SoundSource category, float volume, float pitch, long length, long sustain, long delay, Entity entity) {
         delay = Math.max(0, delay + Config.getInstance().getBufferDelay);
         NoteSoundInstance positionedSoundInstance = new NoteSoundInstance(event, category, volume, pitch, length, sustain, entity);
         executor.schedule(() -> {
@@ -31,20 +30,20 @@ public class SoundManagerImpl implements SoundManager {
 
     @Override
     public boolean isFirstPerson(Entity entity) {
-        return MinecraftClient.getInstance().getCameraEntity() == entity && !MinecraftClient.getInstance().gameRenderer.getCamera().isThirdPerson();
+        return Minecraft.getInstance().getCameraEntity() == entity && !Minecraft.getInstance().gameRenderer.getMainCamera().isDetached();
     }
 
     @Override
     public boolean audible(Entity entity) {
-        Entity cameraEntity = MinecraftClient.getInstance().getCameraEntity();
+        Entity cameraEntity = Minecraft.getInstance().getCameraEntity();
         return cameraEntity != null && cameraEntity.distanceTo(entity) < Config.getInstance().maxAudibleDistance;
     }
 
     @Override
     public void pauseGameMusic() {
-        MusicTrackerAccessor musicTrackerAccessor = (MusicTrackerAccessor) this.client.getMusicTracker();
-        if (musicTrackerAccessor.getCurrent() != null) {
-            this.client.getMusicTracker().stop();
+        MusicTrackerAccessor musicTrackerAccessor = (MusicTrackerAccessor) this.client.getMusicManager();
+        if (musicTrackerAccessor.getCurrentMusic() != null) {
+            this.client.getMusicManager().stopPlaying();
         }
     }
 }

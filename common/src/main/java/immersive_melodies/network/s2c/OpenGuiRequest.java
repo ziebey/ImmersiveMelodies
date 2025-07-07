@@ -2,8 +2,8 @@ package immersive_melodies.network.s2c;
 
 import immersive_melodies.Common;
 import immersive_melodies.cobalt.network.Message;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public class OpenGuiRequest extends Message {
     public final Type gui;
@@ -12,17 +12,17 @@ public class OpenGuiRequest extends Message {
         this.gui = gui;
     }
 
-    public OpenGuiRequest(PacketByteBuf b) {
-        this.gui = b.readEnumConstant(OpenGuiRequest.Type.class);
+    public OpenGuiRequest(FriendlyByteBuf b) {
+        this.gui = b.readEnum(OpenGuiRequest.Type.class);
     }
 
     @Override
-    public void encode(PacketByteBuf b) {
-        b.writeEnumConstant(gui);
+    public void encode(FriendlyByteBuf b) {
+        b.writeEnum(gui);
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive(Player e) {
         Common.networkManager.handleOpenGuiRequest(this);
     }
 

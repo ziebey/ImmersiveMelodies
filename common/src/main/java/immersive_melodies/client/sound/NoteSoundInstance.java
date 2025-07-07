@@ -1,17 +1,17 @@
 package immersive_melodies.client.sound;
 
-import net.minecraft.client.sound.EntityTrackingSoundInstance;
-import net.minecraft.entity.Entity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 
-public class NoteSoundInstance extends EntityTrackingSoundInstance implements CancelableSoundInstance {
+public class NoteSoundInstance extends EntityBoundSoundInstance implements CancelableSoundInstance {
     long age;
     long length;
     long sustain;
     long fallOff;
 
-    public NoteSoundInstance(SoundEvent sound, SoundCategory category, float volume, float pitch, long length, long sustain, Entity entity) {
+    public NoteSoundInstance(SoundEvent sound, SoundSource category, float volume, float pitch, long length, long sustain, Entity entity) {
         super(sound, category, volume, pitch, entity, 1);
 
         this.length = length + sustain;
@@ -26,7 +26,7 @@ public class NoteSoundInstance extends EntityTrackingSoundInstance implements Ca
         // Fade out
         age += 50;
         if (age >= length) {
-            this.setDone();
+            this.stop();
         }
 
         // todo Pitch bend
@@ -44,7 +44,7 @@ public class NoteSoundInstance extends EntityTrackingSoundInstance implements Ca
     }
 
     @Override
-    public void stop() {
+    public void cancel() {
         this.age = length - fallOff;
     }
 }

@@ -1,6 +1,6 @@
 package immersive_melodies.resources;
 
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class MelodyDescriptor {
     private final String name;
@@ -9,15 +9,15 @@ public class MelodyDescriptor {
         this.name = name;
     }
 
-    public MelodyDescriptor(PacketByteBuf b) {
-        this.name = b.readString();
+    public MelodyDescriptor(FriendlyByteBuf b) {
+        this.name = b.readUtf();
     }
 
     public String getName() {
         return name;
     }
 
-    public void encodeLite(PacketByteBuf b) {
-        b.writeString(name);
+    public void encodeLite(FriendlyByteBuf b) {
+        b.writeUtf(name);
     }
 }

@@ -3,17 +3,16 @@ package immersive_melodies.client.gui;
 import immersive_melodies.Client;
 import immersive_melodies.Config;
 import immersive_melodies.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-
 import java.util.List;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import static immersive_melodies.client.gui.ImmersiveMelodiesScreen.BACKGROUND_TEXTURE;
 
 public class ImmersiveMelodiesFreePlayingScreen extends Screen {
-    public static final MutableText TEXT = Text.translatable("immersive_melodies.free_playing");
+    public static final MutableComponent TEXT = Component.translatable("immersive_melodies.free_playing");
 
     protected ImmersiveMelodiesFreePlayingScreen() {
         super(TEXT);
@@ -24,16 +23,16 @@ public class ImmersiveMelodiesFreePlayingScreen extends Screen {
         super.init();
 
         // Exit
-        addDrawableChild(new TexturedButtonWidget(width / 2, height / 2 + 50, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 16, 256, 256, Text.of(null), button -> {
-            close();
-        }, () -> List.of(Text.translatable("immersive_melodies.close").asOrderedText())));
+        addRenderableWidget(new TexturedButtonWidget(width / 2, height / 2 + 50, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 16, 256, 256, Component.nullToEmpty(null), button -> {
+            onClose();
+        }, () -> List.of(Component.translatable("immersive_melodies.close").getVisualOrderText())));
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // Hint
-        context.drawCenteredTextWithShadow(
-                this.textRenderer,
+        context.drawCenteredString(
+                this.font,
                 TEXT,
                 this.width / 2,
                 this.height / 2 + 70,
@@ -64,7 +63,7 @@ public class ImmersiveMelodiesFreePlayingScreen extends Screen {
     }
 
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
 }

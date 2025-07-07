@@ -1,6 +1,6 @@
 package immersive_melodies.resources;
 
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class Note {
     private final int note;
@@ -17,7 +17,7 @@ public class Note {
         this.sustain = sustain;
     }
 
-    public Note(PacketByteBuf b) {
+    public Note(FriendlyByteBuf b) {
         this.note = b.readByte() & 0xFF;
         this.velocity = b.readByte() & 0xFF;
         this.time = b.readInt();
@@ -45,7 +45,7 @@ public class Note {
         return sustain;
     }
 
-    public void encode(PacketByteBuf b) {
+    public void encode(FriendlyByteBuf b) {
         b.writeByte(note);
         b.writeByte(velocity);
         b.writeInt(time);

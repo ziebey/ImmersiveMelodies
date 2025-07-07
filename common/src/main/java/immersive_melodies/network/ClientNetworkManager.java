@@ -6,14 +6,14 @@ import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.network.s2c.NoteMessage;
 import immersive_melodies.network.s2c.OpenGuiRequest;
 import immersive_melodies.resources.ClientMelodyManager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 
 public class ClientNetworkManager implements NetworkManager {
     @Override
     public void handleOpenGuiRequest(OpenGuiRequest request) {
         if (request.gui == OpenGuiRequest.Type.SELECTOR) {
-            MinecraftClient.getInstance().setScreen(new ImmersiveMelodiesScreen());
+            Minecraft.getInstance().setScreen(new ImmersiveMelodiesScreen());
         }
     }
 
@@ -22,15 +22,15 @@ public class ClientNetworkManager implements NetworkManager {
         ClientMelodyManager.getMelodiesList().clear();
         ClientMelodyManager.getMelodiesList().putAll(response.getMelodies());
 
-        if (MinecraftClient.getInstance().currentScreen instanceof ImmersiveMelodiesScreen screen) {
+        if (Minecraft.getInstance().screen instanceof ImmersiveMelodiesScreen screen) {
             screen.refreshPage();
         }
     }
 
     @Override
     public void handleNoteMessage(NoteMessage e) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Entity entity = client.world != null ? client.world.getEntityById(e.entity) : null;
+        Minecraft client = Minecraft.getInstance();
+        Entity entity = client.level != null ? client.level.getEntity(e.entity) : null;
         if (entity != null) {
             Client.playNote(entity, e.tone, e.velocity);
         }

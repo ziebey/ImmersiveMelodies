@@ -1,10 +1,9 @@
 package immersive_melodies.resources;
 
-import net.minecraft.network.PacketByteBuf;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class Track {
     private final List<Note> notes;
@@ -15,8 +14,8 @@ public class Track {
         this.notes = notes;
     }
 
-    public Track(PacketByteBuf b) {
-        name = b.readString();
+    public Track(FriendlyByteBuf b) {
+        name = b.readUtf();
 
         int noteCount = b.readInt();
         notes = new LinkedList<>();
@@ -33,8 +32,8 @@ public class Track {
         return name;
     }
 
-    public void encode(PacketByteBuf b) {
-        b.writeString(name);
+    public void encode(FriendlyByteBuf b) {
+        b.writeUtf(name);
 
         b.writeInt(notes.size());
         for (Note note : notes) {

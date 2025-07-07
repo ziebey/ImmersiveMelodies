@@ -6,11 +6,6 @@ import com.mojang.logging.LogUtils;
 import immersive_melodies.Config;
 import immersive_melodies.util.MidiParser;
 import immersive_melodies.util.Utils;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.SinglePreparationResourceReloader;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -18,8 +13,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 
-public class MelodyLoader extends SinglePreparationResourceReloader<Map<Identifier, MelodyLoader.LazyMelody>> {
+public class MelodyLoader extends SimplePreparableReloadListener<Map<ResourceLocation, MelodyLoader.LazyMelody>> {
     private static final Logger LOGGER = LogUtils.getLogger();
     final String dataType = "melodies";
 
@@ -55,20 +55,20 @@ public class MelodyLoader extends SinglePreparationResourceReloader<Map<Identifi
     }
 
     @Override
-    protected Map<Identifier, LazyMelody> prepare(ResourceManager manager, Profiler profiler) {
-        Map<Identifier, LazyMelody> map = Maps.newHashMap();
+    protected Map<ResourceLocation, LazyMelody> prepare(ResourceManager manager, ProfilerFiller profiler) {
+        Map<ResourceLocation, LazyMelody> map = Maps.newHashMap();
 
-        Map<Identifier, Resource> resources = manager.findResources(dataType, path -> path.getPath().endsWith(".midi") || path.getPath().endsWith(".mid"));
-        for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
+        Map<ResourceLocation, Resource> resources = manager.listResources(dataType, path -> path.getPath().endsWith(".midi") || path.getPath().endsWith(".mid"));
+        for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
             if (!Config.getInstance().loadInbuiltMidis && entry.getKey().getNamespace().equals("immersive_melodies")) {
                 continue;
             }
             try {
                 String name = Utils.toTitle(Utils.removeLastPart(Utils.getLastPart(entry.getKey().getPath(), "/"), "."));
-                Identifier identifier = new Identifier(entry.getKey().getNamespace(), entry.getKey().getPath());
+                ResourceLocation identifier = new ResourceLocation(entry.getKey().getNamespace(), entry.getKey().getPath());
                 map.put(identifier, new LazyMelody(name, () -> {
                     try {
-                        return MidiParser.parseMidi(entry.getValue().getInputStream(), name);
+                        return MidiParser.parseMidi(entry.getValue().open(), name);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -82,7 +82,7 @@ public class MelodyLoader extends SinglePreparationResourceReloader<Map<Identifi
     }
 
     @Override
-    protected void apply(Map<Identifier, LazyMelody> prepared, ResourceManager manager, Profiler profiler) {
+    protected void apply(Map<ResourceLocation, LazyMelody> prepared, ResourceManager manager, ProfilerFiller profiler) {
         ServerMelodyManager.setDatapackMelodies(prepared);
     }
 }

@@ -3,13 +3,12 @@ package immersive_melodies.network;
 import immersive_melodies.cobalt.network.Message;
 import immersive_melodies.resources.Melody;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public abstract class FragmentedMessage extends Message {
     private final String name;
@@ -24,28 +23,28 @@ public abstract class FragmentedMessage extends Message {
         this.length = length;
     }
 
-    public FragmentedMessage(PacketByteBuf b) {
-        this.name = b.readString();
+    public FragmentedMessage(FriendlyByteBuf b) {
+        this.name = b.readUtf();
         this.fragment = b.readByteArray();
         this.length = b.readInt();
     }
 
     @Override
-    public void encode(PacketByteBuf b) {
-        b.writeString(name);
+    public void encode(FriendlyByteBuf b) {
+        b.writeUtf(name);
         b.writeByteArray(fragment);
         b.writeInt(length);
     }
 
     @Override
-    public void receive(PlayerEntity e) {
-        String identifier = (e == null ? "local" : e.getUuidAsString()) + ":" + name;
+    public void receive(Player e) {
+        String identifier = (e == null ? "local" : e.getStringUUID()) + ":" + name;
         Queue<byte[]> byteBuffer = buffer.computeIfAbsent(identifier, k -> new ConcurrentLinkedQueue<>());
         byteBuffer.add(fragment);
 
         if (byteBuffer.stream().mapToInt(f -> f.length).sum() >= length) {
             // Assemble
-            PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+            FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
             for (byte[] b : byteBuffer) {
                 buffer.writeBytes(b);
             }
@@ -56,5 +55,5 @@ public abstract class FragmentedMessage extends Message {
         }
     }
 
-    protected abstract void finish(PlayerEntity e, String name, Melody melody);
+    protected abstract void finish(Player e, String name, Melody melody);
 }

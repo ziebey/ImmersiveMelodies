@@ -8,29 +8,29 @@ import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.ServerMelodyManager;
 import immersive_melodies.util.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class UploadMelodyRequest extends FragmentedMessage {
     public UploadMelodyRequest(String name, byte[] fragment, int length) {
         super(name, fragment, length);
     }
 
-    public UploadMelodyRequest(PacketByteBuf b) {
+    public UploadMelodyRequest(FriendlyByteBuf b) {
         super(b);
     }
 
     @Override
-    protected void finish(PlayerEntity e, String name, Melody melody) {
-        if (!e.hasPermissionLevel(Config.getInstance().uploadPermissionLevel)) {
-            e.sendMessage(Text.translatable("immersive_melodies.error.upload.no_permission"));
+    protected void finish(Player e, String name, Melody melody) {
+        if (!e.hasPermissions(Config.getInstance().uploadPermissionLevel)) {
+            e.sendSystemMessage(Component.translatable("immersive_melodies.error.upload.no_permission"));
             return;
         }
         String id = Utils.getPlayerName(e) + "/" + Utils.escapeString(name);
-        Identifier identifier = new Identifier("player", id);
+        ResourceLocation identifier = new ResourceLocation("player", id);
 
         // Register
         ServerMelodyManager.registerMelody(
@@ -39,11 +39,11 @@ public class UploadMelodyRequest extends FragmentedMessage {
         );
 
         // Update the index
-        NetworkHandler.sendToPlayer(new MelodyListMessage(e), (ServerPlayerEntity) e);
+        NetworkHandler.sendToPlayer(new MelodyListMessage(e), (ServerPlayer) e);
 
         // Send the melody to all players
-        e.getWorld().getPlayers().forEach(player -> {
-            PacketSplitter.sendToPlayer(identifier, melody, (ServerPlayerEntity) player);
+        e.level().players().forEach(player -> {
+            PacketSplitter.sendToPlayer(identifier, melody, (ServerPlayer) player);
         });
     }
 }

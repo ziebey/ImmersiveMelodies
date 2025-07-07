@@ -2,21 +2,20 @@ package immersive_melodies.client.animation;
 
 import immersive_melodies.client.MelodyProgress;
 import immersive_melodies.client.MelodyProgressManager;
-import immersive_melodies.client.animation.accessors.BipedModelAccessor;
 import immersive_melodies.client.animation.accessors.ModelAccessor;
 import immersive_melodies.item.InstrumentItem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class EntityModelAnimator {
     public static Item getInstrument(Entity entity) {
-        for (ItemStack handItem : entity.getHandItems()) {
+        for (ItemStack handItem : entity.getHandSlots()) {
             if (handItem.getItem() instanceof InstrumentItem) {
                 return handItem.getItem();
             }
@@ -25,16 +24,16 @@ public class EntityModelAnimator {
     }
 
     private static boolean isInMainHand(LivingEntity entity) {
-        return entity.getMainHandStack().getItem() instanceof InstrumentItem;
+        return entity.getMainHandItem().getItem() instanceof InstrumentItem;
     }
 
     @Deprecated
-    public static ModelPart getLeftArm(BipedEntityModel<?> model, LivingEntity entity) {
+    public static ModelPart getLeftArm(HumanoidModel<?> model, LivingEntity entity) {
         return isInMainHand(entity) ? model.leftArm : model.rightArm;
     }
 
     @Deprecated
-    public static ModelPart getRightArm(BipedEntityModel<?> model, LivingEntity entity) {
+    public static ModelPart getRightArm(HumanoidModel<?> model, LivingEntity entity) {
         return isInMainHand(entity) ? model.rightArm : model.leftArm;
     }
 
@@ -42,13 +41,13 @@ public class EntityModelAnimator {
         T entity = accessor.getEntity();
         Item item = getInstrument(entity);
         if (item != null) {
-            float time = (MinecraftClient.getInstance().isPaused() ? 0.0f : MinecraftClient.getInstance().getTickDelta()) + entity.age;
+            float time = (Minecraft.getInstance().isPaused() ? 0.0f : Minecraft.getInstance().getFrameTime()) + entity.tickCount;
 
             MelodyProgress progress = MelodyProgressManager.INSTANCE.getProgress(entity);
             progress.visualTick(time);
 
             // Apply animations
-            ItemAnimators.get(Registries.ITEM.getId(item)).setAngles(accessor, progress, time);
+            ItemAnimators.get(BuiltInRegistries.ITEM.getKey(item)).setAngles(accessor, progress, time);
         }
     }
 }

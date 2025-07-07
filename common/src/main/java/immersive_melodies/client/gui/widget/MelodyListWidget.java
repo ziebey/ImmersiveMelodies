@@ -1,31 +1,30 @@
 package immersive_melodies.client.gui.widget;
 
 import immersive_melodies.client.gui.ImmersiveMelodiesScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.Collection;
 import java.util.Objects;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
-public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWidget.MelodyEntry> {
+public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.MelodyEntry> {
     private final ImmersiveMelodiesScreen currentScreen;
     private final boolean showSelection;
 
-    public MelodyListWidget(MinecraftClient client, ImmersiveMelodiesScreen currentScreen, int left, int width, int listY, int listH, boolean showSelection) {
+    public MelodyListWidget(Minecraft client, ImmersiveMelodiesScreen currentScreen, int left, int width, int listY, int listH, boolean showSelection) {
         super(client, width, currentScreen.height, listY, listY + listH, 10);
 
         this.currentScreen = currentScreen;
 
-        this.left = left;
-        this.right = this.left + width;
+        this.x0 = left;
+        this.x1 = this.x0 + width;
 
         this.showSelection = showSelection;
 
         setRenderBackground(false);
-        setRenderHorizontalShadows(false);
+        setRenderTopAndBottom(false);
         setRenderHeader(false, 0);
     }
 
@@ -34,7 +33,7 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
         super.clearEntries();
     }
 
-    public void addEntry(Identifier identifier, Text name, Runnable onPress) {
+    public void addEntry(ResourceLocation identifier, Component name, Runnable onPress) {
         super.addEntry(new MelodyEntry(identifier, name, onPress));
     }
 
@@ -44,8 +43,8 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
     }
 
     @Override
-    protected int getScrollbarPositionX() {
-        return left + width + 2;
+    protected int getScrollbarPosition() {
+        return x0 + width + 2;
     }
 
     @Override
@@ -55,35 +54,35 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= left && mouseX <= left + width + 10 && mouseY >= this.top && mouseY <= this.bottom;
+        return mouseX >= x0 && mouseX <= x0 + width + 10 && mouseY >= this.y0 && mouseY <= this.y1;
     }
 
     @Override
-    protected void enableScissor(DrawContext context) {
-        context.enableScissor(left - 15, this.top, left + width, this.bottom);
+    protected void enableScissor(GuiGraphics context) {
+        context.enableScissor(x0 - 15, this.y0, x0 + width, this.y1);
     }
 
     @Override
-    protected void drawSelectionHighlight(DrawContext context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
+    protected void renderSelection(GuiGraphics context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
         if (showSelection) {
-            context.fill(left - 1, y - 1, left + width, y + entryHeight + 3, 0x40000000);
+            context.fill(x0 - 1, y - 1, x0 + width, y + entryHeight + 3, 0x40000000);
         }
     }
 
-    public class MelodyEntry extends AlwaysSelectedEntryListWidget.Entry<MelodyEntry> {
-        final Identifier identifier;
-        final Text name;
+    public class MelodyEntry extends ObjectSelectionList.Entry<MelodyEntry> {
+        final ResourceLocation identifier;
+        final Component name;
         final Runnable onPress;
 
-        public MelodyEntry(Identifier identifier, Text melody, Runnable onPress) {
+        public MelodyEntry(ResourceLocation identifier, Component melody, Runnable onPress) {
             this.identifier = identifier;
             this.name = melody;
             this.onPress = onPress;
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            context.drawText(currentScreen.getTextRenderer(), name, left + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
+        public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            context.drawString(currentScreen.getTextRenderer(), name, x0 + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
         }
 
         @Override
@@ -96,7 +95,7 @@ public class MelodyListWidget extends AlwaysSelectedEntryListWidget<MelodyListWi
         }
 
         @Override
-        public Text getNarration() {
+        public Component getNarration() {
             return name;
         }
 

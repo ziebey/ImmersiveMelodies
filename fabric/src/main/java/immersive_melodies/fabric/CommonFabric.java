@@ -9,10 +9,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.world.item.CreativeModeTab;
 
 public final class CommonFabric implements ModInitializer {
     static {
@@ -26,17 +26,17 @@ public final class CommonFabric implements ModInitializer {
         Messages.bootstrap();
         Sounds.bootstrap();
 
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new FabricMelody());
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricMelody());
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> ServerMelodyManager.server = server);
 
-        ItemGroup group = FabricItemGroup.builder()
-                .displayName(ItemGroups.getDisplayName())
+        CreativeModeTab group = FabricItemGroup.builder()
+                .title(ItemGroups.getDisplayName())
                 .icon(ItemGroups::getIcon)
-                .entries((enabledFeatures, entries) -> entries.addAll(Items.getSortedItems()))
+                .displayItems((enabledFeatures, entries) -> entries.acceptAll(Items.getSortedItems()))
                 .build();
 
-        Registry.register(Registries.ITEM_GROUP, Common.locate("group"), group);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Common.locate("group"), group);
     }
 }
 

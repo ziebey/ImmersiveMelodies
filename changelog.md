@@ -1,3 +1,7 @@
+# 0.6.0
+
+* Switched to Mojmap (Might break addons!)
+
 # 0.5.1
 
 * Melodies are now grouped by namespaces as well

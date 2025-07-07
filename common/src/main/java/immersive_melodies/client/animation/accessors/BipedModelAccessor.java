@@ -1,13 +1,13 @@
 package immersive_melodies.client.animation.accessors;
 
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.LivingEntity;
 
 public class BipedModelAccessor<T extends LivingEntity> extends ArmsAndHeadAccessor<T> {
-    private final BipedEntityModel<T> model;
+    private final HumanoidModel<T> model;
     private final T entity;
 
-    public BipedModelAccessor(BipedEntityModel<T> model, T entity) {
+    public BipedModelAccessor(HumanoidModel<T> model, T entity) {
         super(entity, model.head, model.hat, model.leftArm, model.rightArm);
         this.model = model;
         this.entity = entity;
@@ -18,7 +18,7 @@ public class BipedModelAccessor<T extends LivingEntity> extends ArmsAndHeadAcces
         return entity;
     }
 
-    public BipedEntityModel<T> getModel() {
+    public HumanoidModel<T> getModel() {
         return model;
     }
 }

@@ -1,8 +1,8 @@
 package immersive_melodies.forge.cobalt.registration;
 
 import immersive_melodies.cobalt.registration.Registration;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -27,14 +27,14 @@ public class RegistrationImpl extends Registration.Impl {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public <T> Supplier<T> register(Registry<? super T> registry, Identifier id, Supplier<T> obj) {
+    public <T> Supplier<T> register(Registry<? super T> registry, ResourceLocation id, Supplier<T> obj) {
         DeferredRegister reg = getRepo(id.getNamespace()).get(registry);
         return reg.register(id.getPath(), obj);
     }
 
     static class RegistryRepo {
-        private final Set<Identifier> skipped = new HashSet<>();
-        private final Map<Identifier, DeferredRegister<?>> registries = new HashMap<>();
+        private final Set<ResourceLocation> skipped = new HashSet<>();
+        private final Map<ResourceLocation, DeferredRegister<?>> registries = new HashMap<>();
 
         private final String namespace;
 
@@ -44,7 +44,7 @@ public class RegistrationImpl extends Registration.Impl {
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         public <T> DeferredRegister get(Registry<? super T> registry) {
-            Identifier id = registry.getKey().getValue();
+            ResourceLocation id = registry.key().location();
             if (!registries.containsKey(id) && !skipped.contains(id)) {
                 ForgeRegistry reg = RegistryManager.ACTIVE.getRegistry(id);
                 if (reg == null) {

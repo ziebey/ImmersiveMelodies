@@ -2,17 +2,16 @@ package immersive_melodies.resources;
 
 import immersive_melodies.Common;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.level.storage.LevelStorage;
-
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -21,11 +20,11 @@ public class ServerMelodyManager {
     static final Random RANDOM = new Random();
 
     public static MinecraftServer server;
-    private static Map<Identifier, MelodyLoader.LazyMelody> datapackMelodies = new HashMap<>();
+    private static Map<ResourceLocation, MelodyLoader.LazyMelody> datapackMelodies = new HashMap<>();
     private static File directory = new File("data/melodies");
 
-    public static void instantiate(ServerWorld world, LevelStorage.Session session) {
-        directory = session.getWorldDirectory(world.getRegistryKey()).resolve("data/melodies").toFile();
+    public static void instantiate(ServerLevel world, LevelStorageSource.LevelStorageAccess session) {
+        directory = session.getDimensionPath(world.dimension()).resolve("data/melodies").toFile();
     }
 
     private static File getFile(String id) {
@@ -36,22 +35,22 @@ public class ServerMelodyManager {
     }
 
     public static CustomServerMelodiesIndex getIndex() {
-        return server.getOverworld().getPersistentStateManager().getOrCreate(CustomServerMelodiesIndex::fromNbt, CustomServerMelodiesIndex::new, "immersive_melodies");
+        return server.overworld().getDataStorage().computeIfAbsent(CustomServerMelodiesIndex::fromNbt, CustomServerMelodiesIndex::new, "immersive_melodies");
     }
 
     public static MelodyTrackSettings getSettings() {
-        return server.getOverworld().getPersistentStateManager().getOrCreate(MelodyTrackSettings::fromNbt, MelodyTrackSettings::new, "immersive_melodies_settings");
+        return server.overworld().getDataStorage().computeIfAbsent(MelodyTrackSettings::fromNbt, MelodyTrackSettings::new, "immersive_melodies_settings");
     }
 
-    public static Map<Identifier, MelodyLoader.LazyMelody> getDatapackMelodies() {
+    public static Map<ResourceLocation, MelodyLoader.LazyMelody> getDatapackMelodies() {
         return datapackMelodies;
     }
 
-    public static void setDatapackMelodies(Map<Identifier, MelodyLoader.LazyMelody> datapackMelodies) {
+    public static void setDatapackMelodies(Map<ResourceLocation, MelodyLoader.LazyMelody> datapackMelodies) {
         ServerMelodyManager.datapackMelodies = datapackMelodies;
     }
 
-    public static Identifier getRandomMelody() {
+    public static ResourceLocation getRandomMelody() {
         Object[] datapack = getDatapackMelodies().keySet().toArray();
         Object[] custom = getIndex().melodies.keySet().toArray();
         if (datapack.length + custom.length == 0) {
@@ -59,9 +58,9 @@ public class ServerMelodyManager {
         }
         int i = RANDOM.nextInt(datapack.length + custom.length);
         if (i < datapack.length) {
-            return (Identifier) datapack[i];
+            return (ResourceLocation) datapack[i];
         } else {
-            return (Identifier) custom[i - datapack.length];
+            return (ResourceLocation) custom[i - datapack.length];
         }
     }
 
@@ -71,12 +70,12 @@ public class ServerMelodyManager {
      * @param identifier The identifier of the melody to register.
      * @param melody     The melody to register.
      */
-    public static void registerMelody(Identifier identifier, Melody melody) {
+    public static void registerMelody(ResourceLocation identifier, Melody melody) {
         getIndex().getMelodies().put(identifier, melody);
         getIndex().setDirty(true);
 
         try {
-            PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+            FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
             melody.encode(buffer);
 
             // Write to disk
@@ -93,7 +92,7 @@ public class ServerMelodyManager {
      *
      * @param identifier The identifier of the melody to delete.
      */
-    public static void deleteMelody(Identifier identifier) {
+    public static void deleteMelody(ResourceLocation identifier) {
         getIndex().getMelodies().remove(identifier);
         getIndex().setDirty(true);
 
@@ -104,14 +103,14 @@ public class ServerMelodyManager {
         }
     }
 
-    public static Melody getMelody(Identifier identifier) {
+    public static Melody getMelody(ResourceLocation identifier) {
         if (datapackMelodies.containsKey(identifier)) {
             return datapackMelodies.get(identifier).get();
         } else {
             Melody melody = Melody.DEFAULT;
             try {
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getFile(identifier.toString())));
-                melody = new Melody(new PacketByteBuf(Unpooled.wrappedBuffer(bis.readAllBytes())));
+                melody = new Melody(new FriendlyByteBuf(Unpooled.wrappedBuffer(bis.readAllBytes())));
             } catch (Exception e) {
                 Common.LOGGER.error("Couldn't load melody {} ({})", identifier, e);
                 deleteMelody(identifier);
@@ -123,30 +122,30 @@ public class ServerMelodyManager {
     /**
      * The melody index, containing only important information about the melodies.
      */
-    public static class CustomServerMelodiesIndex extends PersistentState {
-        final Map<Identifier, MelodyDescriptor> melodies = new HashMap<>();
+    public static class CustomServerMelodiesIndex extends SavedData {
+        final Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
 
-        public static CustomServerMelodiesIndex fromNbt(NbtCompound nbt) {
+        public static CustomServerMelodiesIndex fromNbt(CompoundTag nbt) {
             CustomServerMelodiesIndex c = new CustomServerMelodiesIndex();
-            for (String key : nbt.getKeys()) {
-                PacketByteBuf buffer = new PacketByteBuf(Unpooled.wrappedBuffer(nbt.getByteArray(key)));
-                c.melodies.put(new Identifier(key), new MelodyDescriptor(buffer));
+            for (String key : nbt.getAllKeys()) {
+                FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(nbt.getByteArray(key)));
+                c.melodies.put(new ResourceLocation(key), new MelodyDescriptor(buffer));
             }
             return c;
         }
 
         @Override
-        public NbtCompound writeNbt(NbtCompound nbt) {
-            NbtCompound c = new NbtCompound();
-            for (Map.Entry<Identifier, MelodyDescriptor> entry : melodies.entrySet()) {
-                PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+        public CompoundTag save(CompoundTag nbt) {
+            CompoundTag c = new CompoundTag();
+            for (Map.Entry<ResourceLocation, MelodyDescriptor> entry : melodies.entrySet()) {
+                FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
                 entry.getValue().encodeLite(buffer);
                 c.putByteArray(entry.getKey().toString(), buffer.array());
             }
             return c;
         }
 
-        public Map<Identifier, MelodyDescriptor> getMelodies() {
+        public Map<ResourceLocation, MelodyDescriptor> getMelodies() {
             return melodies;
         }
     }
@@ -154,34 +153,34 @@ public class ServerMelodyManager {
     /**
      * Stores the settings for the melody tracks.
      */
-    public static class MelodyTrackSettings extends PersistentState {
-        final Map<Identifier, Map<String, Set<Integer>>> enabledTracks = new HashMap<>();
+    public static class MelodyTrackSettings extends SavedData {
+        final Map<ResourceLocation, Map<String, Set<Integer>>> enabledTracks = new HashMap<>();
 
-        public static MelodyTrackSettings fromNbt(NbtCompound nbt) {
+        public static MelodyTrackSettings fromNbt(CompoundTag nbt) {
             MelodyTrackSettings c = new MelodyTrackSettings();
-            for (String key : nbt.getKeys()) {
-                NbtCompound map = nbt.getCompound(key);
+            for (String key : nbt.getAllKeys()) {
+                CompoundTag map = nbt.getCompound(key);
                 Map<String, Set<Integer>> m = new HashMap<>();
-                for (String k : map.getKeys()) {
-                    NbtCompound set = map.getCompound(k);
+                for (String k : map.getAllKeys()) {
+                    CompoundTag set = map.getCompound(k);
                     Set<Integer> s = new HashSet<>();
-                    for (String i : set.getKeys()) {
+                    for (String i : set.getAllKeys()) {
                         s.add(set.getInt(i));
                     }
                     m.put(k, s);
                 }
-                c.enabledTracks.put(new Identifier(key), m);
+                c.enabledTracks.put(new ResourceLocation(key), m);
             }
             return c;
         }
 
         @Override
-        public NbtCompound writeNbt(NbtCompound nbt) {
-            NbtCompound c = new NbtCompound();
-            for (Map.Entry<Identifier, Map<String, Set<Integer>>> entry : enabledTracks.entrySet()) {
-                NbtCompound map = new NbtCompound();
+        public CompoundTag save(CompoundTag nbt) {
+            CompoundTag c = new CompoundTag();
+            for (Map.Entry<ResourceLocation, Map<String, Set<Integer>>> entry : enabledTracks.entrySet()) {
+                CompoundTag map = new CompoundTag();
                 for (Map.Entry<String, Set<Integer>> e : entry.getValue().entrySet()) {
-                    NbtCompound set = new NbtCompound();
+                    CompoundTag set = new CompoundTag();
                     for (int i : e.getValue()) {
                         set.putInt(e.getKey(), i);
                     }
@@ -192,28 +191,28 @@ public class ServerMelodyManager {
             return c;
         }
 
-        public void enableTrack(Identifier melody, String identifier, int track) {
+        public void enableTrack(ResourceLocation melody, String identifier, int track) {
             enabledTracks.computeIfAbsent(melody, k -> new HashMap<>()).computeIfAbsent(identifier, k -> new HashSet<>()).add(track);
             setDirty(true);
         }
 
-        public void disableTrack(Identifier melody, String identifier, int track) {
+        public void disableTrack(ResourceLocation melody, String identifier, int track) {
             Map<String, Set<Integer>> uuidSetMap = enabledTracks.computeIfAbsent(melody, k -> new HashMap<>());
             uuidSetMap.computeIfAbsent(identifier, k -> new HashSet<>()).remove(track);
             setDirty(true);
         }
 
-        public Set<Integer> getEnabledTracks(Identifier name, String identifier) {
+        public Set<Integer> getEnabledTracks(ResourceLocation name, String identifier) {
             Map<String, Set<Integer>> playerSettings = enabledTracks.getOrDefault(name, Collections.emptyMap());
             return playerSettings.getOrDefault(identifier, playerSettings.values().stream().findFirst().orElse(Set.of()));
         }
     }
 
     public static String getIdentifier(Entity entity, Item item) {
-        return getIdentifier(entity, Registries.ITEM.getId(item));
+        return getIdentifier(entity, BuiltInRegistries.ITEM.getKey(item));
     }
 
-    public static String getIdentifier(Entity entity, Identifier instrument) {
+    public static String getIdentifier(Entity entity, ResourceLocation instrument) {
         // Here I use only the instrument
         // That means track lists are managed globally, which is a "security issue" but usually more convenient
         return instrument.toString();
