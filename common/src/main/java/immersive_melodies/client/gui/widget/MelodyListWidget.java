@@ -1,13 +1,14 @@
 package immersive_melodies.client.gui.widget;
 
 import immersive_melodies.client.gui.ImmersiveMelodiesScreen;
-import java.util.Collection;
-import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Collection;
+import java.util.Objects;
 
 public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.MelodyEntry> {
     private final ImmersiveMelodiesScreen currentScreen;

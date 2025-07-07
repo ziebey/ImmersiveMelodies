@@ -46,10 +46,10 @@ public class MidiConverter {
         @Override
         public String toString() {
             return "Response{" +
-                    "responseCode=" + responseCode +
-                    ", error='" + error + '\'' +
-                    ", body length=" + body.length +
-                    '}';
+                   "responseCode=" + responseCode +
+                   ", error='" + error + '\'' +
+                   ", body length=" + body.length +
+                   '}';
         }
     }
 

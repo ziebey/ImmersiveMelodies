@@ -1,8 +1,9 @@
 package immersive_melodies.cobalt.registration;
 
-import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.Supplier;
 
 public class Registration {
     private static Impl INSTANCE;

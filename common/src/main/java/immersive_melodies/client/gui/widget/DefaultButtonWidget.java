@@ -1,13 +1,14 @@
 package immersive_melodies.client.gui.widget;
 
-import java.util.List;
-import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public class DefaultButtonWidget extends Button {
     private final Supplier<List<FormattedCharSequence>> tooltipSupplier;

@@ -7,11 +7,12 @@ import immersive_melodies.resources.MelodyDescriptor;
 import immersive_melodies.resources.MelodyLoader;
 import immersive_melodies.resources.ServerMelodyManager;
 import immersive_melodies.util.Utils;
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MelodyListMessage extends Message {
     private final Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();

@@ -3,10 +3,11 @@ package immersive_melodies.client;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.resources.ClientMelodyManager;
 import immersive_melodies.resources.Melody;
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MelodyProgress {
     long lastTime;

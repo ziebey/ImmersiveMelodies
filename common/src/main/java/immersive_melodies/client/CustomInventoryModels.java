@@ -1,11 +1,12 @@
 package immersive_melodies.client;
 
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomInventoryModels {
     private static final Map<Item, ModelResourceLocation> handIdentifierCache = new HashMap<>();

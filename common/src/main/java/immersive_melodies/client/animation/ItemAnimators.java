@@ -2,9 +2,10 @@ package immersive_melodies.client.animation;
 
 import immersive_melodies.Common;
 import immersive_melodies.client.animation.animators.*;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.resources.ResourceLocation;
 
 public class ItemAnimators {
     private static final Map<ResourceLocation, Animator> ANIMATORS = new HashMap<>();

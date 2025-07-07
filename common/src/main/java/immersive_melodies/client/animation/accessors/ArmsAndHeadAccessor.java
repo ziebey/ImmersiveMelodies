@@ -1,8 +1,9 @@
 package immersive_melodies.client.animation.accessors;
 
-import java.util.Optional;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
+
+import java.util.Optional;
 
 public class ArmsAndHeadAccessor<T extends Entity> implements ModelAccessor<T> {
     private final T entity;

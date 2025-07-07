@@ -5,11 +5,12 @@ import immersive_melodies.network.c2s.UploadMelodyRequest;
 import immersive_melodies.network.s2c.MelodyResponse;
 import immersive_melodies.resources.Melody;
 import io.netty.buffer.Unpooled;
-import java.util.LinkedList;
-import java.util.List;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class PacketSplitter {
     private static final int FRAGMENT_SIZE = 8192;

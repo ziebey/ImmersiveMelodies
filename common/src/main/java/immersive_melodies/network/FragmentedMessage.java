@@ -3,12 +3,13 @@ package immersive_melodies.network;
 import immersive_melodies.cobalt.network.Message;
 import immersive_melodies.resources.Melody;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 
 public abstract class FragmentedMessage extends Message {
     private final String name;

@@ -1,12 +1,13 @@
 package immersive_melodies.client;
 
 import immersive_melodies.Config;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MelodyProgressManager {
     public static final MelodyProgressManager INSTANCE = new MelodyProgressManager();

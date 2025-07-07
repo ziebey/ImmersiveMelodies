@@ -17,15 +17,6 @@ import immersive_melodies.resources.Track;
 import immersive_melodies.util.MidiConverter;
 import immersive_melodies.util.MidiParser;
 import immersive_melodies.util.Utils;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -38,6 +29,16 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.*;
 
 public class ImmersiveMelodiesScreen extends Screen {
     public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("immersive_melodies:textures/gui/paper.png");

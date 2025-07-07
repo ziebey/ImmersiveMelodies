@@ -8,12 +8,13 @@ import immersive_melodies.network.ClientNetworkManager;
 import immersive_melodies.network.c2s.ItemActionMessage;
 import immersive_melodies.network.c2s.NoteBroadcastRequest;
 import immersive_melodies.resources.Note;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Client {
     public static void postLoad() {

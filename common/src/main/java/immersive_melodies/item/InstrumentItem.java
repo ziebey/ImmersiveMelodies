@@ -12,13 +12,6 @@ import immersive_melodies.network.s2c.OpenGuiRequest;
 import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.Note;
 import immersive_melodies.resources.ServerMelodyManager;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,6 +29,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class InstrumentItem extends Item {
     public static final String TAG_PLAYING = "playing";

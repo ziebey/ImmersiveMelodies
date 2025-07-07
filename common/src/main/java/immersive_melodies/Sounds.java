@@ -1,12 +1,13 @@
 package immersive_melodies;
 
 import immersive_melodies.cobalt.registration.Registration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class Sounds {
     static Supplier<SoundEvent> register(String namespace, String path) {

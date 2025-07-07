@@ -3,11 +3,12 @@ package immersive_melodies.client.gui;
 import immersive_melodies.Client;
 import immersive_melodies.Config;
 import immersive_melodies.client.gui.widget.TexturedButtonWidget;
-import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+
+import java.util.List;
 
 import static immersive_melodies.client.gui.ImmersiveMelodiesScreen.BACKGROUND_TEXTURE;
 

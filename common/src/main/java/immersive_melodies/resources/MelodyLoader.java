@@ -6,6 +6,11 @@ import com.mojang.logging.LogUtils;
 import immersive_melodies.Config;
 import immersive_melodies.util.MidiParser;
 import immersive_melodies.util.Utils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -13,11 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 
 public class MelodyLoader extends SimplePreparableReloadListener<Map<ResourceLocation, MelodyLoader.LazyMelody>> {
     private static final Logger LOGGER = LogUtils.getLogger();

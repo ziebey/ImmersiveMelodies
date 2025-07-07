@@ -1,11 +1,12 @@
 package immersive_melodies.client.animation.accessors;
 
 import immersive_melodies.item.InstrumentItem;
-import java.util.Optional;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public interface ModelAccessor<T extends Entity> {

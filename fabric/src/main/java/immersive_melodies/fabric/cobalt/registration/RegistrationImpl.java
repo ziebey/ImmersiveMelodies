@@ -1,9 +1,10 @@
 package immersive_melodies.fabric.cobalt.registration;
 
 import immersive_melodies.cobalt.registration.Registration;
-import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.Supplier;
 
 public class RegistrationImpl extends Registration.Impl {
     @Override

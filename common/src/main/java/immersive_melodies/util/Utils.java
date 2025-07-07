@@ -1,10 +1,10 @@
 package immersive_melodies.util;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 
 public class Utils {
     public static String escapeString(String string) {

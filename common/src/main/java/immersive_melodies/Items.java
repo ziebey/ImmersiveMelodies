@@ -4,6 +4,10 @@ import immersive_melodies.client.animation.ItemAnimators;
 import immersive_melodies.client.animation.animators.Animator;
 import immersive_melodies.cobalt.registration.Registration;
 import immersive_melodies.item.InstrumentItem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -12,10 +16,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 @SuppressWarnings("unused")
 public interface Items {

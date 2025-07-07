@@ -2,13 +2,14 @@ package immersive_melodies.client.sound;
 
 import immersive_melodies.Config;
 import immersive_melodies.mixin.MusicTrackerAccessor;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class SoundManagerImpl implements SoundManager {
     private final Minecraft client;

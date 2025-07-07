@@ -1,9 +1,10 @@
 package immersive_melodies.resources;
 
+import net.minecraft.network.FriendlyByteBuf;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import net.minecraft.network.FriendlyByteBuf;
 
 
 public class Melody extends MelodyDescriptor {

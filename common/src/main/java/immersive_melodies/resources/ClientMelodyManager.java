@@ -2,11 +2,12 @@ package immersive_melodies.resources;
 
 import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.c2s.MelodyRequest;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.resources.ResourceLocation;
 
 public class ClientMelodyManager {
     static final Map<ResourceLocation, Melody> melodies = new HashMap<>();
