@@ -1,6 +1,8 @@
 # 0.6.0
 
-* Switched to Mojmap (Might break addons!)
+* Breaking API changes to prepare for 1.21
+    * Switched to Mojmap (Might break addons!)
+    * Retired cobalt networking and registration
 
 # 0.5.1
 

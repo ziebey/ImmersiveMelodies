@@ -14,7 +14,6 @@ public class ItemGroups {
     }
 
     public static ItemStack getIcon() {
-        assert Items.LUTE != null;
-        return Items.LUTE.get().getDefaultInstance();
+        return Items.LUTE.getDefaultInstance();
     }
 }

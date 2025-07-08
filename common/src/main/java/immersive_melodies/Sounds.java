@@ -1,26 +1,25 @@
 package immersive_melodies;
 
-import immersive_melodies.cobalt.registration.Registration;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class Sounds {
-    static Supplier<SoundEvent> register(String namespace, String path) {
-        ResourceLocation id = ResourceLocation.tryBuild(namespace, path);
-        return Registration.register(BuiltInRegistries.SOUND_EVENT, id, () -> SoundEvent.createVariableRangeEvent(id));
+public interface Sounds {
+    Map<ResourceLocation, SoundEvent> sounds = new ConcurrentHashMap<>();
+
+    static SoundEvent register(String namespace, String path) {
+        ResourceLocation id = new ResourceLocation(namespace, path);
+        SoundEvent event = SoundEvent.createVariableRangeEvent(id);
+        sounds.put(id, event);
+        return event;
     }
 
-    public static void bootstrap() {
-        // nop
-    }
-
-    public static class Instrument {
-        List<Supplier<SoundEvent>> octaves = new LinkedList<>();
+    class Instrument {
+        List<SoundEvent> octaves = new LinkedList<>();
 
         public Instrument(String namespace, String name) {
             for (int octave = 1; octave <= 8; octave++) {
@@ -29,7 +28,11 @@ public class Sounds {
         }
 
         public SoundEvent get(int octave) {
-            return octaves.get(octave - 1).get();
+            return octaves.get(octave - 1);
         }
+    }
+
+    static void registerSounds(Common.RegisterHelper<SoundEvent> helper) {
+        sounds.forEach(helper::register);
     }
 }

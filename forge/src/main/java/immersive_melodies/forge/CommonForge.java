@@ -1,11 +1,16 @@
 package immersive_melodies.forge;
 
-import immersive_melodies.*;
-import immersive_melodies.forge.cobalt.registration.RegistrationImpl;
+import immersive_melodies.Common;
+import immersive_melodies.ItemGroups;
+import immersive_melodies.Items;
+import immersive_melodies.Sounds;
 import immersive_melodies.network.ImmersivePayload;
 import immersive_melodies.network.Network;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -13,8 +18,10 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
@@ -22,15 +29,18 @@ import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
 @Mod(Common.MOD_ID)
 @Mod.EventBusSubscriber(modid = Common.MOD_ID, bus = Bus.MOD)
 public final class CommonForge {
-    static {
-        RegistrationImpl.bootstrap();
+    private static <T> void registerHelper(RegisterEvent event, Registry<T> register, Consumer<Common.RegisterHelper<T>> consumer) {
+        event.register(register.key(), registry -> consumer.accept(registry::register));
     }
 
     public CommonForge() {
-        Items.bootstrap();
-        Sounds.bootstrap();
-
         DEF_REG.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    @SubscribeEvent
+    public static void register(RegisterEvent event) {
+        registerHelper(event, BuiltInRegistries.ITEM, Items::registerItems);
+        registerHelper(event, BuiltInRegistries.SOUND_EVENT, Sounds::registerSounds);
     }
 
     public static final DeferredRegister<CreativeModeTab> DEF_REG = DeferredRegister.create(CREATIVE_MODE_TAB, Common.MOD_ID);

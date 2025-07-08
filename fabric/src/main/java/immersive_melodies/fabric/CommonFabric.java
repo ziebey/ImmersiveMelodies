@@ -1,7 +1,9 @@
 package immersive_melodies.fabric;
 
-import immersive_melodies.*;
-import immersive_melodies.fabric.cobalt.registration.RegistrationImpl;
+import immersive_melodies.Common;
+import immersive_melodies.ItemGroups;
+import immersive_melodies.Items;
+import immersive_melodies.Sounds;
 import immersive_melodies.fabric.resources.FabricMelody;
 import immersive_melodies.network.ImmersivePayload;
 import immersive_melodies.network.Network;
@@ -26,17 +28,18 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class CommonFabric implements ModInitializer {
-    static {
-        new RegistrationImpl();
+    private static <T> void registerHelper(Registry<T> register, Consumer<Common.RegisterHelper<T>> consumer) {
+        consumer.accept((name, value) -> Registry.register(register, name, value));
     }
 
     @Override
     public void onInitialize() {
-        Items.bootstrap();
-        Sounds.bootstrap();
+        registerHelper(BuiltInRegistries.ITEM, Items::registerItems);
+        registerHelper(BuiltInRegistries.SOUND_EVENT, Sounds::registerSounds);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricMelody());
 
