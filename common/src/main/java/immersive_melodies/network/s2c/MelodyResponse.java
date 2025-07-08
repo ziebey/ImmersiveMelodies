@@ -7,17 +7,17 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public class MelodyResponse extends FragmentedMessage {
+public record MelodyResponse(String name, byte[] fragment, int length) implements FragmentedMessage {
     public MelodyResponse(FriendlyByteBuf b) {
-        super(b);
-    }
-
-    public MelodyResponse(ResourceLocation identifier, byte[] fragment, int length) {
-        super(identifier.toString(), fragment, length);
+        this(
+                b.readUtf(),
+                b.readByteArray(),
+                b.readVarInt()
+        );
     }
 
     @Override
-    protected void finish(Player e, String name, Melody melody) {
+    public void finish(Player e, String name, Melody melody) {
         ClientMelodyManager.setMelody(new ResourceLocation(name), melody);
     }
 }

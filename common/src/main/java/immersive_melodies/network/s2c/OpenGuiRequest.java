@@ -5,15 +5,9 @@ import immersive_melodies.network.ImmersivePayload;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
-public class OpenGuiRequest implements ImmersivePayload {
-    public final Type gui;
-
-    public OpenGuiRequest(OpenGuiRequest.Type gui) {
-        this.gui = gui;
-    }
-
+public record OpenGuiRequest(Type gui) implements ImmersivePayload {
     public OpenGuiRequest(FriendlyByteBuf b) {
-        this.gui = b.readEnum(OpenGuiRequest.Type.class);
+        this(b.readEnum(Type.class));
     }
 
     @Override

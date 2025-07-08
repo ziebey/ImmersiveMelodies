@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 public class ClientNetworkManager implements NetworkManager {
     @Override
     public void handleOpenGuiRequest(OpenGuiRequest request) {
-        if (request.gui == OpenGuiRequest.Type.SELECTOR) {
+        if (request.gui() == OpenGuiRequest.Type.SELECTOR) {
             Minecraft.getInstance().setScreen(new ImmersiveMelodiesScreen());
         }
     }
@@ -20,7 +20,7 @@ public class ClientNetworkManager implements NetworkManager {
     @Override
     public void handleMelodyListMessage(MelodyListMessage response) {
         ClientMelodyManager.getMelodiesList().clear();
-        ClientMelodyManager.getMelodiesList().putAll(response.getMelodies());
+        ClientMelodyManager.getMelodiesList().putAll(response.melodies());
 
         if (Minecraft.getInstance().screen instanceof ImmersiveMelodiesScreen screen) {
             screen.refreshPage();
@@ -30,9 +30,9 @@ public class ClientNetworkManager implements NetworkManager {
     @Override
     public void handleNoteMessage(NoteMessage e) {
         Minecraft client = Minecraft.getInstance();
-        Entity entity = client.level != null ? client.level.getEntity(e.entity) : null;
+        Entity entity = client.level != null ? client.level.getEntity(e.entity()) : null;
         if (entity != null) {
-            Client.playNote(entity, e.tone, e.velocity);
+            Client.playNote(entity, e.tone(), e.velocity());
         }
     }
 }

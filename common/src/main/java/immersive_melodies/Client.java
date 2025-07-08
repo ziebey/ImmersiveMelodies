@@ -40,7 +40,7 @@ public class Client {
         for (ItemStack stack : entity.getAllSlots()) {
             if (stack.getItem() instanceof InstrumentItem instrument) {
                 if (entity instanceof LocalPlayer && instrument.isPlaying(stack)) {
-                    Network.sendToServer(new ItemActionMessage(ItemActionMessage.State.PAUSE));
+                    Network.sendToServer(ItemActionMessage.fromState(ItemActionMessage.State.PAUSE));
                 }
 
                 if (velocity > 0) {

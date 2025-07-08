@@ -9,29 +9,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemActionMessage implements ImmersivePayload {
-    private final int slot;
-    private final State state;
-    private final ResourceLocation melody;
-
-    public ItemActionMessage(State state, ResourceLocation melody) {
+public record ItemActionMessage(int slot, State state, ResourceLocation melody) implements ImmersivePayload {
+    public static ItemActionMessage fromStateAndMelody(State state, ResourceLocation melody) {
         LocalPlayer player = Minecraft.getInstance().player;
-        slot = player == null ? -1 : player.getInventory().selected;
-        this.state = state;
-        this.melody = melody;
+        int slot = player == null ? -1 : player.getInventory().selected;
+        return new ItemActionMessage(slot, state, melody);
     }
 
-    public ItemActionMessage(State state) {
+    public static ItemActionMessage fromState(State state) {
         LocalPlayer player = Minecraft.getInstance().player;
-        slot = player == null ? -1 : player.getInventory().selected;
-        this.state = state;
-        this.melody = new ResourceLocation("empty");
+        int slot = player == null ? -1 : player.getInventory().selected;
+        return new ItemActionMessage(slot, state, new ResourceLocation("empty"));
     }
 
     public ItemActionMessage(FriendlyByteBuf b) {
-        slot = b.readInt();
-        state = b.readEnum(State.class);
-        melody = b.readResourceLocation();
+        this(b.readInt(), b.readEnum(State.class), b.readResourceLocation());
     }
 
     @Override

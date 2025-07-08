@@ -9,15 +9,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class MelodyRequest implements ImmersivePayload {
-    private final ResourceLocation identifier;
-
-    public MelodyRequest(ResourceLocation identifier) {
-        this.identifier = identifier;
-    }
-
+public record MelodyRequest(ResourceLocation identifier) implements ImmersivePayload {
     public MelodyRequest(FriendlyByteBuf b) {
-        this.identifier = b.readResourceLocation();
+        this(b.readResourceLocation());
     }
 
     @Override

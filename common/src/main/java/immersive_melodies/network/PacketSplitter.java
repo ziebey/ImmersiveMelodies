@@ -54,7 +54,7 @@ public class PacketSplitter {
         List<byte[]> fragments = fragmentate(melody);
         int length = fragments.stream().mapToInt(f -> f.length).sum();
         for (byte[] fragment : fragments) {
-            Network.sendToPlayer(new MelodyResponse(identifier, fragment, length), player);
+            Network.sendToPlayer(new MelodyResponse(identifier.toString(), fragment, length), player);
         }
     }
 }

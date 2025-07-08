@@ -7,21 +7,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public class TrackToggleMessage implements ImmersivePayload {
-    private final ResourceLocation melody;
-    private final int track;
-    private final boolean enabled;
-
-    public TrackToggleMessage(ResourceLocation melody, int track, boolean enabled) {
-        this.melody = melody;
-        this.track = track;
-        this.enabled = enabled;
-    }
-
+public record TrackToggleMessage(ResourceLocation melody, int track, boolean enabled) implements ImmersivePayload {
     public TrackToggleMessage(FriendlyByteBuf b) {
-        melody = b.readResourceLocation();
-        track = b.readInt();
-        enabled = b.readBoolean();
+        this(b.readResourceLocation(), b.readInt(), b.readBoolean());
     }
 
     @Override

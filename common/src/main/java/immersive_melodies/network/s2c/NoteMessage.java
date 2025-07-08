@@ -5,21 +5,9 @@ import immersive_melodies.network.ImmersivePayload;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
-public class NoteMessage implements ImmersivePayload {
-    public final int entity;
-    public final int tone;
-    public final int velocity;
-
-    public NoteMessage(int entity, int tone, int velocity) {
-        this.entity = entity;
-        this.tone = tone;
-        this.velocity = velocity;
-    }
-
+public record NoteMessage(int entity, int tone, int velocity) implements ImmersivePayload {
     public NoteMessage(FriendlyByteBuf b) {
-        this.entity = b.readInt();
-        this.tone = b.readInt();
-        this.velocity = b.readInt();
+        this(b.readInt(), b.readInt(), b.readInt());
     }
 
     @Override

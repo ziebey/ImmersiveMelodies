@@ -246,7 +246,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             String[] split = key.split("/", 2);
             MutableComponent name = Component.translatableWithFallback("immersive_melodies.melodies." + split[split.length - 1], entry.getValue().getName());
             list.addEntry(entry.getKey(), name, () -> {
-                Network.sendToServer(new ItemActionMessage(ItemActionMessage.State.PLAY, entry.getKey()));
+                Network.sendToServer(ItemActionMessage.fromStateAndMelody(ItemActionMessage.State.PLAY, entry.getKey()));
                 selected = entry.getKey();
                 refreshPage();
             });
@@ -299,12 +299,12 @@ public class ImmersiveMelodiesScreen extends Screen {
 
         // Pause
         addRenderableWidget(new TexturedButtonWidget(width / 2 - 8, y, 16, 16, BACKGROUND_TEXTURE, 256 - 32, 32, 256, 256, Component.nullToEmpty(null), button -> {
-            Network.sendToServer(new ItemActionMessage(ItemActionMessage.State.PAUSE));
+            Network.sendToServer(ItemActionMessage.fromState(ItemActionMessage.State.PAUSE));
         }, () -> List.of(Component.translatable("immersive_melodies.pause").getVisualOrderText())));
 
         // Play
         addRenderableWidget(new TexturedButtonWidget(width / 2 + 8, y, 16, 16, BACKGROUND_TEXTURE, 256 - 16, 32, 256, 256, Component.nullToEmpty(null), button -> {
-            Network.sendToServer(new ItemActionMessage(ItemActionMessage.State.CONTINUE));
+            Network.sendToServer(ItemActionMessage.fromState(ItemActionMessage.State.CONTINUE));
         }, () -> List.of(Component.translatable("immersive_melodies.play").getVisualOrderText())));
 
         // Delete

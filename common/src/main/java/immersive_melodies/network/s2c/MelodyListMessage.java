@@ -14,10 +14,13 @@ import net.minecraft.world.entity.player.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MelodyListMessage implements ImmersivePayload {
-    private final Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
-
+public record MelodyListMessage(Map<ResourceLocation, MelodyDescriptor> melodies) implements ImmersivePayload {
     public MelodyListMessage(Player receiver) {
+        this(createMelodiesMap(receiver));
+    }
+
+    private static Map<ResourceLocation, MelodyDescriptor> createMelodiesMap(Player receiver) {
+        Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
         //datapack melodies
         for (Map.Entry<ResourceLocation, MelodyLoader.LazyMelody> lazyMelodyEntry : ServerMelodyManager.getDatapackMelodies().entrySet()) {
             melodies.put(lazyMelodyEntry.getKey(), lazyMelodyEntry.getValue().getDescriptor());
@@ -25,14 +28,15 @@ public class MelodyListMessage implements ImmersivePayload {
 
         //custom melodies
         if (Config.getInstance().showOtherPlayersMelodies) {
-            this.melodies.putAll(ServerMelodyManager.getIndex().getMelodies());
+            melodies.putAll(ServerMelodyManager.getIndex().getMelodies());
         } else {
             ServerMelodyManager.getIndex().getMelodies().forEach((id, desc) -> {
                 if (Utils.ownsMelody(id, receiver)) {
-                    this.melodies.put(id, desc);
+                    melodies.put(id, desc);
                 }
             });
         }
+        return melodies;
     }
 
     @Override
@@ -45,18 +49,20 @@ public class MelodyListMessage implements ImmersivePayload {
     }
 
     public MelodyListMessage(FriendlyByteBuf b) {
+        this(readMelodies(b));
+    }
+
+    private static Map<ResourceLocation, MelodyDescriptor> readMelodies(FriendlyByteBuf b) {
         int size = b.readInt();
+        Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
         for (int i = 0; i < size; i++) {
             melodies.put(b.readResourceLocation(), new MelodyDescriptor(b));
         }
+        return melodies;
     }
 
     @Override
     public void handle(Player e) {
         Common.networkManager.handleMelodyListMessage(this);
-    }
-
-    public Map<ResourceLocation, MelodyDescriptor> getMelodies() {
-        return melodies;
     }
 }

@@ -7,18 +7,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class NoteBroadcastRequest implements ImmersivePayload {
-    public final int tone;
-    public final int velocity;
-
-    public NoteBroadcastRequest(int tone, int velocity) {
-        this.tone = tone;
-        this.velocity = velocity;
-    }
-
+public record NoteBroadcastRequest(int tone, int velocity) implements ImmersivePayload {
     public NoteBroadcastRequest(FriendlyByteBuf b) {
-        this.tone = b.readInt();
-        this.velocity = b.readInt();
+        this(b.readInt(), b.readInt());
     }
 
     @Override
