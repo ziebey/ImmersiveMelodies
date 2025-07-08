@@ -1,6 +1,5 @@
 package immersive_melodies.network;
 
-import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.c2s.UploadMelodyRequest;
 import immersive_melodies.network.s2c.MelodyResponse;
 import immersive_melodies.resources.Melody;
@@ -40,7 +39,7 @@ public class PacketSplitter {
         List<byte[]> fragments = fragmentate(melody);
         int length = fragments.stream().mapToInt(f -> f.length).sum();
         for (byte[] fragment : fragments) {
-            NetworkHandler.sendToServer(new UploadMelodyRequest(name, fragment, length));
+            Network.sendToServer(new UploadMelodyRequest(name, fragment, length));
         }
     }
 
@@ -55,7 +54,7 @@ public class PacketSplitter {
         List<byte[]> fragments = fragmentate(melody);
         int length = fragments.stream().mapToInt(f -> f.length).sum();
         for (byte[] fragment : fragments) {
-            NetworkHandler.sendToPlayer(new MelodyResponse(identifier, fragment, length), player);
+            Network.sendToPlayer(new MelodyResponse(identifier, fragment, length), player);
         }
     }
 }

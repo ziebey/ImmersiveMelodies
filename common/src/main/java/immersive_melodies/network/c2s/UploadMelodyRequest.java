@@ -1,8 +1,8 @@
 package immersive_melodies.network.c2s;
 
 import immersive_melodies.Config;
-import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.network.FragmentedMessage;
+import immersive_melodies.network.Network;
 import immersive_melodies.network.PacketSplitter;
 import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.resources.Melody;
@@ -39,7 +39,7 @@ public class UploadMelodyRequest extends FragmentedMessage {
         );
 
         // Update the index
-        NetworkHandler.sendToPlayer(new MelodyListMessage(e), (ServerPlayer) e);
+        Network.sendToPlayer(new MelodyListMessage(e), (ServerPlayer) e);
 
         // Send the melody to all players
         e.level().players().forEach(player -> {

@@ -1,11 +1,11 @@
 package immersive_melodies.network.s2c;
 
 import immersive_melodies.Common;
-import immersive_melodies.cobalt.network.Message;
+import immersive_melodies.network.ImmersivePayload;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
-public class OpenGuiRequest extends Message {
+public class OpenGuiRequest implements ImmersivePayload {
     public final Type gui;
 
     public OpenGuiRequest(OpenGuiRequest.Type gui) {
@@ -22,7 +22,7 @@ public class OpenGuiRequest extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         Common.networkManager.handleOpenGuiRequest(this);
     }
 

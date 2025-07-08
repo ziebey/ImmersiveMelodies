@@ -2,7 +2,7 @@ package immersive_melodies.network.s2c;
 
 import immersive_melodies.Common;
 import immersive_melodies.Config;
-import immersive_melodies.cobalt.network.Message;
+import immersive_melodies.network.ImmersivePayload;
 import immersive_melodies.resources.MelodyDescriptor;
 import immersive_melodies.resources.MelodyLoader;
 import immersive_melodies.resources.ServerMelodyManager;
@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MelodyListMessage extends Message {
+public class MelodyListMessage implements ImmersivePayload {
     private final Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
 
     public MelodyListMessage(Player receiver) {
@@ -52,7 +52,7 @@ public class MelodyListMessage extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         Common.networkManager.handleMelodyListMessage(this);
     }
 

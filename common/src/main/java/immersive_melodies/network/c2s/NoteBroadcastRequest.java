@@ -1,13 +1,13 @@
 package immersive_melodies.network.c2s;
 
-import immersive_melodies.cobalt.network.Message;
-import immersive_melodies.cobalt.network.NetworkHandler;
+import immersive_melodies.network.ImmersivePayload;
+import immersive_melodies.network.Network;
 import immersive_melodies.network.s2c.NoteMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class NoteBroadcastRequest extends Message {
+public class NoteBroadcastRequest implements ImmersivePayload {
     public final int tone;
     public final int velocity;
 
@@ -28,12 +28,12 @@ public class NoteBroadcastRequest extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         if (e instanceof ServerPlayer se) {
             se.serverLevel().players().stream()
                     .filter(player -> player != e && player.distanceToSqr(e) < 64)
                     .forEach(player -> {
-                        NetworkHandler.sendToPlayer(new NoteMessage(player.getId(), tone, velocity), player);
+                        Network.sendToPlayer(new NoteMessage(player.getId(), tone, velocity), player);
                     });
         }
     }

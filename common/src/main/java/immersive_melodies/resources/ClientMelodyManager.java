@@ -1,6 +1,6 @@
 package immersive_melodies.resources;
 
-import immersive_melodies.cobalt.network.NetworkHandler;
+import immersive_melodies.network.Network;
 import immersive_melodies.network.c2s.MelodyRequest;
 import net.minecraft.resources.ResourceLocation;
 
@@ -20,7 +20,7 @@ public class ClientMelodyManager {
 
     public static Melody getMelody(ResourceLocation identifier) {
         if (!melodies.containsKey(identifier) && !requested.contains(identifier)) {
-            NetworkHandler.sendToServer(new MelodyRequest(identifier));
+            Network.sendToServer(new MelodyRequest(identifier));
             requested.add(identifier);
         }
         return melodies.getOrDefault(identifier, Melody.DEFAULT);

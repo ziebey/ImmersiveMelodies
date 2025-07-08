@@ -1,13 +1,13 @@
 package immersive_melodies.network.c2s;
 
-import immersive_melodies.cobalt.network.Message;
 import immersive_melodies.item.InstrumentItem;
+import immersive_melodies.network.ImmersivePayload;
 import immersive_melodies.resources.ServerMelodyManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public class TrackToggleMessage extends Message {
+public class TrackToggleMessage implements ImmersivePayload {
     private final ResourceLocation melody;
     private final int track;
     private final boolean enabled;
@@ -32,7 +32,7 @@ public class TrackToggleMessage extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         e.getHandSlots().forEach(stack -> {
             if (stack.getItem() instanceof InstrumentItem item) {
                 ServerMelodyManager.MelodyTrackSettings settings = ServerMelodyManager.getSettings();

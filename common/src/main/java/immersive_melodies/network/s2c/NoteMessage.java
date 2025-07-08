@@ -1,11 +1,11 @@
 package immersive_melodies.network.s2c;
 
 import immersive_melodies.Common;
-import immersive_melodies.cobalt.network.Message;
+import immersive_melodies.network.ImmersivePayload;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
-public class NoteMessage extends Message {
+public class NoteMessage implements ImmersivePayload {
     public final int entity;
     public final int tone;
     public final int velocity;
@@ -30,7 +30,7 @@ public class NoteMessage extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         Common.networkManager.handleNoteMessage(this);
     }
 }

@@ -6,7 +6,7 @@ import immersive_melodies.Sounds;
 import immersive_melodies.client.MelodyProgress;
 import immersive_melodies.client.MelodyProgressManager;
 import immersive_melodies.client.sound.CancelableSoundInstance;
-import immersive_melodies.cobalt.network.NetworkHandler;
+import immersive_melodies.network.Network;
 import immersive_melodies.network.s2c.MelodyListMessage;
 import immersive_melodies.network.s2c.OpenGuiRequest;
 import immersive_melodies.resources.Melody;
@@ -59,8 +59,8 @@ public class InstrumentItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
         if (!world.isClientSide) {
-            NetworkHandler.sendToPlayer(new MelodyListMessage(user), (ServerPlayer) user);
-            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.SELECTOR), (ServerPlayer) user);
+            Network.sendToPlayer(new MelodyListMessage(user), (ServerPlayer) user);
+            Network.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.SELECTOR), (ServerPlayer) user);
         }
 
         return super.use(world, user, hand);
@@ -81,7 +81,7 @@ public class InstrumentItem extends Item {
     }
 
     public void inventoryClientTick(ItemStack stack, Level world, Entity entity) {
-        // check if the item is in the hand, and is the primary instrument as you cant play two at once
+        // check if the item is in the hand and is the primary instrument as you can't play two at once
         boolean isPrimary = false;
         for (ItemStack handItem : entity.getHandSlots()) {
             if (handItem == stack) {

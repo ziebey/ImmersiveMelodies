@@ -2,9 +2,9 @@ package immersive_melodies;
 
 import immersive_melodies.client.sound.CancelableSoundInstance;
 import immersive_melodies.client.sound.SoundManagerImpl;
-import immersive_melodies.cobalt.network.NetworkHandler;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.network.ClientNetworkManager;
+import immersive_melodies.network.Network;
 import immersive_melodies.network.c2s.ItemActionMessage;
 import immersive_melodies.network.c2s.NoteBroadcastRequest;
 import immersive_melodies.resources.Note;
@@ -31,7 +31,7 @@ public class Client {
         Minecraft client = Minecraft.getInstance();
         if (client.player != null && !client.isPaused()) {
             if (playNote(client.player, tone, velocity)) {
-                NetworkHandler.sendToServer(new NoteBroadcastRequest(tone, velocity));
+                Network.sendToServer(new NoteBroadcastRequest(tone, velocity));
             }
         }
     }
@@ -40,7 +40,7 @@ public class Client {
         for (ItemStack stack : entity.getAllSlots()) {
             if (stack.getItem() instanceof InstrumentItem instrument) {
                 if (entity instanceof LocalPlayer && instrument.isPlaying(stack)) {
-                    NetworkHandler.sendToServer(new ItemActionMessage(ItemActionMessage.State.PAUSE));
+                    Network.sendToServer(new ItemActionMessage(ItemActionMessage.State.PAUSE));
                 }
 
                 if (velocity > 0) {

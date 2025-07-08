@@ -1,7 +1,7 @@
 package immersive_melodies.network.c2s;
 
-import immersive_melodies.cobalt.network.Message;
 import immersive_melodies.item.InstrumentItem;
+import immersive_melodies.network.ImmersivePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemActionMessage extends Message {
+public class ItemActionMessage implements ImmersivePayload {
     private final int slot;
     private final State state;
     private final ResourceLocation melody;
@@ -42,7 +42,7 @@ public class ItemActionMessage extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         ItemStack stack = e.getInventory().getItem(slot);
         if (stack.getItem() instanceof InstrumentItem instrument) {
             switch (state) {

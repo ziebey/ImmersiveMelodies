@@ -1,6 +1,5 @@
 package immersive_melodies.network;
 
-import immersive_melodies.cobalt.network.Message;
 import immersive_melodies.resources.Melody;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,7 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public abstract class FragmentedMessage extends Message {
+public abstract class FragmentedMessage implements ImmersivePayload {
     private final String name;
     private final byte[] fragment;
     private final int length;
@@ -38,7 +37,7 @@ public abstract class FragmentedMessage extends Message {
     }
 
     @Override
-    public void receive(Player e) {
+    public void handle(Player e) {
         String identifier = (e == null ? "local" : e.getStringUUID()) + ":" + name;
         Queue<byte[]> byteBuffer = buffer.computeIfAbsent(identifier, k -> new ConcurrentLinkedQueue<>());
         byteBuffer.add(fragment);

@@ -1,14 +1,21 @@
 package immersive_melodies.forge;
 
 import immersive_melodies.*;
-import immersive_melodies.forge.cobalt.network.NetworkHandlerImpl;
 import immersive_melodies.forge.cobalt.registration.RegistrationImpl;
+import immersive_melodies.network.ImmersivePayload;
+import immersive_melodies.network.Network;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.function.Function;
 
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
 
@@ -17,12 +24,10 @@ import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
 public final class CommonForge {
     static {
         RegistrationImpl.bootstrap();
-        new NetworkHandlerImpl();
     }
 
     public CommonForge() {
         Items.bootstrap();
-        Messages.bootstrap();
         Sounds.bootstrap();
 
         DEF_REG.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -37,4 +42,35 @@ public final class CommonForge {
             .displayItems((featureFlags, output) -> output.acceptAll(Items.getSortedItems()))
             .build()
     );
+
+    private static final String PROTOCOL_VERSION = "1";
+    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+            Common.locate("main"),
+            () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals
+    );
+    private static int id = 0;
+
+    static class ForgeRegistrar implements Network.Registrar {
+        @Override
+        public <T extends ImmersivePayload> void register(Class<T> msg, Function<FriendlyByteBuf, T> constructor) {
+            INSTANCE.registerMessage(
+                    id++,
+                    msg,
+                    ImmersivePayload::encode,
+                    constructor,
+                    (m, ctx) -> {
+                        ctx.get().enqueueWork(() -> m.handle(ctx.get().getSender()));
+                        ctx.get().setPacketHandled(true);
+                    }
+            );
+        }
+    }
+
+    static {
+        Network.register(new ForgeRegistrar());
+        Network.registerSender((payload, player) -> INSTANCE.sendTo(payload, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+        Network.registerClientSender(INSTANCE::sendToServer);
+    }
 }
