@@ -29,10 +29,8 @@ public class Client {
 
     public static void playNote(int tone, int velocity) {
         Minecraft client = Minecraft.getInstance();
-        if (client.player != null && !client.isPaused()) {
-            if (playNote(client.player, tone, velocity)) {
-                Network.sendToServer(new NoteBroadcastRequest(tone, velocity));
-            }
+        if (client.player != null && !client.isPaused() && playNote(client.player, tone, velocity)) {
+            Network.sendToServer(new NoteBroadcastRequest(tone, velocity));
         }
     }
 

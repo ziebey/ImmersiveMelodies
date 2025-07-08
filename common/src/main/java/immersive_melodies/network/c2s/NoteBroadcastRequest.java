@@ -22,9 +22,10 @@ public record NoteBroadcastRequest(int tone, int velocity) implements ImmersiveP
     public void handle(Player e) {
         if (e instanceof ServerPlayer se) {
             se.serverLevel().players().stream()
-                    .filter(player -> player != e && player.distanceToSqr(e) < 64)
+                    .filter(player -> player != e && player.distanceTo(e) < 64)
                     .forEach(player -> {
-                        Network.sendToPlayer(new NoteMessage(player.getId(), tone, velocity), player);
+                        System.out.printf("%s handles for %s\n", e.getName().getString(), player.getName().getString());
+                        Network.sendToPlayer(new NoteMessage(e.getId(), tone, velocity), player);
                     });
         }
     }

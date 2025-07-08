@@ -1,5 +1,6 @@
 # 0.6.0
 
+* Fixed direct playback not working correctly in Multiplayer
 * Breaking API changes to prepare for 1.21
     * Switched to Mojmap (Might break addons!)
     * Retired cobalt networking and registration

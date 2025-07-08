@@ -24,7 +24,7 @@ public interface FragmentedMessage extends ImmersivePayload {
     default void encode(FriendlyByteBuf b) {
         b.writeUtf(name());
         b.writeByteArray(fragment());
-        b.writeInt(length());
+        b.writeVarInt(length());
     }
 
     @Override
