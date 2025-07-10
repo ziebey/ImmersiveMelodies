@@ -65,7 +65,7 @@ public class MelodyLoader extends SimplePreparableReloadListener<Map<ResourceLoc
             }
             try {
                 String name = Utils.toTitle(Utils.removeLastPart(Utils.getLastPart(entry.getKey().getPath(), "/"), "."));
-                ResourceLocation identifier = new ResourceLocation(entry.getKey().getNamespace(), entry.getKey().getPath());
+                ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(entry.getKey().getNamespace(), entry.getKey().getPath());
                 map.put(identifier, new LazyMelody(name, () -> {
                     try {
                         return MidiParser.parseMidi(entry.getValue().open(), name);

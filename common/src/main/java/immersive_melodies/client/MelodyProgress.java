@@ -1,5 +1,6 @@
 package immersive_melodies.client;
 
+import immersive_melodies.Common;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.resources.ClientMelodyManager;
 import immersive_melodies.resources.Melody;
@@ -13,8 +14,8 @@ public class MelodyProgress {
     long lastTime;
     int time;
 
-    String currentlyPlaying = "";
-    String overwritten = null;
+    ResourceLocation currentlyPlaying = Common.locate("");
+    ResourceLocation overwritten = null;
     long worldTime;
     final Map<Integer, Integer> lastIndex = new HashMap<>();
 
@@ -42,8 +43,8 @@ public class MelodyProgress {
         lastTime = l;
 
         // reset progress on change
-        String identifier = stack.getOrCreateTag().getString(InstrumentItem.TAG_MELODY);
-        long startTime = stack.getOrCreateTag().getLong(InstrumentItem.TAG_START_TIME);
+        ResourceLocation identifier = InstrumentItem.getMelody(stack);
+        long startTime = stack.getOrDefault(InstrumentItem.START_TIME, 0L);
 
         // reset if the melody changed
         if (!currentlyPlaying.equals(identifier)) {
@@ -87,11 +88,11 @@ public class MelodyProgress {
         return currentPitch;
     }
 
-    public String getCurrentlyPlaying() {
+    public ResourceLocation getCurrentlyPlaying() {
         return overwritten == null ? currentlyPlaying : overwritten;
     }
 
-    public void overwrite(String by) {
+    public void overwrite(ResourceLocation by) {
         overwritten = by;
     }
 
@@ -116,6 +117,6 @@ public class MelodyProgress {
     }
 
     public Melody getMelody() {
-        return ClientMelodyManager.getMelody(new ResourceLocation(getCurrentlyPlaying()));
+        return ClientMelodyManager.getMelody(getCurrentlyPlaying());
     }
 }

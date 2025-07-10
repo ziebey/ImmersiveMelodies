@@ -41,7 +41,7 @@ import java.nio.file.PathMatcher;
 import java.util.*;
 
 public class ImmersiveMelodiesScreen extends Screen {
-    public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("immersive_melodies:textures/gui/paper.png");
+    public static final ResourceLocation BACKGROUND_TEXTURE = Common.locate("textures/gui/paper.png");
     private MelodyListWidget list;
     private MelodyListWidget trackList;
     private EditBox search;
@@ -49,7 +49,7 @@ public class ImmersiveMelodiesScreen extends Screen {
     private Component error;
     private long lastError;
     private boolean showTrackSelection;
-    private Set<Integer> enabledTracks;
+    private List<Integer> enabledTracks;
     private ResourceLocation selected;
 
     private void setError(Component error) {
@@ -72,10 +72,9 @@ public class ImmersiveMelodiesScreen extends Screen {
     protected void init() {
         this.search = new EditBox(this.font, this.width / 2 - 70, this.height / 2 - 103, 140, 20, Component.translatable("immersive_melodies.search"));
         this.search.setMaxLength(128);
-        this.search.setResponder(a -> {
+        this.search.setResponder(search -> {
             this.refreshPage();
             this.search.setSuggestion(null);
-            this.list.setScrollAmount(0);
         });
         this.search.setBordered(false);
         this.search.setTextColor(0x808080);
@@ -91,8 +90,8 @@ public class ImmersiveMelodiesScreen extends Screen {
         // Select the current melody
         if (minecraft != null && minecraft.player != null) {
             ItemStack stack = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (stack.getItem() instanceof InstrumentItem item) {
-                selected = item.getMelody(stack);
+            if (stack.getItem() instanceof InstrumentItem) {
+                selected = InstrumentItem.getMelody(stack);
             }
         }
     }
@@ -101,13 +100,13 @@ public class ImmersiveMelodiesScreen extends Screen {
         if (minecraft != null && minecraft.player != null) {
             ItemStack stack = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
             if (stack.getItem() instanceof InstrumentItem item) {
-                Set<Integer> newEnabledTracks = item.getEnabledTracks(stack);
+                List<Integer> newEnabledTracks = item.getEnabledTracks(stack);
                 if (!Objects.equals(newEnabledTracks, enabledTracks)) {
-                    enabledTracks = new HashSet<>(newEnabledTracks);
+                    enabledTracks = new ArrayList<>(newEnabledTracks);
                     refreshPage();
                 }
             } else {
-                enabledTracks = new HashSet<>();
+                enabledTracks = new ArrayList<>();
             }
         }
     }
@@ -178,27 +177,28 @@ public class ImmersiveMelodiesScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
-
+    protected void renderMenuBackground(GuiGraphics context, int x, int y, int width, int height) {
         // Draw the track selection background
-        int x = (this.width - 192) / 2;
-        int y = (this.height - 230) / 2;
+        int cx = (this.width - 192) / 2;
+        int cy = (this.height - 230) / 2;
         if (showTrackSelection) {
             int overlap = 10;
             int trackListWidth = 75;
-            context.blit(BACKGROUND_TEXTURE, x + 192 - overlap, y + 8, 0, 0, 32, 100);
-            context.blit(BACKGROUND_TEXTURE, x + 192 - overlap, y + 108, 0, 115, 32, 100);
-            context.blit(BACKGROUND_TEXTURE, x + 192 - overlap + 32, y + 8, 192 - overlap - trackListWidth, 0, overlap + trackListWidth, 100);
-            context.blit(BACKGROUND_TEXTURE, x + 192 - overlap + 32, y + 108, 192 - overlap - trackListWidth, 115, overlap + trackListWidth, 100);
+            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap, cy + 8, 0, 0, 32, 100);
+            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap, cy + 108, 0, 115, 32, 100);
+            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap + 32, cy + 8, 192 - overlap - trackListWidth, 0, overlap + trackListWidth, 100);
+            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap + 32, cy + 108, 192 - overlap - trackListWidth, 115, overlap + trackListWidth, 100);
 
             // Track selection title
             context.drawString(font, Component.translatable("immersive_melodies.tracks"), width / 2 + 100, height / 2 - 94, 0x000000, false);
         }
 
         // Draw background
-        context.blit(BACKGROUND_TEXTURE, x, y, 0, 0, 192, 215);
+        context.blit(BACKGROUND_TEXTURE, cx, cy, 0, 0, 192, 215);
+    }
 
+    @Override
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // Print help for noobs
         if (!Config.getInstance().clickedHelp) {
             context.renderTooltip(font, Component.translatable("immersive_melodies.read"), width / 2 + 55, height / 2 + 69 + 17);
@@ -238,7 +238,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             String path = entry.getKey().getNamespace() + "/" + dir;
 
             if (!path.equals(lastPath)) {
-                list.addEntry(new ResourceLocation(path), Component.literal(dir).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), null);
+                list.addEntry(ResourceLocation.parse(path), Component.literal(dir).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), null);
                 lastPath = path;
             }
 
@@ -252,7 +252,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             });
 
             if (entry.getKey().equals(selected)) {
-                list.setSelected(list.children().get(list.children().size() - 1));
+                list.setSelected(list.children().getLast());
             }
         }
 
@@ -266,7 +266,7 @@ public class ImmersiveMelodiesScreen extends Screen {
                     Track track = melody.getTracks().get(i);
                     int trackId = i;
                     trackList.addEntry(
-                            new ResourceLocation(selected.getPath() + "/" + i),
+                            ResourceLocation.parse(selected.getPath() + "/" + i),
                             Component.translatable(track.getName()).withStyle(enabledTracks.contains(i) ? ChatFormatting.DARK_GRAY : ChatFormatting.STRIKETHROUGH),
                             () -> {
                                 boolean enabled = enabledTracks.contains(trackId);
@@ -276,6 +276,8 @@ public class ImmersiveMelodiesScreen extends Screen {
                 }
             }
         }
+
+        this.list.setScrollAmount(this.list.getScrollAmount());
 
         int y = this.height / 2 + 69;
 

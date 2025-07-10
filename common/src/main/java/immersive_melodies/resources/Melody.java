@@ -1,6 +1,8 @@
 package immersive_melodies.resources;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,20 +16,14 @@ public class Melody extends MelodyDescriptor {
 
     public Melody() {
         super("unknown");
+
         addTrack(new Track("unknown", new LinkedList<>()));
     }
 
-    public Melody(String name) {
+    public Melody(String name, List<Track> tracks) {
         super(name);
-    }
 
-    public Melody(FriendlyByteBuf b) {
-        super(b);
-
-        int trackCount = b.readInt();
-        for (int i = 0; i < trackCount; i++) {
-            tracks.add(new Track(b));
-        }
+        this.tracks.addAll(tracks);
     }
 
     public List<Track> getTracks() {
@@ -44,15 +40,6 @@ public class Melody extends MelodyDescriptor {
 
     public void addTrack(Track track) {
         tracks.add(track);
-    }
-
-    public void encode(FriendlyByteBuf b) {
-        super.encodeLite(b);
-
-        b.writeInt(tracks.size());
-        for (Track note : tracks) {
-            note.encode(b);
-        }
     }
 
     public void trim() {
@@ -77,9 +64,15 @@ public class Melody extends MelodyDescriptor {
         for (Track track : tracks) {
             List<Note> notes = track.getNotes();
             if (!notes.isEmpty()) {
-                earliestNote = Math.min(earliestNote, notes.get(0).getTime());
+                earliestNote = Math.min(earliestNote, notes.getFirst().getTime());
             }
         }
         return earliestNote;
     }
+
+    public static StreamCodec<FriendlyByteBuf, Melody> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, Melody::getName,
+            Track.STREAM_CODEC.apply(ByteBufCodecs.list()), Melody::getTracks,
+            Melody::new
+    );
 }

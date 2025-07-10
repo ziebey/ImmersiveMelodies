@@ -44,7 +44,7 @@ public abstract class MobEntityMixin extends LivingEntity {
             if (handItem.getItem() instanceof InstrumentItem) {
                 ItemEntity itemEntity = spawnAtLocation(handItem.copyAndClear());
                 if (itemEntity != null) {
-                    itemEntity.setThrower(getUUID());
+                    itemEntity.setThrower(this);
                 }
                 cir.setReturnValue(InteractionResult.CONSUME);
                 break;

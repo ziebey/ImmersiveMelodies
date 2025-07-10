@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MidiParser {
     public static Melody parseMidi(InputStream inputStream, String midiName) {
-        Melody melody = new Melody(midiName);
+        Melody melody = new Melody(midiName, new LinkedList<>());
         try {
             Sequence sequence = MidiSystem.getSequence(inputStream);
 

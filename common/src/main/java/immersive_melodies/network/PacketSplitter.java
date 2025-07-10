@@ -16,7 +16,7 @@ public class PacketSplitter {
 
     private static List<byte[]> fragmentate(Melody melody) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        melody.encode(buffer);
+        Melody.STREAM_CODEC.encode(buffer, melody);
         byte[] array = new byte[buffer.writerIndex()];
         buffer.getBytes(0, array);
 

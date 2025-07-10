@@ -1,23 +1,24 @@
 package immersive_melodies.network.c2s;
 
+import immersive_melodies.Common;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.network.ImmersivePayload;
 import immersive_melodies.resources.ServerMelodyManager;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public record TrackToggleMessage(ResourceLocation melody, int track, boolean enabled) implements ImmersivePayload {
-    public TrackToggleMessage(FriendlyByteBuf b) {
-        this(b.readResourceLocation(), b.readInt(), b.readBoolean());
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf b) {
-        b.writeResourceLocation(melody);
-        b.writeInt(track);
-        b.writeBoolean(enabled);
-    }
+    public static final Type<TrackToggleMessage> TYPE = new CustomPacketPayload.Type<>(Common.locate("track_toggle_message"));
+    public static final StreamCodec<FriendlyByteBuf, TrackToggleMessage> STREAM_CODEC = StreamCodec.composite(
+            ResourceLocation.STREAM_CODEC, TrackToggleMessage::melody,
+            ByteBufCodecs.INT, TrackToggleMessage::track,
+            ByteBufCodecs.BOOL, TrackToggleMessage::enabled,
+            TrackToggleMessage::new
+    );
 
     @Override
     public void handle(Player e) {
@@ -34,5 +35,10 @@ public record TrackToggleMessage(ResourceLocation melody, int track, boolean ena
                 item.refreshTracks(stack, e);
             }
         });
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

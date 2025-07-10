@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "id": "immersive_melodies",
   "version": "${version}",
-  "name": "Immersive Melodies",
-  "description": "Play custom melodies on various instruments and annoy your friends!",
+  "name": "${mod_name}",
+  "description": "${description}",
   "authors": [
-    "Luke100000"
+    "${mod_author}"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/ImmersiveMelodies",
-    "sources": "https://github.com/Luke100000/ImmersiveMelodies",
-    "issues": "https://github.com/Luke100000/ImmersiveMelodies/issues"
+    "homepage": "${mod_homepage}",
+    "sources": "${mod_sources}",
+    "issues": "${mod_issues}"
   },
-  "license": "GPL-3.0-only",
-  "icon": "icon.png",
+  "license": "${license}",
+  "icon": "assets/immersive_melodies/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -24,11 +24,15 @@
     ]
   },
   "mixins": [
-    "immersive_melodies.mixin.json"
+    "${mod_id}.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.3",
-    "java": ">=8",
-    "fabric-api-base": ">=0.1.0"
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=17"
+  },
+  "suggests": {
+    "ferritecore": "*"
   }
 }

@@ -8,13 +8,12 @@ import immersive_melodies.network.s2c.OpenGuiRequest;
 import immersive_melodies.resources.ClientMelodyManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 public class ClientNetworkManager implements NetworkManager {
     @Override
     public void handleOpenGuiRequest(OpenGuiRequest request) {
-        if (request.gui() == OpenGuiRequest.Type.SELECTOR) {
-            Minecraft.getInstance().setScreen(new ImmersiveMelodiesScreen());
-        }
+        Minecraft.getInstance().setScreen(new ImmersiveMelodiesScreen());
     }
 
     @Override
@@ -31,8 +30,8 @@ public class ClientNetworkManager implements NetworkManager {
     public void handleNoteMessage(NoteMessage e) {
         Minecraft client = Minecraft.getInstance();
         Entity entity = client.level != null ? client.level.getEntity(e.entity()) : null;
-        if (entity != null) {
-            Client.playNote(entity, e.tone(), e.velocity());
+        if (entity instanceof LivingEntity livingEntity) {
+            Client.playNote(livingEntity, e.tone(), e.velocity());
         }
     }
 }

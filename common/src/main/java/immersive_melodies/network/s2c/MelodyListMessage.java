@@ -8,6 +8,9 @@ import immersive_melodies.resources.MelodyLoader;
 import immersive_melodies.resources.ServerMelodyManager;
 import immersive_melodies.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -15,6 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public record MelodyListMessage(Map<ResourceLocation, MelodyDescriptor> melodies) implements ImmersivePayload {
+    public static final Type<MelodyListMessage> TYPE = new CustomPacketPayload.Type<>(Common.locate("melody_list_message"));
+    public static final StreamCodec<FriendlyByteBuf, MelodyListMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, MelodyDescriptor.STREAM_CODEC), MelodyListMessage::melodies,
+            MelodyListMessage::new
+    );
+
     public MelodyListMessage(Player receiver) {
         this(createMelodiesMap(receiver));
     }
@@ -40,29 +49,12 @@ public record MelodyListMessage(Map<ResourceLocation, MelodyDescriptor> melodies
     }
 
     @Override
-    public void encode(FriendlyByteBuf b) {
-        b.writeInt(melodies.size());
-        for (Map.Entry<ResourceLocation, MelodyDescriptor> entry : melodies.entrySet()) {
-            b.writeResourceLocation(entry.getKey());
-            entry.getValue().encodeLite(b);
-        }
-    }
-
-    public MelodyListMessage(FriendlyByteBuf b) {
-        this(readMelodies(b));
-    }
-
-    private static Map<ResourceLocation, MelodyDescriptor> readMelodies(FriendlyByteBuf b) {
-        int size = b.readInt();
-        Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
-        for (int i = 0; i < size; i++) {
-            melodies.put(b.readResourceLocation(), new MelodyDescriptor(b));
-        }
-        return melodies;
+    public void handle(Player e) {
+        Common.networkManager.handleMelodyListMessage(this);
     }
 
     @Override
-    public void handle(Player e) {
-        Common.networkManager.handleMelodyListMessage(this);
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

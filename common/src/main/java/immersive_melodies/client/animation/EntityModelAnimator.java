@@ -8,13 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class EntityModelAnimator {
-    public static Item getInstrument(Entity entity) {
+    public static Item getInstrument(LivingEntity entity) {
         for (ItemStack handItem : entity.getHandSlots()) {
             if (handItem.getItem() instanceof InstrumentItem) {
                 return handItem.getItem();
@@ -37,11 +36,11 @@ public class EntityModelAnimator {
         return isInMainHand(entity) ? model.rightArm : model.leftArm;
     }
 
-    public static <T extends Entity> void setAngles(ModelAccessor<T> accessor) {
+    public static <T extends LivingEntity> void setAngles(ModelAccessor<T> accessor) {
         T entity = accessor.getEntity();
         Item item = getInstrument(entity);
         if (item != null) {
-            float time = (Minecraft.getInstance().isPaused() ? 0.0f : Minecraft.getInstance().getFrameTime()) + entity.tickCount;
+            float time = (Minecraft.getInstance().isPaused() ? 0.0f : Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000.0f) + entity.tickCount;
 
             MelodyProgress progress = MelodyProgressManager.INSTANCE.getProgress(entity);
             progress.visualTick(time);

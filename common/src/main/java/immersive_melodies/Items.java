@@ -45,7 +45,7 @@ public interface Items {
      * @return The registered item's provider.
      */
     static Item register(@NotNull String namespace, @NotNull String name, Animator animator, long sustain, Vector3f offset) {
-        ResourceLocation identifier = new ResourceLocation(namespace, name);
+        ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(namespace, name);
         Item supplier = register(namespace, name, sustain, offset);
         ItemAnimators.register(identifier, animator);
         return supplier;
@@ -63,7 +63,7 @@ public interface Items {
      * @return The registered item's provider.
      */
     static Item register(@NotNull String namespace, @NotNull String name, long sustain, Vector3f offset) {
-        ResourceLocation location = new ResourceLocation(namespace, name);
+        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(namespace, name);
         Sounds.Instrument instrument = new Sounds.Instrument(namespace, name);
         Item item = new InstrumentItem(baseProps(), instrument, sustain, offset);
         items.put(location, item);

@@ -1,28 +1,19 @@
 package immersive_melodies.resources;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Track {
-    private final List<Note> notes;
     private final String name;
+    private final List<Note> notes;
 
     public Track(String name, List<Note> notes) {
         this.name = name;
         this.notes = notes;
-    }
-
-    public Track(FriendlyByteBuf b) {
-        name = b.readUtf();
-
-        int noteCount = b.readInt();
-        notes = new LinkedList<>();
-        for (int i = 0; i < noteCount; i++) {
-            notes.add(new Note(b));
-        }
     }
 
     public List<Note> getNotes() {
@@ -33,18 +24,9 @@ public class Track {
         return name;
     }
 
-    public void encode(FriendlyByteBuf b) {
-        b.writeUtf(name);
-
-        b.writeInt(notes.size());
-        for (Note note : notes) {
-            note.encode(b);
-        }
-    }
-
     public int getLength() {
         if (notes.isEmpty()) return 0;
-        Note note = notes.get(notes.size() - 1);
+        Note note = notes.getLast();
         return note.getTime() + note.getLength();
     }
 
@@ -52,4 +34,10 @@ public class Track {
         this.notes.clear();
         this.notes.addAll(notes);
     }
+
+    public static StreamCodec<FriendlyByteBuf, Track> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, Track::getName,
+            Note.STREAM_CODEC.apply(ByteBufCodecs.list()), Track::getNotes,
+            Track::new
+    );
 }

@@ -1,5 +1,6 @@
 package immersive_melodies.item;
 
+import com.mojang.serialization.Codec;
 import immersive_melodies.Common;
 import immersive_melodies.Config;
 import immersive_melodies.Sounds;
@@ -13,9 +14,12 @@ import immersive_melodies.resources.Melody;
 import immersive_melodies.resources.Note;
 import immersive_melodies.resources.ServerMelodyManager;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,19 +33,24 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class InstrumentItem extends Item {
-    public static final String TAG_PLAYING = "playing";
-    public static final String TAG_MELODY = "melody";
-    public static final String TAG_START_TIME = "start_time";
-    public static final String TAG_TRACKS = "enabled_tracks";
+    public static final DataComponentType<Boolean> PLAYING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "playing",
+            DataComponentType.<Boolean>builder().persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
+
+    public static final DataComponentType<ResourceLocation> MELODY = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "melody",
+            DataComponentType.<ResourceLocation>builder().persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC).build());
+
+    public static final DataComponentType<Long> START_TIME = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "start_time",
+            DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
+
+    public static final DataComponentType<List<Integer>> TRACKS = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "enabled_tracks",
+            DataComponentType.<List<Integer>>builder().persistent(Codec.list(Codec.INT)).networkSynchronized(ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list())).build());
 
     private final Sounds.Instrument sound;
     private final long sustain;
@@ -60,27 +69,27 @@ public class InstrumentItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
         if (!world.isClientSide) {
             Network.sendToPlayer(new MelodyListMessage(user), (ServerPlayer) user);
-            Network.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.SELECTOR), (ServerPlayer) user);
+            Network.sendToPlayer(new OpenGuiRequest(), (ServerPlayer) user);
         }
 
         return super.use(world, user, hand);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag tooltipFlag) {
         // State
         if (isPlaying(stack)) {
-            tooltip.add(Component.translatable("immersive_melodies.playing").withStyle(ChatFormatting.GREEN));
+            components.add(Component.translatable("immersive_melodies.playing").withStyle(ChatFormatting.GREEN));
         }
 
-        super.appendHoverText(stack, world, tooltip, context);
+        super.appendHoverText(stack, context, components, tooltipFlag);
     }
 
     public boolean isPlaying(ItemStack stack) {
-        return stack.getOrCreateTag().getBoolean(TAG_PLAYING);
+        return stack.getOrDefault(PLAYING, false);
     }
 
-    public void inventoryClientTick(ItemStack stack, Level world, Entity entity) {
+    public void inventoryClientTick(ItemStack stack, Level world, LivingEntity entity) {
         // check if the item is in the hand and is the primary instrument as you can't play two at once
         boolean isPrimary = false;
         for (ItemStack handItem : entity.getHandSlots()) {
@@ -103,7 +112,7 @@ public class InstrumentItem extends Item {
             Melody melody = progress.getMelody();
 
             // get enabled tracks
-            Set<Integer> enabledTracks = getEnabledTracks(stack);
+            List<Integer> enabledTracks = getEnabledTracks(stack);
             for (int track = 0; track < melody.getTracks().size(); track++) {
                 int lastIndex = MelodyProgressManager.INSTANCE.getProgress(entity).getLastIndex(track);
                 List<Note> notes = melody.getTracks().get(track).getNotes();
@@ -184,40 +193,36 @@ public class InstrumentItem extends Item {
     }
 
     public void play(ItemStack stack, ResourceLocation melody, Level world, Entity entity) {
-        stack.getOrCreateTag().putString(TAG_MELODY, melody.toString());
-        stack.getOrCreateTag().putBoolean(TAG_PLAYING, true);
-        stack.getOrCreateTag().putLong(TAG_START_TIME, world.getGameTime());
+        stack.set(MELODY, melody);
+        stack.set(PLAYING, true);
+        stack.set(START_TIME, world.getGameTime());
 
         refreshTracks(stack, entity);
     }
 
-    public ResourceLocation getMelody(ItemStack stack) {
-        return new ResourceLocation(stack.getOrCreateTag().getString(TAG_MELODY));
+    public static ResourceLocation getMelody(ItemStack stack) {
+        return stack.getOrDefault(MELODY, Common.locate("default"));
     }
 
     public void refreshTracks(ItemStack stack, Entity entity) {
         String identifier = ServerMelodyManager.getIdentifier(entity, BuiltInRegistries.ITEM.getKey(this));
         Set<Integer> enabledTracks = ServerMelodyManager.getSettings().getEnabledTracks(getMelody(stack), identifier);
-        stack.getOrCreateTag().putIntArray(TAG_TRACKS, enabledTracks.stream().mapToInt(i -> i).toArray());
+        stack.set(TRACKS, new ArrayList<>(enabledTracks));
     }
 
     public void rewind(ItemStack stack, Level world) {
-        stack.getOrCreateTag().putLong(TAG_START_TIME, world.getGameTime());
+        stack.set(START_TIME, world.getGameTime());
     }
 
     public void play(ItemStack stack) {
-        stack.getOrCreateTag().putBoolean(TAG_PLAYING, true);
+        stack.set(PLAYING, true);
     }
 
     public void pause(ItemStack stack) {
-        stack.getOrCreateTag().putBoolean(TAG_PLAYING, false);
+        stack.set(PLAYING, false);
     }
 
-    public Set<Integer> getEnabledTracks(ItemStack stack) {
-        if (!stack.getOrCreateTag().contains(TAG_TRACKS)) {
-            return Set.of();
-        }
-        int[] array = stack.getOrCreateTag().getIntArray(TAG_TRACKS);
-        return Arrays.stream(array).boxed().collect(Collectors.toSet());
+    public List<Integer> getEnabledTracks(ItemStack stack) {
+        return stack.get(TRACKS);
     }
 }

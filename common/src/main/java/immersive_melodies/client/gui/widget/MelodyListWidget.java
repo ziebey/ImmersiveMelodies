@@ -15,18 +15,20 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
     private final boolean showSelection;
 
     public MelodyListWidget(Minecraft client, ImmersiveMelodiesScreen currentScreen, int left, int width, int listY, int listH, boolean showSelection) {
-        super(client, width, currentScreen.height, listY, listY + listH, 10);
+        super(client, width, listH, listY, 10);
 
         this.currentScreen = currentScreen;
 
-        this.x0 = left;
-        this.x1 = this.x0 + width;
+        this.setX(left);
 
         this.showSelection = showSelection;
 
-        setRenderBackground(false);
-        setRenderTopAndBottom(false);
         setRenderHeader(false, 0);
+    }
+
+    @Override
+    protected void renderListBackground(GuiGraphics guiGraphics) {
+        // Nop
     }
 
     @Override
@@ -45,7 +47,7 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
 
     @Override
     protected int getScrollbarPosition() {
-        return x0 + width + 2;
+        return getX() + width + 2;
     }
 
     @Override
@@ -55,18 +57,18 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= x0 && mouseX <= x0 + width + 10 && mouseY >= this.y0 && mouseY <= this.y1;
+        return mouseX >= getX() && mouseX <= getX() + getWidth() + width + 10 && mouseY >= this.getY() && mouseY <= this.getY() + getHeight();
     }
 
     @Override
     protected void enableScissor(GuiGraphics context) {
-        context.enableScissor(x0 - 15, this.y0, x0 + width, this.y1);
+        context.enableScissor(getX() - 15, getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     @Override
     protected void renderSelection(GuiGraphics context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
         if (showSelection) {
-            context.fill(x0 - 1, y - 1, x0 + width, y + entryHeight + 3, 0x40000000);
+            context.fill(getX() - 1, y - 1, getX() + width, y + entryHeight + 3, 0x40000000);
         }
     }
 
@@ -83,7 +85,7 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
 
         @Override
         public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            context.drawString(currentScreen.getTextRenderer(), name, x0 + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
+            context.drawString(currentScreen.getTextRenderer(), name, getX() + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
         }
 
         @Override

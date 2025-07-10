@@ -7,10 +7,10 @@ import immersive_melodies.network.s2c.MelodyResponse;
 import immersive_melodies.network.s2c.NoteMessage;
 import immersive_melodies.network.s2c.OpenGuiRequest;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.function.Function;
 
 public class Network {
     private static Sender sender;
@@ -29,33 +29,29 @@ public class Network {
     }
 
     public static void sendToPlayer(ImmersivePayload payload, ServerPlayer player) {
-        sender.sendToPlayer(payload, player);
-    }
-
-    public static void sendToAllPlayers(MinecraftServer server, ImmersivePayload payload) {
-        server.getPlayerList().getPlayers().forEach(p -> sendToPlayer(payload, p));
+        sender.sendToPlayer(player, payload);
     }
 
     public static void register(Registrar c) {
-        c.register(ItemActionMessage.class, ItemActionMessage::new);
-        c.register(MelodyDeleteRequest.class, MelodyDeleteRequest::new);
-        c.register(MelodyRequest.class, MelodyRequest::new);
-        c.register(NoteBroadcastRequest.class, NoteBroadcastRequest::new);
-        c.register(TrackToggleMessage.class, TrackToggleMessage::new);
-        c.register(UploadMelodyRequest.class, UploadMelodyRequest::new);
+        c.register(ItemActionMessage.TYPE, ItemActionMessage.STREAM_CODEC, true);
+        c.register(MelodyDeleteRequest.TYPE, MelodyDeleteRequest.STREAM_CODEC, true);
+        c.register(MelodyRequest.TYPE, MelodyRequest.STREAM_CODEC, true);
+        c.register(NoteBroadcastRequest.TYPE, NoteBroadcastRequest.STREAM_CODEC, true);
+        c.register(TrackToggleMessage.TYPE, TrackToggleMessage.STREAM_CODEC, true);
+        c.register(UploadMelodyRequest.TYPE, UploadMelodyRequest.STREAM_CODEC, true);
 
-        c.register(MelodyListMessage.class, MelodyListMessage::new);
-        c.register(MelodyResponse.class, MelodyResponse::new);
-        c.register(NoteMessage.class, NoteMessage::new);
-        c.register(OpenGuiRequest.class, OpenGuiRequest::new);
+        c.register(MelodyListMessage.TYPE, MelodyListMessage.STREAM_CODEC, false);
+        c.register(MelodyResponse.TYPE, MelodyResponse.STREAM_CODEC, false);
+        c.register(NoteMessage.TYPE, NoteMessage.STREAM_CODEC, false);
+        c.register(OpenGuiRequest.TYPE, OpenGuiRequest.STREAM_CODEC, false);
     }
 
     public interface Registrar {
-        <T extends ImmersivePayload> void register(Class<T> msg, Function<FriendlyByteBuf, T> constructor);
+        <T extends ImmersivePayload> void register(CustomPacketPayload.Type<T> type, StreamCodec<FriendlyByteBuf, T> codec, boolean isServer);
     }
 
     public interface Sender {
-        void sendToPlayer(ImmersivePayload payload, ServerPlayer player);
+        void sendToPlayer(ServerPlayer player, ImmersivePayload payload);
     }
 
     public interface ClientSender {

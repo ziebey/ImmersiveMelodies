@@ -14,15 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ModelBakery.class)
 public abstract class ModelLoaderMixin {
-    @Shadow
-    protected abstract void loadTopLevel(ModelResourceLocation modelId);
+    @Shadow protected abstract void loadSpecialItemModelAndDependencies(ModelResourceLocation modelLocation);
 
-    @Inject(method = "loadTopLevel", at = @At("HEAD"))
-    void immersiveMelodies$injectModelLoaderInit(ModelResourceLocation modelId, CallbackInfo ci) {
+    @Inject(method = "loadSpecialItemModelAndDependencies", at = @At("HEAD"))
+    void immersiveMelodies$inject(ModelResourceLocation modelId, CallbackInfo ci) {
         if (modelId == ItemRenderer.SPYGLASS_IN_HAND_MODEL) {
             for (ResourceLocation identifier : Items.customInventoryModels) {
                 ModelResourceLocation modelIdentifier = CustomInventoryModels.computeHandIdentifier(identifier);
-                loadTopLevel(modelIdentifier);
+                loadSpecialItemModelAndDependencies(modelIdentifier);
             }
         }
     }

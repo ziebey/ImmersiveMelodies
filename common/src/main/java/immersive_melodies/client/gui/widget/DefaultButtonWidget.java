@@ -24,8 +24,8 @@ public class DefaultButtonWidget extends Button {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 
         if (visible) {
             updateTooltip();
@@ -36,7 +36,7 @@ public class DefaultButtonWidget extends Button {
         if (this.tooltipSupplier != null && isHovered()) {
             Screen screen = Minecraft.getInstance().screen;
             if (screen != null) {
-                screen.setTooltipForNextRenderPass(this.tooltipSupplier.get(), this.createTooltipPositioner(), this.isFocused());
+                screen.setTooltipForNextRenderPass(this.tooltipSupplier.get());
             }
         }
     }

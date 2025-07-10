@@ -1,6 +1,8 @@
 package immersive_melodies.resources;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 public class Note {
     private final int note;
@@ -15,14 +17,6 @@ public class Note {
         this.time = time;
         this.length = length;
         this.sustain = sustain;
-    }
-
-    public Note(FriendlyByteBuf b) {
-        this.note = b.readByte() & 0xFF;
-        this.velocity = b.readByte() & 0xFF;
-        this.time = b.readInt();
-        this.length = b.readInt();
-        this.sustain = b.readInt();
     }
 
     public int getNote() {
@@ -43,14 +37,6 @@ public class Note {
 
     public int getSustain() {
         return sustain;
-    }
-
-    public void encode(FriendlyByteBuf b) {
-        b.writeByte(note);
-        b.writeByte(velocity);
-        b.writeInt(time);
-        b.writeInt(length);
-        b.writeInt(sustain);
     }
 
     public static class Builder {
@@ -76,4 +62,13 @@ public class Note {
             );
         }
     }
+
+    public static StreamCodec<FriendlyByteBuf, Note> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, Note::getNote,
+            ByteBufCodecs.INT, Note::getVelocity,
+            ByteBufCodecs.INT, Note::getTime,
+            ByteBufCodecs.INT, Note::getLength,
+            ByteBufCodecs.INT, Note::getSustain,
+            Note::new
+    );
 }

@@ -5,6 +5,7 @@ import immersive_melodies.Items;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Random;
 
 public class EntityEquiper {
-    public static void equip(Entity entity) {
+    public static void equip(LivingEntity entity) {
         if (shouldEquip(entity)) {
             Item item = Items.items.values().stream().skip(new Random().nextInt(Items.items.size())).findFirst().orElse(Items.LUTE);
             entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item));

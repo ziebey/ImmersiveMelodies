@@ -2,6 +2,7 @@ package immersive_melodies.resources;
 
 import immersive_melodies.Common;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -36,11 +37,18 @@ public class ServerMelodyManager {
     }
 
     public static CustomServerMelodiesIndex getIndex() {
-        return server.overworld().getDataStorage().computeIfAbsent(CustomServerMelodiesIndex::fromNbt, CustomServerMelodiesIndex::new, "immersive_melodies");
+        //noinspection DataFlowIssue
+        return server.overworld().getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(CustomServerMelodiesIndex::new, CustomServerMelodiesIndex::fromNbt, null),
+                "immersive_melodies");
     }
 
     public static MelodyTrackSettings getSettings() {
-        return server.overworld().getDataStorage().computeIfAbsent(MelodyTrackSettings::fromNbt, MelodyTrackSettings::new, "immersive_melodies_settings");
+        //noinspection DataFlowIssue
+        return server.overworld().getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(MelodyTrackSettings::new, MelodyTrackSettings::fromNbt, null),
+                "immersive_melodies_settings"
+        );
     }
 
     public static Map<ResourceLocation, MelodyLoader.LazyMelody> getDatapackMelodies() {
@@ -77,7 +85,7 @@ public class ServerMelodyManager {
 
         try {
             FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-            melody.encode(buffer);
+            Melody.STREAM_CODEC.encode(buffer, melody);
 
             // Write to disk
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getFile(identifier.toString())));
@@ -111,7 +119,7 @@ public class ServerMelodyManager {
             Melody melody = Melody.DEFAULT;
             try {
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getFile(identifier.toString())));
-                melody = new Melody(new FriendlyByteBuf(Unpooled.wrappedBuffer(bis.readAllBytes())));
+                melody = Melody.STREAM_CODEC.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(bis.readAllBytes())));
             } catch (Exception e) {
                 Common.LOGGER.error("Couldn't load melody {} ({})", identifier, e);
                 deleteMelody(identifier);
@@ -126,21 +134,20 @@ public class ServerMelodyManager {
     public static class CustomServerMelodiesIndex extends SavedData {
         final Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
 
-        public static CustomServerMelodiesIndex fromNbt(CompoundTag nbt) {
+        public static CustomServerMelodiesIndex fromNbt(CompoundTag nbt, HolderLookup.Provider provider) {
             CustomServerMelodiesIndex c = new CustomServerMelodiesIndex();
             for (String key : nbt.getAllKeys()) {
                 FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(nbt.getByteArray(key)));
-                c.melodies.put(new ResourceLocation(key), new MelodyDescriptor(buffer));
+                c.melodies.put(ResourceLocation.parse(key), MelodyDescriptor.STREAM_CODEC.decode(buffer));
             }
             return c;
         }
 
         @Override
-        public CompoundTag save(CompoundTag nbt) {
-            CompoundTag c = new CompoundTag();
+        public CompoundTag save(CompoundTag c, HolderLookup.Provider provider) {
             for (Map.Entry<ResourceLocation, MelodyDescriptor> entry : melodies.entrySet()) {
                 FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-                entry.getValue().encodeLite(buffer);
+                MelodyDescriptor.STREAM_CODEC.encode(buffer, entry.getValue());
                 c.putByteArray(entry.getKey().toString(), buffer.array());
             }
             return c;
@@ -157,7 +164,7 @@ public class ServerMelodyManager {
     public static class MelodyTrackSettings extends SavedData {
         final Map<ResourceLocation, Map<String, Set<Integer>>> enabledTracks = new HashMap<>();
 
-        public static MelodyTrackSettings fromNbt(CompoundTag nbt) {
+        public static MelodyTrackSettings fromNbt(CompoundTag nbt, HolderLookup.Provider provider) {
             MelodyTrackSettings c = new MelodyTrackSettings();
             for (String key : nbt.getAllKeys()) {
                 CompoundTag map = nbt.getCompound(key);
@@ -170,14 +177,13 @@ public class ServerMelodyManager {
                     }
                     m.put(k, s);
                 }
-                c.enabledTracks.put(new ResourceLocation(key), m);
+                c.enabledTracks.put(ResourceLocation.parse(key), m);
             }
             return c;
         }
 
         @Override
-        public CompoundTag save(CompoundTag nbt) {
-            CompoundTag c = new CompoundTag();
+        public CompoundTag save(CompoundTag c, HolderLookup.Provider provider) {
             for (Map.Entry<ResourceLocation, Map<String, Set<Integer>>> entry : enabledTracks.entrySet()) {
                 CompoundTag map = new CompoundTag();
                 for (Map.Entry<String, Set<Integer>> e : entry.getValue().entrySet()) {

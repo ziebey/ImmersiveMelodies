@@ -12,7 +12,7 @@ public interface Sounds {
     Map<ResourceLocation, SoundEvent> sounds = new ConcurrentHashMap<>();
 
     static SoundEvent register(String namespace, String path) {
-        ResourceLocation id = new ResourceLocation(namespace, path);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
         SoundEvent event = SoundEvent.createVariableRangeEvent(id);
         sounds.put(id, event);
         return event;

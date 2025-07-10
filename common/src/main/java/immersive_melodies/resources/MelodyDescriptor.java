@@ -1,6 +1,8 @@
 package immersive_melodies.resources;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 public class MelodyDescriptor {
     private final String name;
@@ -9,15 +11,12 @@ public class MelodyDescriptor {
         this.name = name;
     }
 
-    public MelodyDescriptor(FriendlyByteBuf b) {
-        this.name = b.readUtf();
-    }
-
     public String getName() {
         return name;
     }
 
-    public void encodeLite(FriendlyByteBuf b) {
-        b.writeUtf(name);
-    }
+    public static StreamCodec<FriendlyByteBuf, MelodyDescriptor> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, MelodyDescriptor::getName,
+            MelodyDescriptor::new
+    );
 }

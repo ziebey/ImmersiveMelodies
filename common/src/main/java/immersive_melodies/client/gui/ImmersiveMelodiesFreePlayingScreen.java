@@ -30,6 +30,11 @@ public class ImmersiveMelodiesFreePlayingScreen extends Screen {
     }
 
     @Override
+    protected void renderBlurredBackground(float partialTick) {
+        // Nop
+    }
+
+    @Override
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         // Hint
         context.drawCenteredString(

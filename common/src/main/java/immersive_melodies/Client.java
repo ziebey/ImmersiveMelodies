@@ -10,7 +10,7 @@ import immersive_melodies.network.c2s.NoteBroadcastRequest;
 import immersive_melodies.resources.Note;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
@@ -34,7 +34,7 @@ public class Client {
         }
     }
 
-    public static boolean playNote(Entity entity, int tone, int velocity) {
+    public static boolean playNote(LivingEntity entity, int tone, int velocity) {
         for (ItemStack stack : entity.getAllSlots()) {
             if (stack.getItem() instanceof InstrumentItem instrument) {
                 if (entity instanceof LocalPlayer && instrument.isPlaying(stack)) {

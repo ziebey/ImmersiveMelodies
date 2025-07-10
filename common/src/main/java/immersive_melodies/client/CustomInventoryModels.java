@@ -13,11 +13,11 @@ public class CustomInventoryModels {
     private static final Map<Item, ModelResourceLocation> identifierCache = new HashMap<>();
 
     public static ModelResourceLocation computeHandIdentifier(ResourceLocation id) {
-        return new ModelResourceLocation(id.getNamespace(), id.getPath() + "_hand", "inventory");
+        return new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_hand"), "inventory");
     }
 
     public static ModelResourceLocation computeIdentifier(ResourceLocation id) {
-        return new ModelResourceLocation(id.getNamespace(), id.getPath(), "inventory");
+        return new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath()), "inventory");
     }
 
     public static ModelResourceLocation computeHandIdentifier(Item item) {

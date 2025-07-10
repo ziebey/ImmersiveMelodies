@@ -21,13 +21,6 @@ public interface FragmentedMessage extends ImmersivePayload {
     int length();
 
     @Override
-    default void encode(FriendlyByteBuf b) {
-        b.writeUtf(name());
-        b.writeByteArray(fragment());
-        b.writeVarInt(length());
-    }
-
-    @Override
     default void handle(Player e) {
         String identifier = this.getClass().getSimpleName() + ":" + (e == null ? "local" : e.getStringUUID()) + ":" + name();
         Queue<byte[]> byteBuffer = buffer.computeIfAbsent(identifier, k -> new ConcurrentLinkedQueue<>());
@@ -40,7 +33,7 @@ public interface FragmentedMessage extends ImmersivePayload {
                 buffer.writeBytes(b);
             }
 
-            finish(e, name(), new Melody(buffer));
+            finish(e, name(), Melody.STREAM_CODEC.decode(buffer));
 
             FragmentedMessage.buffer.remove(identifier);
         }
