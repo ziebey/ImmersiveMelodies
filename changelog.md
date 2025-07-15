@@ -1,3 +1,7 @@
+# 0.6.2
+
+* Fixed recipes, advancements, and tags not loading correctly
+
 # 0.6.1
 
 * Fixed a crash

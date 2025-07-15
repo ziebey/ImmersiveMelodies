@@ -2,22 +2,22 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "BBB",
-    "CCC",
+    "NNN",
     "   "
   ],
   "key": {
     "B": [
       {
-        "item": "minecraft:copper_ingot"
+        "item": "minecraft:bone"
       }
     ],
-    "C": [
+    "N": [
       {
-        "item": "minecraft:copper_block"
+        "item": "minecraft:note_block"
       }
     ]
   },
   "result": {
-    "item": "immersive_melodies:handpan"
+    "id": "immersive_melodies:piano"
   }
 }

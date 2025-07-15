@@ -1,14 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "P  ",
-    " PL",
-    "  P"
+    "  I",
+    "PS ",
+    "PP "
   ],
   "key": {
-    "L": [
+    "S": [
       {
-        "item": "minecraft:lapis_lazuli"
+        "item": "minecraft:string"
+      }
+    ],
+    "I": [
+      {
+        "item": "minecraft:stick"
       }
     ],
     "P": [
@@ -18,6 +23,6 @@
     ]
   },
   "result": {
-    "item": "immersive_melodies:didgeridoo"
+    "id": "immersive_melodies:lute"
   }
 }

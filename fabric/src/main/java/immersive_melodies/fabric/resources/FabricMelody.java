@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 
 public class FabricMelody extends MelodyLoader implements IdentifiableResourceReloadListener {
-    private static final ResourceLocation ID = Common.locate("melodies");
+    private static final ResourceLocation ID = Common.locate("melody");
 
     @Override
     public ResourceLocation getFabricId() {

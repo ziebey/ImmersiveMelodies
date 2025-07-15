@@ -14,6 +14,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,7 +22,6 @@ import java.util.function.Supplier;
 
 public class MelodyLoader extends SimplePreparableReloadListener<Map<ResourceLocation, MelodyLoader.LazyMelody>> {
     private static final Logger LOGGER = LogUtils.getLogger();
-    final String dataType = "melodies";
 
     public static <T> Supplier<T> memoize(Supplier<T> delegate) {
         AtomicReference<T> value = new AtomicReference<>();
@@ -58,7 +58,11 @@ public class MelodyLoader extends SimplePreparableReloadListener<Map<ResourceLoc
     protected Map<ResourceLocation, LazyMelody> prepare(ResourceManager manager, ProfilerFiller profiler) {
         Map<ResourceLocation, LazyMelody> map = Maps.newHashMap();
 
-        Map<ResourceLocation, Resource> resources = manager.listResources(dataType, path -> path.getPath().endsWith(".midi") || path.getPath().endsWith(".mid"));
+        // Support both 1.21+ singular and 1.20.x plural resource locations
+        Map<ResourceLocation, Resource> resources = new HashMap<>();
+        resources.putAll(manager.listResources("melodies", MelodyLoader::filter));
+        resources.putAll(manager.listResources("melody", MelodyLoader::filter));
+
         for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
             if (!Config.getInstance().loadInbuiltMidis && entry.getKey().getNamespace().equals("immersive_melodies")) {
                 continue;
@@ -79,6 +83,10 @@ public class MelodyLoader extends SimplePreparableReloadListener<Map<ResourceLoc
         }
 
         return map;
+    }
+
+    private static boolean filter(ResourceLocation path) {
+        return path.getPath().endsWith(".midi") || path.getPath().endsWith(".mid");
     }
 
     @Override

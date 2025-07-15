@@ -2,8 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "  I",
-    "PS ",
-    "PP "
+    "WS ",
+    "WW "
   ],
   "key": {
     "S": [
@@ -16,13 +16,13 @@
         "item": "minecraft:stick"
       }
     ],
-    "P": [
+    "W": [
       {
-        "tag": "minecraft:planks"
+        "tag": "minecraft:logs"
       }
     ]
   },
   "result": {
-    "item": "immersive_melodies:lute"
+    "id": "immersive_melodies:vielle"
   }
 }

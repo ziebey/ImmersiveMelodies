@@ -46,13 +46,12 @@ public interface Items {
      */
     static Item register(@NotNull String namespace, @NotNull String name, Animator animator, long sustain, Vector3f offset) {
         ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath(namespace, name);
-        Item supplier = register(namespace, name, sustain, offset);
         ItemAnimators.register(identifier, animator);
-        return supplier;
+        return register(namespace, name, sustain, offset);
     }
 
     /**
-     * Open method to create custom items, for addons.
+     * Open-method to create custom items, for addons.
      * If using this method, make sure to also register an {@link Animator} for your item.
      *
      * @param namespace Your addon's namespace
