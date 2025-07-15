@@ -1,3 +1,7 @@
+# 0.6.1
+
+* Fixed a crash
+
 # 0.6.0
 
 * Fixed direct playback not working correctly in Multiplayer
