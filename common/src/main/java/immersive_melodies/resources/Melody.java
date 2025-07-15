@@ -10,7 +10,7 @@ import java.util.List;
 
 
 public class Melody extends MelodyDescriptor {
-    static final Melody DEFAULT = new Melody();
+    public static final Melody DEFAULT = new Melody();
 
     private final List<Track> tracks = new LinkedList<>();
 

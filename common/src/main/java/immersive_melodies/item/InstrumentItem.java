@@ -223,6 +223,6 @@ public class InstrumentItem extends Item {
     }
 
     public List<Integer> getEnabledTracks(ItemStack stack) {
-        return stack.get(TRACKS);
+        return stack.getOrDefault(TRACKS, new ArrayList<>());
     }
 }

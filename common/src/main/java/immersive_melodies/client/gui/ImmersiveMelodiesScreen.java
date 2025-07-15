@@ -49,7 +49,7 @@ public class ImmersiveMelodiesScreen extends Screen {
     private Component error;
     private long lastError;
     private boolean showTrackSelection;
-    private List<Integer> enabledTracks;
+    private List<Integer> enabledTracks = new ArrayList<>();
     private ResourceLocation selected;
 
     private void setError(Component error) {
@@ -261,7 +261,7 @@ public class ImmersiveMelodiesScreen extends Screen {
         if (selected != null && showTrackSelection) {
             addRenderableWidget(trackList);
             Melody melody = ClientMelodyManager.getMelody(selected);
-            if (melody != null) {
+            if (melody != Melody.DEFAULT) {
                 for (int i = 0; i < melody.getTracks().size(); i++) {
                     Track track = melody.getTracks().get(i);
                     int trackId = i;
@@ -287,10 +287,12 @@ public class ImmersiveMelodiesScreen extends Screen {
         }, () -> List.of(Component.translatable("immersive_melodies.close").getVisualOrderText())));
 
         // Track selection
-        addRenderableWidget(new TexturedButtonWidget(width / 2 - 55, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 16, 256, 256, Component.nullToEmpty(null), button -> {
-            this.showTrackSelection = !this.showTrackSelection;
-            refreshPage();
-        }, () -> List.of(Component.translatable("immersive_melodies.tracks").getVisualOrderText())));
+        if (selected != null) {
+            addRenderableWidget(new TexturedButtonWidget(width / 2 - 55, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 16, 256, 256, Component.nullToEmpty(null), button -> {
+                this.showTrackSelection = !this.showTrackSelection;
+                refreshPage();
+            }, () -> List.of(Component.translatable("immersive_melodies.tracks").getVisualOrderText())));
+        }
 
         // Free playing
         addRenderableWidget(new TexturedButtonWidget(width / 2 - 33, y, 16, 16, BACKGROUND_TEXTURE, 256 - 48, 0, 256, 256, Component.nullToEmpty(null), button -> {
