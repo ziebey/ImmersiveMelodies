@@ -1,3 +1,7 @@
+# 0.6.3
+
+* Bumped NeoForge version
+
 # 0.6.2
 
 * Fixed recipes, advancements, and tags not loading correctly

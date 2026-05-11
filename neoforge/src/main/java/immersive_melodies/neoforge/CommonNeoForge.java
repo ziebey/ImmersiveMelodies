@@ -1,11 +1,10 @@
 package immersive_melodies.neoforge;
 
-import immersive_melodies.Common;
-import immersive_melodies.ItemGroups;
-import immersive_melodies.Items;
-import immersive_melodies.Sounds;
+import immersive_melodies.*;
 import immersive_melodies.network.ImmersivePayload;
 import immersive_melodies.network.Network;
+import immersive_melodies.resources.MelodyLoader;
+import immersive_melodies.resources.ServerMelodyManager;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,6 +14,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -75,5 +77,26 @@ public final class CommonNeoForge {
         Network.register(new NeoForgeRegistrar(event.registrar("1")));
         Network.registerSender(PacketDistributor::sendToPlayer);
         Network.registerClientSender(PacketDistributor::sendToServer);
+    }
+
+    @SubscribeEvent
+    public static void onServerAboutToStart(ServerAboutToStartEvent event) {
+        ServerMelodyManager.server = event.getServer();
+    }
+
+    public static boolean firstLoad = true;
+
+    @SubscribeEvent
+    public static void onClientStart(ClientTickEvent.Pre event) {
+        //forge decided to be funny and won't trigger the client load event
+        if (firstLoad) {
+            Client.postLoad();
+            firstLoad = false;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener(new MelodyLoader());
     }
 }
