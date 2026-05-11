@@ -3,6 +3,7 @@
 * Bumped NeoForge version
 * Fix keyboard mapping in free playing (Thanks PhyX-Meow!)
 * Synced translations
+* Added note humanization
 
 # 0.6.2
 
