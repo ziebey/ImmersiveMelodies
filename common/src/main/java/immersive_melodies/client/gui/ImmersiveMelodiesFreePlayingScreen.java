@@ -50,8 +50,8 @@ public class ImmersiveMelodiesFreePlayingScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (Config.getInstance().scancodeToMidi.containsKey(scanCode)) {
-            int midi = Config.getInstance().scancodeToMidi.get(scanCode);
+        if (Config.getInstance().keycodeToMidi.containsKey(keyCode)) {
+            int midi = Config.getInstance().keycodeToMidi.get(keyCode);
             Client.playNote(midi, 127);
             return true;
         }
@@ -60,8 +60,8 @@ public class ImmersiveMelodiesFreePlayingScreen extends Screen {
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (Config.getInstance().scancodeToMidi.containsKey(scanCode)) {
-            int midi = Config.getInstance().scancodeToMidi.get(scanCode);
+        if (Config.getInstance().keycodeToMidi.containsKey(keyCode)) {
+            int midi = Config.getInstance().keycodeToMidi.get(keyCode);
             Client.playNote(midi, 0);
             return true;
         }

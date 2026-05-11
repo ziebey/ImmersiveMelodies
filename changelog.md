@@ -1,6 +1,8 @@
 # 0.6.3
 
 * Bumped NeoForge version
+* Fix keyboard mapping in free playing (Thanks PhyX-Meow!)
+* Synced translations
 
 # 0.6.2
 
