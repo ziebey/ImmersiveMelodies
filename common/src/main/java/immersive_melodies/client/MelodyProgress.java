@@ -98,7 +98,7 @@ public class MelodyProgress {
 
     public void visualTick(float time) {
         boolean decayPhase = time - lastNoteTime > attackTime;
-        float delta = Math.max(0.0f, Math.min(1.0f, (time - lastAnimationTime) / (decayPhase ? decayTime : attackTime)));
+        float delta = Math.clamp((time - lastAnimationTime) / (decayPhase ? decayTime : attackTime), 0.0f, 1.0f);
         lastAnimationTime = time;
 
         if (delta > 0) {

@@ -31,7 +31,7 @@ public class MelodyProgressManager {
         progress.lastPitch = pitch;
         progress.lastLength = length;
 
-        progress.decayTime = Math.max(4.0f, Math.min(30.0f, length / 50.0f / 2.0f));
+        progress.decayTime = Math.clamp(length / 50.0f / 2.0f, 4.0f, 30.0f);
         progress.attackTime = Math.min(5.0f, progress.decayTime / 2.0f);
     }
 
