@@ -1,3 +1,8 @@
+# 0.6.1
+
+* Fix keyboard mapping in free playing (Thanks PhyX-Meow!)
+* Synced translations
+
 # 0.6.0
 
 * Fixed direct playback not working correctly in Multiplayer
