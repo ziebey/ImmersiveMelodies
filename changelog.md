@@ -1,6 +1,6 @@
 # 0.6.3
 
-* Bumped NeoForge version
+* Fixed first-person sound and bound sound instances to entities
 * Fix keyboard mapping in free playing (Thanks PhyX-Meow!)
 * Synced translations
 * Added note humanization
