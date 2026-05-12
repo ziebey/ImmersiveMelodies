@@ -2,6 +2,7 @@ package immersive_melodies.util;
 
 import immersive_melodies.Config;
 import immersive_melodies.Items;
+import immersive_melodies.item.InstrumentItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -24,6 +25,10 @@ public class EntityEquiper {
     }
 
     public static boolean shouldEquip(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity && hasInstrument(livingEntity)) {
+            return false;
+        }
+
         String id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
         return Config.getInstance().mobInstrumentFactors.containsKey(id) && entity.level().getRandom().nextFloat() < Config.getInstance().mobInstrumentFactors.get(id);
     }
@@ -31,5 +36,14 @@ public class EntityEquiper {
     public static boolean canPickUp(Entity entity) {
         String id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
         return Config.getInstance().mobInstrumentFactors.containsKey(id) && Config.getInstance().mobInstrumentFactors.get(id) > 0;
+    }
+
+    private static boolean hasInstrument(LivingEntity entity) {
+        for (ItemStack handItem : entity.getHandSlots()) {
+            if (handItem.getItem() instanceof InstrumentItem) {
+                return true;
+            }
+        }
+        return false;
     }
 }

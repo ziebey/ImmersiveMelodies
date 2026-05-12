@@ -1,3 +1,7 @@
+# 0.6.4
+
+* Fixed entities replacing NBT configured instruments
+
 # 0.6.3
 
 * Fixed first-person sound and bound sound instances to entities
