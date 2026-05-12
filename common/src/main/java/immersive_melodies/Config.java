@@ -42,6 +42,7 @@ public final class Config extends JsonConfig {
     public boolean stopGameMusicForPlayers = true;
     public boolean stopGameMusicForMobs = false;
     public int uploadPermissionLevel = 0;
+    public int rightClickToDropEntityInstrumentPermissionLevel = 0;
 
     public Map<Integer, Integer> keycodeToMidi = Map.ofEntries(
             Map.entry(65, 60), // A -> C4
