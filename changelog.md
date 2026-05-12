@@ -1,6 +1,7 @@
 # 0.6.4
 
 * Fixed entities replacing NBT configured instruments
+* Added `rightClickToDropEntityInstrumentPermissionLevel` config
 
 # 0.6.3
 
