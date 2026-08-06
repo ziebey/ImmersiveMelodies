@@ -2,6 +2,9 @@
 
 * Backported 1.21.1 changes
 * Added note humanization
+* Fixed first-person sound and bound sound instances to entities
+* Fixed entities replacing NBT configured instruments
+* Added `rightClickToDropEntityInstrumentPermissionLevel` config
 
 # 0.6.1
 
