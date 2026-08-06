@@ -1,3 +1,7 @@
+# 0.6.5
+
+* Fixed non-ascii file name conflicts
+
 # 0.6.4
 
 * Backported 1.21.1 changes
