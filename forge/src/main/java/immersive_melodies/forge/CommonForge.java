@@ -34,7 +34,6 @@ public final class CommonForge {
     }
 
     public CommonForge() {
-        Items.bootstrap();
         DEF_REG.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 

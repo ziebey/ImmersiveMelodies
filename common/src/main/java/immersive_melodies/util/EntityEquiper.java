@@ -16,7 +16,11 @@ import java.util.Random;
 public class EntityEquiper {
     public static void equip(Entity entity) {
         if (shouldEquip(entity)) {
-            Item item = Items.items.values().stream().skip(new Random().nextInt(Items.items.size())).findFirst().orElse(Items.LUTE);
+            Item item = Items.items.values().stream()
+                    .skip(new Random().nextInt(Items.items.size()))
+                    .findFirst()
+                    .orElse(Items.LUTE)
+                    .get();
             entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item));
             if (entity instanceof Mob mobEntity) {
                 mobEntity.setDropChance(EquipmentSlot.MAINHAND, Config.getInstance().mobInstrumentDropFactor);

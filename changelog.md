@@ -1,7 +1,8 @@
-# 0.6.5
+# 0.7.0
 
 * Fixed non-ascii file name conflicts
 * Added `autoSynchronize` config to disable auto synchronization of nearby melodies
+* Fixed crashes on Forge
 
 # 0.6.4
 

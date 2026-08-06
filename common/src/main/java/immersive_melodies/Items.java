@@ -1,5 +1,6 @@
 package immersive_melodies;
 
+import com.google.common.base.Suppliers;
 import immersive_melodies.client.animation.ItemAnimators;
 import immersive_melodies.client.animation.animators.Animator;
 import immersive_melodies.item.InstrumentItem;
@@ -10,27 +11,27 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public interface Items {
-    Map<ResourceLocation, Item> items = new ConcurrentHashMap<>();
-    List<ResourceLocation> customInventoryModels = new LinkedList<>();
+    Map<ResourceLocation, Supplier<Item>> items = new ConcurrentHashMap<>();
+    CopyOnWriteArrayList<ResourceLocation> customInventoryModels = new CopyOnWriteArrayList<>();
 
-    Item BAGPIPE = register(Common.MOD_ID, "bagpipe", 300, new Vector3f(0.5f, 0.6f, 0.05f));
-    Item DIDGERIDOO = register(Common.MOD_ID, "didgeridoo", 400, new Vector3f(0.0f, -0.45f, 1.0f));
-    Item FLUTE = register(Common.MOD_ID, "flute", 100, new Vector3f(0.0f, 0.15f, 0.9f));
-    Item LUTE = register(Common.MOD_ID, "lute", 300, new Vector3f(0.0f, 0.0f, 0.5f));
-    Item PIANO = register(Common.MOD_ID, "piano", 500, new Vector3f(0.0f, 0.25f, 0.5f));
-    Item TRIANGLE = register(Common.MOD_ID, "triangle", 300, new Vector3f(0.0f, 0.0f, 0.6f));
-    Item TRUMPET = register(Common.MOD_ID, "trumpet", 100, new Vector3f(0.0f, 0.25f, 1.4f));
-    Item TINY_DRUM = register(Common.MOD_ID, "tiny_drum", 500, new Vector3f(0.0f, 0.25f, 0.5f));
-    Item VIELLE = register(Common.MOD_ID, "vielle", 200, new Vector3f(-0.25f, 0.4f, 0.35f));
-    Item ENDER_BASS = register(Common.MOD_ID, "ender_bass", 100, new Vector3f(0.0f, 0.0f, 0.65f));
-    Item HANDPAN = register(Common.MOD_ID, "handpan", 300, new Vector3f(0.0f, 0.25f, 0.5f));
+    Supplier<Item> BAGPIPE = register(Common.MOD_ID, "bagpipe", 300, new Vector3f(0.5f, 0.6f, 0.05f));
+    Supplier<Item> DIDGERIDOO = register(Common.MOD_ID, "didgeridoo", 400, new Vector3f(0.0f, -0.45f, 1.0f));
+    Supplier<Item> FLUTE = register(Common.MOD_ID, "flute", 100, new Vector3f(0.0f, 0.15f, 0.9f));
+    Supplier<Item> LUTE = register(Common.MOD_ID, "lute", 300, new Vector3f(0.0f, 0.0f, 0.5f));
+    Supplier<Item> PIANO = register(Common.MOD_ID, "piano", 500, new Vector3f(0.0f, 0.25f, 0.5f));
+    Supplier<Item> TRIANGLE = register(Common.MOD_ID, "triangle", 300, new Vector3f(0.0f, 0.0f, 0.6f));
+    Supplier<Item> TRUMPET = register(Common.MOD_ID, "trumpet", 100, new Vector3f(0.0f, 0.25f, 1.4f));
+    Supplier<Item> TINY_DRUM = register(Common.MOD_ID, "tiny_drum", 500, new Vector3f(0.0f, 0.25f, 0.5f));
+    Supplier<Item> VIELLE = register(Common.MOD_ID, "vielle", 200, new Vector3f(-0.25f, 0.4f, 0.35f));
+    Supplier<Item> ENDER_BASS = register(Common.MOD_ID, "ender_bass", 100, new Vector3f(0.0f, 0.0f, 0.65f));
+    Supplier<Item> HANDPAN = register(Common.MOD_ID, "handpan", 300, new Vector3f(0.0f, 0.25f, 0.5f));
 
     /**
      * Open method to create custom items, for addons
@@ -44,15 +45,15 @@ public interface Items {
      *                  of the position at which a note particle should be displayed.
      * @return The registered item's provider.
      */
-    static Item register(@NotNull String namespace, @NotNull String name, Animator animator, long sustain, Vector3f offset) {
+    static Supplier<Item> register(@NotNull String namespace, @NotNull String name, Animator animator, long sustain, Vector3f offset) {
         ResourceLocation identifier = new ResourceLocation(namespace, name);
-        Item supplier = register(namespace, name, sustain, offset);
+        Supplier<Item> supplier = register(namespace, name, sustain, offset);
         ItemAnimators.register(identifier, animator);
         return supplier;
     }
 
     /**
-     * Open method to create custom items, for addons.
+     * Public method to create custom items, for addons.
      * If using this method, make sure to also register an {@link Animator} for your item.
      *
      * @param namespace Your addon's namespace
@@ -62,17 +63,14 @@ public interface Items {
      *                  of the position at which a note particle should be displayed.
      * @return The registered item's provider.
      */
-    static Item register(@NotNull String namespace, @NotNull String name, long sustain, Vector3f offset) {
+    static Supplier<Item> register(@NotNull String namespace, @NotNull String name, long sustain, Vector3f offset) {
         ResourceLocation location = new ResourceLocation(namespace, name);
-        Sounds.Instrument instrument = new Sounds.Instrument(namespace, name);
-        Item item = new InstrumentItem(baseProps(), instrument, sustain, offset);
-        items.put(location, item);
-        customInventoryModels.add(location);
-        return item;
-    }
-
-    static void bootstrap() {
-        // nop
+        Supplier<Item> supplier = Suppliers.memoize(() -> new InstrumentItem(
+                baseProps(), new Sounds.Instrument(namespace, name), sustain, offset
+        ));
+        items.put(location, supplier);
+        customInventoryModels.addIfAbsent(location);
+        return supplier;
     }
 
     static Item.Properties baseProps() {
@@ -80,10 +78,10 @@ public interface Items {
     }
 
     static Collection<ItemStack> getSortedItems() {
-        return items.values().stream().map(Item::getDefaultInstance).toList();
+        return items.values().stream().map(Supplier::get).map(Item::getDefaultInstance).toList();
     }
 
     static void registerItems(Common.RegisterHelper<Item> helper) {
-        items.forEach(helper::register);
+        items.forEach((identifier, supplier) -> helper.register(identifier, supplier.get()));
     }
 }
