@@ -1,3 +1,8 @@
+# 0.6.4
+
+* Backported 1.21.1 changes
+* Added note humanization
+
 # 0.6.1
 
 * Fix keyboard mapping in free playing (Thanks PhyX-Meow!)

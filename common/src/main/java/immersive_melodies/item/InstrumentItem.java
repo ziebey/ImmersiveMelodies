@@ -34,6 +34,7 @@ import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ public class InstrumentItem extends Item {
     private final long sustain;
 
     private final Vector3f offset;
+    private final Random random = new Random();
 
     public InstrumentItem(Properties settings, Sounds.Instrument sound, long sustain, Vector3f offset) {
         super(settings);
@@ -102,6 +104,7 @@ public class InstrumentItem extends Item {
 
             Melody melody = progress.getMelody();
 
+            long lookAhead = Math.max(0, Config.getInstance().humanizationTime);
             // get enabled tracks
             Set<Integer> enabledTracks = getEnabledTracks(stack);
             for (int track = 0; track < melody.getTracks().size(); track++) {
@@ -109,7 +112,7 @@ public class InstrumentItem extends Item {
                 List<Note> notes = melody.getTracks().get(track).getNotes();
                 for (int i = lastIndex; i < notes.size(); i++) {
                     Note note = notes.get(i);
-                    if (progress.getTime() >= note.getTime()) {
+                    if (progress.getTime() + lookAhead >= note.getTime()) {
                         if (enabledTracks.isEmpty() || enabledTracks.contains(track)) {
                             playNote(entity, note, progress.getTime());
                         }
@@ -133,31 +136,41 @@ public class InstrumentItem extends Item {
     }
 
     public CancelableSoundInstance playNote(Entity entity, Note note, long time) {
-        float volume = note.getVelocity() / 255.0f * 2.0f * Config.getInstance().instrumentVolumeFactor;
+        Config config = Config.getInstance();
+        float volume = note.getVelocity() / 255.0f * 2.0f * config.instrumentVolumeFactor;
         float pitch = (float) Math.pow(2, (note.getNote() - 24) / 12.0);
+        long delay = Math.max(note.getTime() - time, 0);
+        long length = Math.max(note.getLength(), 1);
+        long sustain = Math.min(this.sustain, note.getSustain());
+
+        // humanize
+        volume = (float) Math.max(0.0f, volume * (1.0 + boundedGaussian(config.humanizationVolume)));
+        pitch *= (float) Math.pow(2.0, boundedGaussian(config.humanizationPitch) / 12.0);
+        delay = Math.max(0, delay + Math.round(boundedGaussian(config.humanizationTime)));
+        length = Math.max(1, Math.round(length * (1.0 + boundedGaussian(config.humanizationLength))));
+
         int octave = 1;
         while (octave < 8 && pitch > 4.0 / 3.0) {
             pitch /= 2;
             octave++;
         }
-        long length = note.getLength();
-        long sustain = Math.min(this.sustain, note.getSustain());
 
         // adjust volume based on perceived loudness
-        float factor = Config.getInstance().perceivedLoudnessAdjustmentFactor;
+        float factor = config.perceivedLoudnessAdjustmentFactor;
         float adjustedVolume = (float) (volume / Math.sqrt(pitch * Math.pow(2, octave - 4)));
         volume = volume * (1.0f - factor) + adjustedVolume * factor;
+        volume = Math.max(0.0f, volume);
 
         // sound
         CancelableSoundInstance soundInstance = Common.soundManager.playSound(entity.getX(), entity.getY(), entity.getZ(),
                 sound.get(octave), SoundSource.NEUTRAL,
                 volume, pitch, length, sustain,
-                note.getTime() - time, entity);
+                delay, entity);
 
         // Stop game music
-        if (entity instanceof Player && Config.getInstance().stopGameMusicForPlayers) {
+        if (entity instanceof Player && config.stopGameMusicForPlayers) {
             Common.soundManager.pauseGameMusic();
-        } else if (Config.getInstance().stopGameMusicForMobs) {
+        } else if (config.stopGameMusicForMobs) {
             Common.soundManager.pauseGameMusic();
         }
 
@@ -173,6 +186,15 @@ public class InstrumentItem extends Item {
         MelodyProgressManager.INSTANCE.setLastNote(entity, volume, pitch, length);
 
         return soundInstance;
+    }
+
+    private double boundedGaussian(double maxAbs) {
+        if (maxAbs <= 0.0) {
+            return 0.0;
+        }
+
+        double value = random.nextGaussian() * (maxAbs / 3.0);
+        return Math.max(-maxAbs, Math.min(maxAbs, value));
     }
 
     public void inventoryServerTick(ItemStack stack, ServerLevel world, Entity entity) {
