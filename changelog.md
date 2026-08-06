@@ -1,6 +1,7 @@
 # 0.6.5
 
 * Fixed non-ascii file name conflicts
+* Added `autoSynchronize` config to disable auto synchronization of nearby melodies
 
 # 0.6.4
 

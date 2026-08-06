@@ -36,6 +36,7 @@ public final class Config extends JsonConfig {
     public float mobInstrumentDropFactor = DEFAULT_EQUIPMENT_DROP_CHANCE;
 
     public boolean showOtherPlayersMelodies = true;
+    public boolean autoSynchronize = true;
     public boolean forceMobsToPickUp = true;
     public boolean clickedHelp = false;
     public boolean loadInbuiltMidis = true;
@@ -60,5 +61,4 @@ public final class Config extends JsonConfig {
             Map.entry(84, 70), // T -> A#4
             Map.entry(89, 73)  // Y -> C#5
     );
-
 }
