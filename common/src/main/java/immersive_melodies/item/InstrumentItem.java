@@ -167,11 +167,9 @@ public class InstrumentItem extends Item {
                 volume, pitch, length, sustain,
                 delay, entity);
 
-        // Stop game music
-        if (entity instanceof Player && config.stopGameMusicForPlayers) {
-            Common.soundManager.pauseGameMusic();
-        } else if (config.stopGameMusicForMobs) {
-            Common.soundManager.pauseGameMusic();
+        // Suppress game music
+        if (entity instanceof Player ? config.stopGameMusicForPlayers : config.stopGameMusicForMobs) {
+            Common.soundManager.suppressGameMusic();
         }
 
         // particle
