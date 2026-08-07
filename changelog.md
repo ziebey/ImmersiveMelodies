@@ -5,6 +5,8 @@
 * Fixed crashes on Forge
 * Channels are now treated as different tracks
 * Added better free playing UI
+* Offhand now supports selecting melodies
+* You can now play with 2 instruments at once (why tho?)
 
 # 0.6.4
 

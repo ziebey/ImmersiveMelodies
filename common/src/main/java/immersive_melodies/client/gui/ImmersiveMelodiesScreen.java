@@ -27,7 +27,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 import java.io.ByteArrayInputStream;
@@ -89,27 +88,32 @@ public class ImmersiveMelodiesScreen extends Screen {
         refreshPage();
 
         // Select the current melody
-        if (minecraft != null && minecraft.player != null) {
-            ItemStack stack = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (stack.getItem() instanceof InstrumentItem item) {
-                selected = item.getMelody(stack);
-            }
+        ItemStack stack = getInstrumentStack();
+        if (stack.getItem() instanceof InstrumentItem item) {
+            selected = item.getMelody(stack);
         }
     }
 
     private void updateTrackList() {
-        if (minecraft != null && minecraft.player != null) {
-            ItemStack stack = minecraft.player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (stack.getItem() instanceof InstrumentItem item) {
-                Set<Integer> newEnabledTracks = item.getEnabledTracks(stack);
-                if (!Objects.equals(newEnabledTracks, enabledTracks)) {
-                    enabledTracks = new HashSet<>(newEnabledTracks);
-                    refreshPage();
-                }
-            } else {
-                enabledTracks = new HashSet<>();
+        ItemStack stack = getInstrumentStack();
+        if (stack.getItem() instanceof InstrumentItem item) {
+            Set<Integer> newEnabledTracks = item.getEnabledTracks(stack);
+            if (!Objects.equals(newEnabledTracks, enabledTracks)) {
+                enabledTracks = new HashSet<>(newEnabledTracks);
+                refreshPage();
             }
+        } else {
+            enabledTracks = new HashSet<>();
         }
+    }
+
+    private ItemStack getInstrumentStack() {
+        if (minecraft == null || minecraft.player == null) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack mainHand = minecraft.player.getMainHandItem();
+        return mainHand.getItem() instanceof InstrumentItem ? mainHand : minecraft.player.getOffhandItem();
     }
 
     private void openHelp() {
