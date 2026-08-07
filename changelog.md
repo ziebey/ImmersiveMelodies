@@ -4,6 +4,7 @@
 * Added `autoSynchronize` config to disable auto synchronization of nearby melodies
 * Fixed crashes on Forge
 * Channels are now treated as different tracks
+* Added better free playing UI
 
 # 0.6.4
 

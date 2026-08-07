@@ -84,7 +84,7 @@ public class ImmersiveMelodiesScreen extends Screen {
 
         int y = (height - 230) / 2 + 22;
         list = new MelodyListWidget(this.minecraft, this, this.width / 2 - 75, 150, y, 162, true);
-        trackList = new MelodyListWidget(this.minecraft, this, this.width / 2 + 100, 85, y + 8, 142, false);
+        trackList = new MelodyListWidget(this.minecraft, this, this.width / 2 + 99, 92, y + 8, 142, false);
 
         refreshPage();
 
