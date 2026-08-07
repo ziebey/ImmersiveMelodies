@@ -16,6 +16,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ServerMelodyManager {
     static final Random RANDOM = new Random();
@@ -163,12 +164,10 @@ public class ServerMelodyManager {
                 CompoundTag map = nbt.getCompound(key);
                 Map<String, Set<Integer>> m = new HashMap<>();
                 for (String k : map.getAllKeys()) {
-                    CompoundTag set = map.getCompound(k);
-                    Set<Integer> s = new HashSet<>();
-                    for (String i : set.getAllKeys()) {
-                        s.add(set.getInt(i));
-                    }
-                    m.put(k, s);
+                    Set<Integer> tracks = Arrays.stream(map.getIntArray(k))
+                            .boxed()
+                            .collect(Collectors.toSet());
+                    m.put(k, tracks);
                 }
                 c.enabledTracks.put(new ResourceLocation(key), m);
             }
@@ -181,11 +180,13 @@ public class ServerMelodyManager {
             for (Map.Entry<ResourceLocation, Map<String, Set<Integer>>> entry : enabledTracks.entrySet()) {
                 CompoundTag map = new CompoundTag();
                 for (Map.Entry<String, Set<Integer>> e : entry.getValue().entrySet()) {
-                    CompoundTag set = new CompoundTag();
-                    for (int i : e.getValue()) {
-                        set.putInt(e.getKey(), i);
-                    }
-                    map.put(e.getKey(), set);
+                    map.putIntArray(
+                            e.getKey(),
+                            e.getValue().stream()
+                                    .mapToInt(Integer::intValue)
+                                    .sorted()
+                                    .toArray()
+                    );
                 }
                 c.put(entry.getKey().toString(), map);
             }

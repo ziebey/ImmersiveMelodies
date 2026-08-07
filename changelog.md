@@ -3,6 +3,7 @@
 * Fixed non-ascii file name conflicts
 * Added `autoSynchronize` config to disable auto synchronization of nearby melodies
 * Fixed crashes on Forge
+* Channels are now treated as different tracks
 
 # 0.6.4
 
