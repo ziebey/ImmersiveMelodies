@@ -1,3 +1,16 @@
+# 0.7.0
+
+* Fixed non-ascii file name conflicts
+* Added `autoSynchronize` config to disable auto synchronization of nearby melodies
+* Fixed crashes on Forge
+* Channels are now treated as different tracks
+* Added better free playing UI
+* Offhand now supports selecting melodies
+* You can now play with two instruments at once (why tho?)
+* Instruments now trigger Skulk sensors
+* MIDI input now supports sustain pedal
+* Fixed syncing issues
+
 # 0.6.4
 
 * Fixed entities replacing NBT configured instruments
