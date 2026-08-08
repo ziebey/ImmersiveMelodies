@@ -6,7 +6,8 @@
 * Channels are now treated as different tracks
 * Added better free playing UI
 * Offhand now supports selecting melodies
-* You can now play with 2 instruments at once (why tho?)
+* You can now play with two instruments at once (why tho?)
+* Instruments now trigger Skulk sensors
 
 # 0.6.4
 
