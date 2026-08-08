@@ -39,7 +39,10 @@ public class InstrumentItem extends Item {
     public static final String TAG_PLAYING = "playing";
     public static final String TAG_MELODY = "melody";
     public static final String TAG_START_TIME = "start_time";
+    public static final String TAG_PAUSED_TIME = "paused_time";
     public static final String TAG_TRACKS = "enabled_tracks";
+
+    private static final long MAX_LATE_NOTE_TIME = 150L;
 
     private final Sounds.Instrument sound;
     private final long sustain;
@@ -97,7 +100,7 @@ public class InstrumentItem extends Item {
 
         // Advance one shared timeline, then play each due note through every instrument
         MelodyProgress progress = MelodyProgressManager.INSTANCE.getProgress(entity);
-        progress.tick(stack);
+        progress.tick(stack, world.getGameTime());
 
         // sync
         MelodyProgressManager.INSTANCE.sync(world.getGameTime());
@@ -110,6 +113,10 @@ public class InstrumentItem extends Item {
             List<Note> notes = melody.getTracks().get(track).getNotes();
             for (int i = lastIndex; i < notes.size(); i++) {
                 Note note = notes.get(i);
+                if (progress.getTime() - note.getTime() > MAX_LATE_NOTE_TIME) {
+                    progress.setLastIndex(track, i + 1);
+                    continue;
+                }
                 if (progress.getTime() + lookAhead >= note.getTime()) {
                     for (ItemStack instrumentStack : playingInstruments) {
                         InstrumentItem instrument = (InstrumentItem) instrumentStack.getItem();
@@ -126,13 +133,6 @@ public class InstrumentItem extends Item {
                     progress.setLastIndex(track, i);
                     break;
                 }
-            }
-        }
-
-        // Rewind
-        if (progress.getTime() > melody.getLength()) {
-            for (ItemStack instrumentStack : playingInstruments) {
-                ((InstrumentItem) instrumentStack.getItem()).rewind(instrumentStack, world);
             }
         }
     }
@@ -230,6 +230,7 @@ public class InstrumentItem extends Item {
         stack.getOrCreateTag().putString(TAG_MELODY, melody.toString());
         stack.getOrCreateTag().putBoolean(TAG_PLAYING, true);
         stack.getOrCreateTag().putLong(TAG_START_TIME, startTime);
+        stack.getOrCreateTag().remove(TAG_PAUSED_TIME);
 
         refreshTracks(stack, entity);
     }
@@ -244,15 +245,20 @@ public class InstrumentItem extends Item {
         stack.getOrCreateTag().putIntArray(TAG_TRACKS, enabledTracks.stream().mapToInt(i -> i).toArray());
     }
 
-    public void rewind(ItemStack stack, Level world) {
-        stack.getOrCreateTag().putLong(TAG_START_TIME, world.getGameTime());
-    }
-
-    public void play(ItemStack stack) {
+    public void play(ItemStack stack, Level world) {
+        if (stack.getOrCreateTag().contains(TAG_PAUSED_TIME)) {
+            long pausedTime = stack.getOrCreateTag().getLong(TAG_PAUSED_TIME);
+            long pausedDuration = Math.max(0L, world.getGameTime() - pausedTime);
+            stack.getOrCreateTag().putLong(TAG_START_TIME, stack.getOrCreateTag().getLong(TAG_START_TIME) + pausedDuration);
+            stack.getOrCreateTag().remove(TAG_PAUSED_TIME);
+        }
         stack.getOrCreateTag().putBoolean(TAG_PLAYING, true);
     }
 
-    public void pause(ItemStack stack) {
+    public void pause(ItemStack stack, Level world) {
+        if (isPlaying(stack)) {
+            stack.getOrCreateTag().putLong(TAG_PAUSED_TIME, world.getGameTime());
+        }
         stack.getOrCreateTag().putBoolean(TAG_PLAYING, false);
     }
 

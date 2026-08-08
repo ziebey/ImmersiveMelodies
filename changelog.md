@@ -9,6 +9,7 @@
 * You can now play with two instruments at once (why tho?)
 * Instruments now trigger Skulk sensors
 * MIDI input now supports sustain pedal
+* Fixed syncing issues
 
 # 0.6.4
 

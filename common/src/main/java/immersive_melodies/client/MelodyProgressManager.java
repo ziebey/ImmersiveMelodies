@@ -65,7 +65,8 @@ public class MelodyProgressManager {
                     } else if (!b1 && b2) {
                         return -1;
                     } else {
-                        return getProgress(b).time - getProgress(a).time;
+                        int comparison = Long.compare(getProgress(a).worldTime, getProgress(b).worldTime);
+                        return comparison != 0 ? comparison : Integer.compare(a.getId(), b.getId());
                     }
                 })
                 .toList();
@@ -80,12 +81,7 @@ public class MelodyProgressManager {
                     MelodyProgress progress0 = getProgress(entity0);
                     MelodyProgress progress1 = getProgress(entity1);
 
-                    if (Math.abs(progress0.time - progress1.time) > 100) {
-                        progress0.overwrite(progress1.getCurrentlyPlaying());
-                        progress0.time = progress1.time;
-                        progress0.lastIndex.clear();
-                        progress0.lastIndex.putAll(progress1.lastIndex);
-                    }
+                    progress0.overwrite(progress1.getCurrentlyPlaying(), progress1.getStartTime(), time);
 
                     break;
                 }

@@ -32,8 +32,8 @@ public record ItemActionMessage(State state, ResourceLocation melody) implements
             if (stack.getItem() instanceof InstrumentItem instrument) {
                 switch (state) {
                     case PLAY -> instrument.play(stack, melody, e.level(), e);
-                    case CONTINUE -> instrument.play(stack);
-                    case PAUSE -> instrument.pause(stack);
+                    case CONTINUE -> instrument.play(stack, e.level());
+                    case PAUSE -> instrument.pause(stack, e.level());
                 }
             }
         });
