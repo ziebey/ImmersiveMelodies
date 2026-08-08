@@ -50,14 +50,18 @@ public class InstrumentItem extends Item {
     public static final DataComponentType<Long> START_TIME = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "start_time",
             DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
 
+    public static final DataComponentType<Long> PAUSED_TIME = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "paused_time",
+            DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
+
     public static final DataComponentType<List<Integer>> TRACKS = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, "enabled_tracks",
             DataComponentType.<List<Integer>>builder().persistent(Codec.list(Codec.INT)).networkSynchronized(ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list())).build());
+
+    private static final long MAX_LATE_NOTE_TIME = 150L;
 
     private final Sounds.Instrument sound;
     private final long sustain;
 
     private final Vector3f offset;
-
     private final RandomSource random = RandomSource.create();
 
     public InstrumentItem(Properties settings, Sounds.Instrument sound, long sustain, Vector3f offset) {
@@ -75,7 +79,7 @@ public class InstrumentItem extends Item {
             Network.sendToPlayer(new OpenGuiRequest(), (ServerPlayer) user);
         }
 
-        return super.use(world, user, hand);
+        return InteractionResultHolder.sidedSuccess(user.getItemInHand(hand), world.isClientSide);
     }
 
     @Override
@@ -93,62 +97,66 @@ public class InstrumentItem extends Item {
     }
 
     public void inventoryClientTick(ItemStack stack, Level world, LivingEntity entity) {
-        // check if the item is in the hand and is the primary instrument as you can't play two at once
-        boolean isPrimary = false;
+        ItemStack primaryStack = null;
+        List<ItemStack> playingInstruments = new ArrayList<>();
         for (ItemStack handItem : entity.getHandSlots()) {
-            if (handItem == stack) {
-                isPrimary = true;
-                break;
-            } else if (handItem.getItem() instanceof InstrumentItem) {
-                break;
+            if (handItem.getItem() instanceof InstrumentItem instrument && instrument.isPlaying(handItem)) {
+                if (primaryStack == null) {
+                    primaryStack = handItem;
+                }
+                playingInstruments.add(handItem);
             }
         }
 
-        // play
-        if (isPlaying(stack) && isPrimary && world.isClientSide && Common.soundManager.audible(entity)) {
-            MelodyProgress progress = MelodyProgressManager.INSTANCE.getProgress(entity);
-            progress.tick(stack);
+        if (stack != primaryStack || !world.isClientSide || !Common.soundManager.audible(entity)) {
+            return;
+        }
 
-            // sync
-            MelodyProgressManager.INSTANCE.sync(world.getGameTime());
+        // Advance one shared timeline, then play each due note through every instrument
+        MelodyProgress progress = MelodyProgressManager.INSTANCE.getProgress(entity);
+        progress.tick(stack, world.getGameTime());
 
-            Melody melody = progress.getMelody();
+        // sync
+        MelodyProgressManager.INSTANCE.sync(world.getGameTime());
 
-            // get enabled tracks
-            List<Integer> enabledTracks = getEnabledTracks(stack);
+        Melody melody = progress.getMelody();
 
-            long lookAhead = Math.max(0, Config.getInstance().humanizationTime);
-            for (int track = 0; track < melody.getTracks().size(); track++) {
-                int lastIndex = MelodyProgressManager.INSTANCE.getProgress(entity).getLastIndex(track);
-                List<Note> notes = melody.getTracks().get(track).getNotes();
-                for (int i = lastIndex; i < notes.size(); i++) {
-                    Note note = notes.get(i);
-                    if (progress.getTime() + lookAhead >= note.getTime()) {
-                        if (enabledTracks.isEmpty() || enabledTracks.contains(track)) {
-                            playNote(entity, note, progress.getTime());
-                        }
-
-                        // Mark as done
-                        if (i == notes.size() - 1) {
-                            MelodyProgressManager.INSTANCE.setLastIndex(entity, track, i + 1);
-                        }
-                    } else {
-                        MelodyProgressManager.INSTANCE.setLastIndex(entity, track, i);
-                        break;
-                    }
+        long lookAhead = Math.max(0, Config.getInstance().humanizationTime);
+        for (int track = 0; track < melody.getTracks().size(); track++) {
+            int lastIndex = progress.getLastIndex(track);
+            List<Note> notes = melody.getTracks().get(track).getNotes();
+            for (int i = lastIndex; i < notes.size(); i++) {
+                Note note = notes.get(i);
+                if (progress.getTime() - note.getTime() > MAX_LATE_NOTE_TIME) {
+                    progress.setLastIndex(track, i + 1);
+                    continue;
                 }
-            }
+                if (progress.getTime() + lookAhead >= note.getTime()) {
+                    for (ItemStack instrumentStack : playingInstruments) {
+                        InstrumentItem instrument = (InstrumentItem) instrumentStack.getItem();
+                        List<Integer> enabledTracks = instrument.getEnabledTracks(instrumentStack);
+                        if (enabledTracks.isEmpty() || enabledTracks.contains(track)) {
+                            instrument.playNote(entity, note, progress.getTime(), instrumentStack == stack);
+                        }
+                    }
 
-            // Rewind
-            if (progress.getTime() > melody.getLength()) {
-                rewind(stack, world);
+                    if (i == notes.size() - 1) {
+                        progress.setLastIndex(track, i + 1);
+                    }
+                } else {
+                    progress.setLastIndex(track, i);
+                    break;
+                }
             }
         }
     }
 
     public CancelableSoundInstance playNote(Entity entity, Note note, long time) {
-        Config config = Config.getInstance();
+        return playNote(entity, note, time, true);
+    }
 
+    private CancelableSoundInstance playNote(Entity entity, Note note, long time, boolean updateProgress) {
+        Config config = Config.getInstance();
         float volume = note.getVelocity() / 255.0f * 2.0f * config.instrumentVolumeFactor;
         float pitch = (float) Math.pow(2, (note.getNote() - 24) / 12.0);
         long delay = Math.max(note.getTime() - time, 0);
@@ -176,13 +184,12 @@ public class InstrumentItem extends Item {
         // sound
         CancelableSoundInstance soundInstance = Common.soundManager.playSound(entity.getX(), entity.getY(), entity.getZ(),
                 sound.get(octave), SoundSource.NEUTRAL,
-                volume, pitch, length, sustain, delay, entity);
+                volume, pitch, length, sustain,
+                delay, entity);
 
-        // Stop game music
-        if (entity instanceof Player && config.stopGameMusicForPlayers) {
-            Common.soundManager.pauseGameMusic();
-        } else if (config.stopGameMusicForMobs) {
-            Common.soundManager.pauseGameMusic();
+        // Suppress game music
+        if (entity instanceof Player ? config.stopGameMusicForPlayers : config.stopGameMusicForMobs) {
+            Common.soundManager.suppressGameMusic();
         }
 
         // particle
@@ -194,23 +201,41 @@ public class InstrumentItem extends Item {
                     x * 5.0, 0.0, z * 5.0);
         }
 
-        MelodyProgressManager.INSTANCE.setLastNote(entity, volume, pitch, length);
+        if (updateProgress) {
+            MelodyProgressManager.INSTANCE.setLastNote(entity, volume, pitch, length);
+        }
 
         return soundInstance;
     }
 
-    public void inventoryServerTick(ItemStack stack, ServerLevel world, Entity entity) {
+    public void inventoryServerTick(ItemStack stack, ServerLevel world, LivingEntity entity) {
         // autoplay
         if (!(entity instanceof Player) && !isPlaying(stack)) {
-            ResourceLocation randomMelody = ServerMelodyManager.getRandomMelody();
-            play(stack, randomMelody, world, entity);
+            ItemStack playingStack = null;
+            for (ItemStack handItem : entity.getHandSlots()) {
+                if (handItem != stack && handItem.getItem() instanceof InstrumentItem instrument && instrument.isPlaying(handItem)) {
+                    playingStack = handItem;
+                    break;
+                }
+            }
+
+            if (playingStack == null) {
+                play(stack, ServerMelodyManager.getRandomMelody(), world, entity);
+            } else {
+                play(stack, getMelody(playingStack), playingStack.getOrDefault(START_TIME, world.getGameTime()), entity);
+            }
         }
     }
 
     public void play(ItemStack stack, ResourceLocation melody, Level world, Entity entity) {
+        play(stack, melody, world.getGameTime(), entity);
+    }
+
+    private void play(ItemStack stack, ResourceLocation melody, long startTime, Entity entity) {
         stack.set(MELODY, melody);
         stack.set(PLAYING, true);
-        stack.set(START_TIME, world.getGameTime());
+        stack.set(START_TIME, startTime);
+        stack.remove(PAUSED_TIME);
 
         refreshTracks(stack, entity);
     }
@@ -225,15 +250,20 @@ public class InstrumentItem extends Item {
         stack.set(TRACKS, new ArrayList<>(enabledTracks));
     }
 
-    public void rewind(ItemStack stack, Level world) {
-        stack.set(START_TIME, world.getGameTime());
-    }
-
-    public void play(ItemStack stack) {
+    public void play(ItemStack stack, Level world) {
+        if (stack.has(PAUSED_TIME)) {
+            long pausedTime = stack.getOrDefault(PAUSED_TIME, world.getGameTime());
+            long pausedDuration = Math.max(0L, world.getGameTime() - pausedTime);
+            stack.set(START_TIME, stack.getOrDefault(START_TIME, world.getGameTime()) + pausedDuration);
+            stack.remove(PAUSED_TIME);
+        }
         stack.set(PLAYING, true);
     }
 
-    public void pause(ItemStack stack) {
+    public void pause(ItemStack stack, Level world) {
+        if (isPlaying(stack)) {
+            stack.set(PAUSED_TIME, world.getGameTime());
+        }
         stack.set(PLAYING, false);
     }
 

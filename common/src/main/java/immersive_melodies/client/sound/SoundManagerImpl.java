@@ -41,10 +41,12 @@ public class SoundManagerImpl implements SoundManager {
     }
 
     @Override
-    public void pauseGameMusic() {
+    public void suppressGameMusic() {
         MusicTrackerAccessor musicTrackerAccessor = (MusicTrackerAccessor) this.client.getMusicManager();
         if (musicTrackerAccessor.getCurrentMusic() != null) {
             this.client.getMusicManager().stopPlaying();
         }
+
+        MusicSuppression.suppress();
     }
 }

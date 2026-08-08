@@ -18,6 +18,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.UUID;
+
 public record UploadMelodyRequest(String name, byte[] fragment, int length) implements FragmentedMessage {
     public static final Type<UploadMelodyRequest> TYPE = new CustomPacketPayload.Type<>(Common.locate("upload_melody_request"));
     public static final StreamCodec<FriendlyByteBuf, UploadMelodyRequest> STREAM_CODEC = StreamCodec.composite(
@@ -33,7 +35,7 @@ public record UploadMelodyRequest(String name, byte[] fragment, int length) impl
             e.sendSystemMessage(Component.translatable("immersive_melodies.error.upload.no_permission"));
             return;
         }
-        String id = Utils.getPlayerName(e) + "/" + Utils.escapeString(name);
+        String id = Utils.getPlayerName(e) + "/" + UUID.randomUUID();
         ResourceLocation identifier = ResourceLocation.fromNamespaceAndPath("player", id);
 
         // Register

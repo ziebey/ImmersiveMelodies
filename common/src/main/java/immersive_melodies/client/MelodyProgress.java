@@ -11,11 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MelodyProgress {
-    long lastTime;
-    int time;
+    long time;
+    long loop = -1;
 
     ResourceLocation currentlyPlaying = Common.locate("");
     ResourceLocation overwritten = null;
+    long overwrittenWorldTime;
     long worldTime;
     final Map<Integer, Integer> lastIndex = new HashMap<>();
 
@@ -34,14 +35,7 @@ public class MelodyProgress {
     float attackTime = 10.0f;
     float decayTime = 15.0f;
 
-    public void tick(ItemStack stack) {
-        long l = System.currentTimeMillis();
-        long delta = l - lastTime;
-        if (delta < 150) {
-            time += (int) delta;
-        }
-        lastTime = l;
-
+    public void tick(ItemStack stack, long gameTime) {
         // reset progress on change
         ResourceLocation identifier = InstrumentItem.getMelody(stack);
         long startTime = stack.getOrDefault(InstrumentItem.START_TIME, 0L);
@@ -52,6 +46,7 @@ public class MelodyProgress {
             overwritten = null;
             worldTime = startTime;
             time = 0;
+            loop = -1;
             lastIndex.clear();
         }
 
@@ -60,8 +55,31 @@ public class MelodyProgress {
             worldTime = startTime;
             overwritten = null;
             time = 0;
+            loop = -1;
             lastIndex.clear();
         }
+
+        updateTime(gameTime);
+    }
+
+    private void updateTime(long gameTime) {
+        // Derive playback from the server-synchronized start time instead of local wall-clock time.
+        long elapsed = Math.max(0L, gameTime - getStartTime()) * 50L;
+        int melodyLength = getMelody().getLength();
+        if (melodyLength > 0) {
+            long currentLoop = elapsed / melodyLength;
+            if (loop != currentLoop) {
+                loop = currentLoop;
+                lastIndex.clear();
+            }
+            time = elapsed % melodyLength;
+        } else {
+            time = elapsed;
+        }
+    }
+
+    long getStartTime() {
+        return overwritten == null ? worldTime : overwrittenWorldTime;
     }
 
     public long getTime() {
@@ -92,8 +110,14 @@ public class MelodyProgress {
         return overwritten == null ? currentlyPlaying : overwritten;
     }
 
-    public void overwrite(ResourceLocation by) {
-        overwritten = by;
+    public void overwrite(ResourceLocation by, long startTime, long gameTime) {
+        if (overwritten == null || !overwritten.equals(by) || overwrittenWorldTime != startTime) {
+            overwritten = by;
+            overwrittenWorldTime = startTime;
+            loop = -1;
+            lastIndex.clear();
+        }
+        updateTime(gameTime);
     }
 
     public void visualTick(float time) {

@@ -4,8 +4,6 @@ import immersive_melodies.Common;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.network.ImmersivePayload;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,37 +15,32 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.IntFunction;
 
-public record ItemActionMessage(int slot, State state, ResourceLocation melody) implements ImmersivePayload {
+public record ItemActionMessage(State state, ResourceLocation melody) implements ImmersivePayload {
     public static final Type<ItemActionMessage> TYPE = new CustomPacketPayload.Type<>(Common.locate("item_action_message"));
     public static final StreamCodec<FriendlyByteBuf, ItemActionMessage> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, ItemActionMessage::slot,
             State.STREAM_CODEC, ItemActionMessage::state,
             ResourceLocation.STREAM_CODEC, ItemActionMessage::melody,
             ItemActionMessage::new
     );
-
     public static ItemActionMessage fromStateAndMelody(State state, ResourceLocation melody) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        int slot = player == null ? -1 : player.getInventory().selected;
-        return new ItemActionMessage(slot, state, melody);
+        return new ItemActionMessage(state, melody);
     }
 
     public static ItemActionMessage fromState(State state) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        int slot = player == null ? -1 : player.getInventory().selected;
-        return new ItemActionMessage(slot, state, ResourceLocation.withDefaultNamespace("empty"));
+        return new ItemActionMessage(state, ResourceLocation.withDefaultNamespace("empty"));
     }
 
     @Override
     public void handle(Player e) {
-        ItemStack stack = e.getInventory().getItem(slot);
-        if (stack.getItem() instanceof InstrumentItem instrument) {
-            switch (state) {
-                case PLAY -> instrument.play(stack, melody, e.level(), e);
-                case CONTINUE -> instrument.play(stack);
-                case PAUSE -> instrument.pause(stack);
+        e.getHandSlots().forEach(stack -> {
+            if (stack.getItem() instanceof InstrumentItem instrument) {
+                switch (state) {
+                    case PLAY -> instrument.play(stack, melody, e.level(), e);
+                    case CONTINUE -> instrument.play(stack, e.level());
+                    case PAUSE -> instrument.pause(stack, e.level());
+                }
             }
-        }
+        });
     }
 
     @Override

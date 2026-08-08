@@ -15,10 +15,17 @@ import net.minecraft.world.item.ItemStack;
 public class EntityModelAnimator {
     public static Item getInstrument(LivingEntity entity) {
         for (ItemStack handItem : entity.getHandSlots()) {
+            if (handItem.getItem() instanceof InstrumentItem instrument && instrument.isPlaying(handItem)) {
+                return handItem.getItem();
+            }
+        }
+
+        for (ItemStack handItem : entity.getHandSlots()) {
             if (handItem.getItem() instanceof InstrumentItem) {
                 return handItem.getItem();
             }
         }
+
         return null;
     }
 
