@@ -1,3 +1,7 @@
+# 0.7.1
+
+* Maybe fixed conflicts with GUI mods
+
 # 0.7.0
 
 * Fixed non-ascii file name conflicts

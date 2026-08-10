@@ -181,7 +181,13 @@ public class ImmersiveMelodiesScreen extends Screen {
     }
 
     @Override
-    protected void renderMenuBackground(GuiGraphics context, int x, int y, int width, int height) {
+    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.renderBackground(context, mouseX, mouseY, delta);
+
+        renderPaperBackground(context);
+    }
+
+    private void renderPaperBackground(GuiGraphics context) {
         // Draw the track selection background
         int cx = (this.width - 192) / 2;
         int cy = (this.height - 230) / 2;
@@ -194,7 +200,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap + 32, cy + 108, 192 - overlap - trackListWidth, 115, overlap + trackListWidth, 100);
 
             // Track selection title
-            context.drawString(font, Component.translatable("immersive_melodies.tracks"), width / 2 + 100, height / 2 - 94, 0x000000, false);
+            context.drawString(font, Component.translatable("immersive_melodies.tracks"), this.width / 2 + 100, this.height / 2 - 94, 0x000000, false);
         }
 
         // Draw background
