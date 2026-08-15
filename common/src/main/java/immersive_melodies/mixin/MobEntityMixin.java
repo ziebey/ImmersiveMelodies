@@ -3,18 +3,21 @@ package immersive_melodies.mixin;
 import immersive_melodies.Config;
 import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.util.EntityEquiper;
-import net.minecraft.core.NonNullList;
+import immersive_melodies.util.Utils;
 import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,25 +31,21 @@ public abstract class MobEntityMixin extends LivingEntity {
     protected abstract Vec3i getPickupReach();
 
     @Shadow
-    protected abstract void pickUpItem(ItemEntity item);
-
-    @Shadow
-    @Final
-    private NonNullList<ItemStack> handItems;
+    protected abstract void pickUpItem(ServerLevel world, ItemEntity item);
 
     protected MobEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
     @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
-    private void immersiveMelodies$injectInteract(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-        if (!player.hasPermissions(Config.getInstance().rightClickToDropEntityInstrumentPermissionLevel)) {
+    private void immersiveMelodies$injectInteract(Player player, InteractionHand hand, Vec3 pos, CallbackInfoReturnable<InteractionResult> cir) {
+        if (!Utils.hasCommandLevel(player, Config.getInstance().rightClickToDropEntityInstrumentPermissionLevel)) {
             return;
         }
 
-        for (ItemStack handItem : this.handItems) {
+        for (ItemStack handItem : new ItemStack[]{this.getItemBySlot(EquipmentSlot.MAINHAND), this.getItemBySlot(EquipmentSlot.OFFHAND)}) {
             if (handItem.getItem() instanceof InstrumentItem) {
-                ItemEntity itemEntity = spawnAtLocation(handItem.copyAndClear());
+                ItemEntity itemEntity = spawnAtLocation((ServerLevel) this.level(), handItem.copyAndClear());
                 if (itemEntity != null) {
                     itemEntity.setThrower(this);
                 }
@@ -58,18 +57,18 @@ public abstract class MobEntityMixin extends LivingEntity {
 
     @Inject(method = "baseTick()V", at = @At("TAIL"))
     private void immersiveMelodies$injectBaseTick(CallbackInfo ci) {
-        if (Config.getInstance().forceMobsToPickUp && EntityEquiper.canPickUp(this) && !this.level().isClientSide && this.isAlive() && !this.dead) {
+        if (Config.getInstance().forceMobsToPickUp && EntityEquiper.canPickUp(this) && !this.level().isClientSide() && this.isAlive() && !this.dead) {
             Vec3i vec3i = this.getPickupReach();
-            for (ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(vec3i.getX(), vec3i.getY(), vec3i.getZ()))) {
+            for (ItemEntity itementity : this.level().getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(vec3i.getX(), vec3i.getY(), vec3i.getZ()), item -> true)) {
                 if ((itementity.getOwner() == null || !itementity.getOwner().getUUID().equals(getUUID())) && !itementity.isRemoved() && !itementity.getItem().isEmpty() && itementity.getItem().getItem() instanceof InstrumentItem) {
-                    pickUpItem(itementity);
+                    pickUpItem((ServerLevel) this.level(), itementity);
                 }
             }
         }
     }
 
     @Inject(method = "canReplaceCurrentItem", at = @At("HEAD"), cancellable = true)
-    private void immersiveMelodies$injectCanReplaceCurrentItem(ItemStack newStack, ItemStack oldStack, CallbackInfoReturnable<Boolean> cir) {
+    private void immersiveMelodies$injectCanReplaceCurrentItem(ItemStack newStack, ItemStack oldStack, EquipmentSlot slot, CallbackInfoReturnable<Boolean> cir) {
         if (newStack.getItem() instanceof InstrumentItem && !(oldStack.getItem() instanceof InstrumentItem)) {
             cir.setReturnValue(true);
         } else if (oldStack.getItem() instanceof InstrumentItem) {

@@ -10,6 +10,7 @@ import immersive_melodies.network.c2s.NoteBroadcastRequest;
 import immersive_melodies.resources.Note;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -36,14 +37,14 @@ public class Client {
 
     public static boolean playNote(LivingEntity entity, int tone, int velocity) {
         if (entity instanceof LocalPlayer) {
-            for (ItemStack handStack : entity.getHandSlots()) {
+            for (ItemStack handStack : new ItemStack[]{entity.getItemBySlot(EquipmentSlot.MAINHAND), entity.getItemBySlot(EquipmentSlot.OFFHAND)}) {
                 if (handStack.getItem() instanceof InstrumentItem instrument && instrument.isPlaying(handStack)) {
                     Network.sendToServer(ItemActionMessage.fromState(ItemActionMessage.State.PAUSE));
                     break;
                 }
             }
         }
-        for (ItemStack stack : entity.getAllSlots()) {
+        for (ItemStack stack : new ItemStack[]{entity.getItemBySlot(EquipmentSlot.MAINHAND), entity.getItemBySlot(EquipmentSlot.OFFHAND)}) {
             if (stack.getItem() instanceof InstrumentItem instrument) {
                 if (velocity > 0) {
                     if (!playingSounds.containsKey(tone)) {

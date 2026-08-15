@@ -8,13 +8,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
-public record TrackToggleMessage(ResourceLocation melody, int track, boolean enabled) implements ImmersivePayload {
+public record TrackToggleMessage(Identifier melody, int track, boolean enabled) implements ImmersivePayload {
     public static final Type<TrackToggleMessage> TYPE = new CustomPacketPayload.Type<>(Common.locate("track_toggle_message"));
     public static final StreamCodec<FriendlyByteBuf, TrackToggleMessage> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, TrackToggleMessage::melody,
+            Identifier.STREAM_CODEC, TrackToggleMessage::melody,
             ByteBufCodecs.INT, TrackToggleMessage::track,
             ByteBufCodecs.BOOL, TrackToggleMessage::enabled,
             TrackToggleMessage::new
@@ -22,7 +24,7 @@ public record TrackToggleMessage(ResourceLocation melody, int track, boolean ena
 
     @Override
     public void handle(Player e) {
-        e.getHandSlots().forEach(stack -> {
+        for (ItemStack stack : new ItemStack[]{e.getItemBySlot(EquipmentSlot.MAINHAND), e.getItemBySlot(EquipmentSlot.OFFHAND)}) {
             if (stack.getItem() instanceof InstrumentItem item) {
                 ServerMelodyManager.MelodyTrackSettings settings = ServerMelodyManager.getSettings();
                 String identifier = ServerMelodyManager.getIdentifier(e, item);
@@ -34,7 +36,7 @@ public record TrackToggleMessage(ResourceLocation melody, int track, boolean ena
 
                 item.refreshTracks(stack, e);
             }
-        });
+        }
     }
 
     @Override

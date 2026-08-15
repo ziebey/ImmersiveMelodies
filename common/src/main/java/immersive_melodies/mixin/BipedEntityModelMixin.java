@@ -1,11 +1,10 @@
 package immersive_melodies.mixin;
 
+import immersive_melodies.client.RenderStateEntityCache;
 import immersive_melodies.client.animation.EntityModelAnimator;
 import immersive_melodies.client.animation.accessors.BipedModelAccessor;
-import net.minecraft.client.model.AgeableListModel;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,10 +12,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HumanoidModel.class)
-public abstract class BipedEntityModelMixin<T extends LivingEntity> extends AgeableListModel<T> implements ArmedModel, HeadedModel {
-    @Inject(method = "setupAnim*", at = @At("TAIL"))
-    public void immersiveMelodies$injectSetupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-        //noinspection unchecked
-        EntityModelAnimator.setAngles(new BipedModelAccessor<>((HumanoidModel<T>) (Object) this, entity));
+public abstract class BipedEntityModelMixin {
+    @Inject(method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V", at = @At("TAIL"))
+    public void immersiveMelodies$injectSetupAnim(HumanoidRenderState renderState, CallbackInfo ci) {
+        if (RenderStateEntityCache.get(renderState) instanceof LivingEntity entity) {
+            //noinspection unchecked
+            EntityModelAnimator.setAngles(new BipedModelAccessor<>((HumanoidModel<?>) (Object) this, entity));
+        }
     }
 }

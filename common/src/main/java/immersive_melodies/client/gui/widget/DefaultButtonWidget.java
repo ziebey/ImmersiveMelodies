@@ -1,9 +1,7 @@
 package immersive_melodies.client.gui.widget;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -18,26 +16,18 @@ public class DefaultButtonWidget extends Button {
     }
 
     public DefaultButtonWidget(int x, int y, int width, int height, Component message, OnPress onPress, Supplier<List<FormattedCharSequence>> tooltipSupplier) {
-        super(x, y, width, height, message, onPress, Supplier::get);
+        super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
 
         this.tooltipSupplier = tooltipSupplier;
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        extractDefaultSprite(guiGraphics);
+        extractDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
 
-        if (visible) {
-            updateTooltip();
-        }
-    }
-
-    private void updateTooltip() {
-        if (this.tooltipSupplier != null && isHovered()) {
-            Screen screen = Minecraft.getInstance().screen;
-            if (screen != null) {
-                screen.setTooltipForNextRenderPass(this.tooltipSupplier.get());
-            }
+        if (visible && tooltipSupplier != null && isHovered) {
+            guiGraphics.setTooltipForNextFrame(tooltipSupplier.get(), mouseX, mouseY);
         }
     }
 }

@@ -4,6 +4,7 @@ import immersive_melodies.item.InstrumentItem;
 import immersive_melodies.util.EntityEquiper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -40,7 +41,7 @@ public class ServerWorldMixin {
         }
 
         boolean playing = false;
-        for (ItemStack itemStack : livingEntity.getHandSlots()) {
+        for (ItemStack itemStack : new ItemStack[]{livingEntity.getItemBySlot(EquipmentSlot.MAINHAND), livingEntity.getItemBySlot(EquipmentSlot.OFFHAND)}) {
             if (itemStack.getItem() instanceof InstrumentItem item) {
                 item.inventoryServerTick(itemStack, (ServerLevel) (Object) this, livingEntity);
                 playing |= item.isPlaying(itemStack);

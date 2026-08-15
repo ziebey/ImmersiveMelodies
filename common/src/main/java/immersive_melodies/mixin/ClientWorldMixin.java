@@ -3,7 +3,9 @@ package immersive_melodies.mixin;
 import immersive_melodies.item.InstrumentItem;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,11 +27,11 @@ public class ClientWorldMixin {
     @Unique
     private void immersiveMelodies$tick(Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.getHandSlots().forEach(itemStack -> {
+            for (ItemStack itemStack : new ItemStack[]{livingEntity.getItemBySlot(EquipmentSlot.MAINHAND), livingEntity.getItemBySlot(EquipmentSlot.OFFHAND)}) {
                 if (itemStack.getItem() instanceof InstrumentItem item) {
                     item.inventoryClientTick(itemStack, (ClientLevel) (Object) this, livingEntity);
                 }
-            });
+            }
         }
     }
 }

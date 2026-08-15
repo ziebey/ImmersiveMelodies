@@ -2,10 +2,10 @@ package immersive_melodies.client.gui.widget;
 
 import immersive_melodies.client.gui.ImmersiveMelodiesScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -22,12 +22,10 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
         this.setX(left);
 
         this.showSelection = showSelection;
-
-        setRenderHeader(false, 0);
     }
 
     @Override
-    protected void renderListBackground(GuiGraphics guiGraphics) {
+    protected void extractListBackground(GuiGraphicsExtractor guiGraphics) {
         // Nop
     }
 
@@ -36,7 +34,7 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
         super.clearEntries();
     }
 
-    public void addEntry(ResourceLocation identifier, Component name, Runnable onPress) {
+    public void addEntry(Identifier identifier, Component name, Runnable onPress) {
         super.addEntry(new MelodyEntry(identifier, name, onPress));
     }
 
@@ -46,7 +44,7 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
     }
 
     @Override
-    protected int getScrollbarPosition() {
+    protected int scrollBarX() {
         return getX() + width + 2;
     }
 
@@ -61,42 +59,42 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
     }
 
     @Override
-    protected void enableScissor(GuiGraphics context) {
+    protected void enableScissor(GuiGraphicsExtractor context) {
         context.enableScissor(getX() - 15, getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     @Override
-    protected void renderSelection(GuiGraphics context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
+    protected void extractSelection(GuiGraphicsExtractor context, MelodyEntry entry, int y) {
         if (showSelection) {
-            context.fill(getX() - 1, y - 1, getX() + width, y + entryHeight + 3, 0x40000000);
+            context.fill(getX() - 1, y - 1, getX() + width, y + entry.getHeight() + 3, 0x40000000);
         }
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        this.setScrollAmount(this.getScrollAmount() - scrollY * (double) this.itemHeight);
+        this.setScrollAmount(this.scrollAmount() - scrollY * (double) this.defaultEntryHeight);
         return true;
     }
 
     public class MelodyEntry extends ObjectSelectionList.Entry<MelodyEntry> {
-        final ResourceLocation identifier;
+        final Identifier identifier;
         final Component name;
         final Runnable onPress;
 
-        public MelodyEntry(ResourceLocation identifier, Component melody, Runnable onPress) {
+        public MelodyEntry(Identifier identifier, Component melody, Runnable onPress) {
             this.identifier = identifier;
             this.name = melody;
             this.onPress = onPress;
         }
 
         @Override
-        public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            context.drawString(currentScreen.getTextRenderer(), name, getX() + (onPress == null ? -2 : 2), y + 1, 0x404040, false);
+        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean isSelected, float partialTick) {
+            context.text(currentScreen.getTextRenderer(), name, getX() + (onPress == null ? -2 : 2), getY() + 1, 0x404040, false);
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0 && onPress != null) {
+        public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean bl) {
+            if (event.button() == 0 && onPress != null) {
                 onPress.run();
                 return true;
             }

@@ -1,10 +1,13 @@
 package immersive_melodies.resources;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public class MelodyDescriptor {
+    public static final Codec<MelodyDescriptor> CODEC = Codec.STRING.xmap(MelodyDescriptor::new, MelodyDescriptor::getName);
+
     private final String name;
 
     public MelodyDescriptor(String name) {

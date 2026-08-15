@@ -1,29 +1,29 @@
 package immersive_melodies.resources;
 
+import com.mojang.serialization.Codec;
 import immersive_melodies.Common;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ServerMelodyManager {
     static final Random RANDOM = new Random();
 
     public static MinecraftServer server;
-    private static Map<ResourceLocation, MelodyLoader.LazyMelody> datapackMelodies = new HashMap<>();
+    private static Map<Identifier, MelodyLoader.LazyMelody> datapackMelodies = new HashMap<>();
     private static File directory = new File("data/melodies");
 
     public static void instantiate(ServerLevel world, LevelStorageSource.LevelStorageAccess session) {
@@ -39,28 +39,23 @@ public class ServerMelodyManager {
 
     public static CustomServerMelodiesIndex getIndex() {
         //noinspection DataFlowIssue
-        return server.overworld().getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(CustomServerMelodiesIndex::new, CustomServerMelodiesIndex::fromNbt, null),
-                "immersive_melodies");
+        return server.overworld().getDataStorage().computeIfAbsent(CustomServerMelodiesIndex.TYPE);
     }
 
     public static MelodyTrackSettings getSettings() {
         //noinspection DataFlowIssue
-        return server.overworld().getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(MelodyTrackSettings::new, MelodyTrackSettings::fromNbt, null),
-                "immersive_melodies_settings"
-        );
+        return server.overworld().getDataStorage().computeIfAbsent(MelodyTrackSettings.TYPE);
     }
 
-    public static Map<ResourceLocation, MelodyLoader.LazyMelody> getDatapackMelodies() {
+    public static Map<Identifier, MelodyLoader.LazyMelody> getDatapackMelodies() {
         return datapackMelodies;
     }
 
-    public static void setDatapackMelodies(Map<ResourceLocation, MelodyLoader.LazyMelody> datapackMelodies) {
+    public static void setDatapackMelodies(Map<Identifier, MelodyLoader.LazyMelody> datapackMelodies) {
         ServerMelodyManager.datapackMelodies = datapackMelodies;
     }
 
-    public static ResourceLocation getRandomMelody() {
+    public static Identifier getRandomMelody() {
         Object[] datapack = getDatapackMelodies().keySet().toArray();
         Object[] custom = getIndex().melodies.keySet().toArray();
         if (datapack.length + custom.length == 0) {
@@ -68,9 +63,9 @@ public class ServerMelodyManager {
         }
         int i = RANDOM.nextInt(datapack.length + custom.length);
         if (i < datapack.length) {
-            return (ResourceLocation) datapack[i];
+            return (Identifier) datapack[i];
         } else {
-            return (ResourceLocation) custom[i - datapack.length];
+            return (Identifier) custom[i - datapack.length];
         }
     }
 
@@ -80,7 +75,7 @@ public class ServerMelodyManager {
      * @param identifier The identifier of the melody to register.
      * @param melody     The melody to register.
      */
-    public static void registerMelody(ResourceLocation identifier, Melody melody) {
+    public static void registerMelody(Identifier identifier, Melody melody) {
         getIndex().getMelodies().put(identifier, melody);
         getIndex().setDirty(true);
 
@@ -102,7 +97,7 @@ public class ServerMelodyManager {
      *
      * @param identifier The identifier of the melody to delete.
      */
-    public static void deleteMelody(ResourceLocation identifier) {
+    public static void deleteMelody(Identifier identifier) {
         getIndex().getMelodies().remove(identifier);
         getIndex().setDirty(true);
 
@@ -113,7 +108,7 @@ public class ServerMelodyManager {
         }
     }
 
-    public static Melody getMelody(ResourceLocation identifier) {
+    public static Melody getMelody(Identifier identifier) {
         if (datapackMelodies.containsKey(identifier)) {
             return datapackMelodies.get(identifier).get();
         } else {
@@ -133,28 +128,23 @@ public class ServerMelodyManager {
      * The melody index, containing only important information about the melodies.
      */
     public static class CustomServerMelodiesIndex extends SavedData {
-        final Map<ResourceLocation, MelodyDescriptor> melodies = new HashMap<>();
+        private static final Codec<CustomServerMelodiesIndex> CODEC = Codec.unboundedMap(Identifier.CODEC, MelodyDescriptor.CODEC)
+                .xmap(map -> {
+                    CustomServerMelodiesIndex c = new CustomServerMelodiesIndex();
+                    c.melodies.putAll(map);
+                    return c;
+                }, index -> index.melodies);
 
-        public static CustomServerMelodiesIndex fromNbt(CompoundTag nbt, HolderLookup.Provider provider) {
-            CustomServerMelodiesIndex c = new CustomServerMelodiesIndex();
-            for (String key : nbt.getAllKeys()) {
-                FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(nbt.getByteArray(key)));
-                c.melodies.put(ResourceLocation.parse(key), MelodyDescriptor.STREAM_CODEC.decode(buffer));
-            }
-            return c;
-        }
+        public static final SavedDataType<CustomServerMelodiesIndex> TYPE = new SavedDataType<>(
+                Common.locate("melodies"),
+                CustomServerMelodiesIndex::new,
+                CODEC,
+                DataFixTypes.LEVEL
+        );
 
-        @Override
-        public CompoundTag save(CompoundTag c, HolderLookup.Provider provider) {
-            for (Map.Entry<ResourceLocation, MelodyDescriptor> entry : melodies.entrySet()) {
-                FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-                MelodyDescriptor.STREAM_CODEC.encode(buffer, entry.getValue());
-                c.putByteArray(entry.getKey().toString(), buffer.array());
-            }
-            return c;
-        }
+        final Map<Identifier, MelodyDescriptor> melodies = new HashMap<>();
 
-        public Map<ResourceLocation, MelodyDescriptor> getMelodies() {
+        public Map<Identifier, MelodyDescriptor> getMelodies() {
             return melodies;
         }
     }
@@ -163,54 +153,36 @@ public class ServerMelodyManager {
      * Stores the settings for the melody tracks.
      */
     public static class MelodyTrackSettings extends SavedData {
-        final Map<ResourceLocation, Map<String, Set<Integer>>> enabledTracks = new HashMap<>();
+        private static final Codec<MelodyTrackSettings> CODEC = Codec.unboundedMap(Identifier.CODEC,
+                Codec.unboundedMap(Codec.STRING,
+                        Codec.list(Codec.INT).xmap(set -> (Set<Integer>) new HashSet<>(set), ArrayList::new)))
+                .xmap(map -> {
+                    MelodyTrackSettings c = new MelodyTrackSettings();
+                    map.forEach((k, v) -> c.enabledTracks.put(k, new HashMap<>(v)));
+                    return c;
+                }, settings -> settings.enabledTracks);
 
-        public static MelodyTrackSettings fromNbt(CompoundTag nbt, HolderLookup.Provider provider) {
-            MelodyTrackSettings c = new MelodyTrackSettings();
-            for (String key : nbt.getAllKeys()) {
-                CompoundTag map = nbt.getCompound(key);
-                Map<String, Set<Integer>> m = new HashMap<>();
-                for (String k : map.getAllKeys()) {
-                    Set<Integer> tracks = Arrays.stream(map.getIntArray(k))
-                            .boxed()
-                            .collect(Collectors.toSet());
-                    m.put(k, tracks);
-                }
-                c.enabledTracks.put(ResourceLocation.parse(key), m);
-            }
-            return c;
-        }
+        public static final SavedDataType<MelodyTrackSettings> TYPE = new SavedDataType<>(
+                Common.locate("melodies_settings"),
+                MelodyTrackSettings::new,
+                CODEC,
+                DataFixTypes.LEVEL
+        );
 
-        @Override
-        public CompoundTag save(CompoundTag c, HolderLookup.Provider provider) {
-            for (Map.Entry<ResourceLocation, Map<String, Set<Integer>>> entry : enabledTracks.entrySet()) {
-                CompoundTag map = new CompoundTag();
-                for (Map.Entry<String, Set<Integer>> e : entry.getValue().entrySet()) {
-                    map.putIntArray(
-                            e.getKey(),
-                            e.getValue().stream()
-                                    .mapToInt(Integer::intValue)
-                                    .sorted()
-                                    .toArray()
-                    );
-                }
-                c.put(entry.getKey().toString(), map);
-            }
-            return c;
-        }
+        final Map<Identifier, Map<String, Set<Integer>>> enabledTracks = new HashMap<>();
 
-        public void enableTrack(ResourceLocation melody, String identifier, int track) {
+        public void enableTrack(Identifier melody, String identifier, int track) {
             enabledTracks.computeIfAbsent(melody, k -> new HashMap<>()).computeIfAbsent(identifier, k -> new HashSet<>()).add(track);
             setDirty(true);
         }
 
-        public void disableTrack(ResourceLocation melody, String identifier, int track) {
+        public void disableTrack(Identifier melody, String identifier, int track) {
             Map<String, Set<Integer>> uuidSetMap = enabledTracks.computeIfAbsent(melody, k -> new HashMap<>());
             uuidSetMap.computeIfAbsent(identifier, k -> new HashSet<>()).remove(track);
             setDirty(true);
         }
 
-        public Set<Integer> getEnabledTracks(ResourceLocation name, String identifier) {
+        public Set<Integer> getEnabledTracks(Identifier name, String identifier) {
             Map<String, Set<Integer>> playerSettings = enabledTracks.getOrDefault(name, Collections.emptyMap());
             return playerSettings.getOrDefault(identifier, playerSettings.values().stream().findFirst().orElse(Set.of()));
         }
@@ -220,7 +192,7 @@ public class ServerMelodyManager {
         return getIdentifier(entity, BuiltInRegistries.ITEM.getKey(item));
     }
 
-    public static String getIdentifier(Entity entity, ResourceLocation instrument) {
+    public static String getIdentifier(Entity entity, Identifier instrument) {
         // Here I use only the instrument
         // That means track lists are managed globally, which is a "security issue" but usually more convenient
         return instrument.toString();

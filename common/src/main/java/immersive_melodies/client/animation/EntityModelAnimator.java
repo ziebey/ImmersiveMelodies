@@ -5,42 +5,27 @@ import immersive_melodies.client.MelodyProgressManager;
 import immersive_melodies.client.animation.accessors.ModelAccessor;
 import immersive_melodies.item.InstrumentItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class EntityModelAnimator {
     public static Item getInstrument(LivingEntity entity) {
-        for (ItemStack handItem : entity.getHandSlots()) {
+        for (ItemStack handItem : new ItemStack[]{entity.getItemBySlot(EquipmentSlot.MAINHAND), entity.getItemBySlot(EquipmentSlot.OFFHAND)}) {
             if (handItem.getItem() instanceof InstrumentItem instrument && instrument.isPlaying(handItem)) {
                 return handItem.getItem();
             }
         }
 
-        for (ItemStack handItem : entity.getHandSlots()) {
+        for (ItemStack handItem : new ItemStack[]{entity.getItemBySlot(EquipmentSlot.MAINHAND), entity.getItemBySlot(EquipmentSlot.OFFHAND)}) {
             if (handItem.getItem() instanceof InstrumentItem) {
                 return handItem.getItem();
             }
         }
 
         return null;
-    }
-
-    private static boolean isInMainHand(LivingEntity entity) {
-        return entity.getMainHandItem().getItem() instanceof InstrumentItem;
-    }
-
-    @Deprecated
-    public static ModelPart getLeftArm(HumanoidModel<?> model, LivingEntity entity) {
-        return isInMainHand(entity) ? model.leftArm : model.rightArm;
-    }
-
-    @Deprecated
-    public static ModelPart getRightArm(HumanoidModel<?> model, LivingEntity entity) {
-        return isInMainHand(entity) ? model.rightArm : model.leftArm;
     }
 
     public static <T extends LivingEntity> void setAngles(ModelAccessor<T> accessor) {

@@ -8,8 +8,8 @@
     "ServerWorldMixin"
   ],
   "client": [
-    "AbstractZombieModelMixin", "BipedEntityModelMixin", "ClientWorldMixin", "IllagerEntityModelMixin",
-    "ItemRendererMixin", "ModelLoaderMixin", "MusicManagerMixin", "MusicTrackerAccessor", "PiglinEntityModelMixin"
+    "AbstractZombieModelMixin", "BipedEntityModelMixin", "ClientWorldMixin", "EntityRendererMixin", "IllagerEntityModelMixin",
+    "MusicManagerMixin", "MusicTrackerAccessor", "PiglinEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

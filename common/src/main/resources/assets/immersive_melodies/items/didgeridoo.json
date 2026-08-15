@@ -1,0 +1,19 @@
+{
+  "model": {
+    "type": "select",
+    "property": "display_context",
+    "cases": [
+      {
+        "when": ["gui", "ground", "fixed"],
+        "model": {
+          "type": "model",
+          "model": "immersive_melodies:item/didgeridoo"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "model",
+      "model": "immersive_melodies:item/didgeridoo_hand"
+    }
+  }
+}
