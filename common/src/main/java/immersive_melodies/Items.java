@@ -4,7 +4,9 @@ import com.google.common.base.Suppliers;
 import immersive_melodies.client.animation.ItemAnimators;
 import immersive_melodies.client.animation.animators.Animator;
 import immersive_melodies.item.InstrumentItem;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -63,14 +65,14 @@ public interface Items {
     static Supplier<Item> register(@NotNull String namespace, @NotNull String name, long sustain, Vector3f offset) {
         Identifier location = Identifier.fromNamespaceAndPath(namespace, name);
         Supplier<Item> supplier = Suppliers.memoize(() -> new InstrumentItem(
-                baseProps(), new Sounds.Instrument(namespace, name), sustain, offset
+                baseProps(location), new Sounds.Instrument(namespace, name), sustain, offset
         ));
         items.put(location, supplier);
         return supplier;
     }
 
-    static Item.Properties baseProps() {
-        return new Item.Properties().stacksTo(1);
+    static Item.Properties baseProps(Identifier id) {
+        return new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id));
     }
 
     static Collection<ItemStack> getSortedItems() {
