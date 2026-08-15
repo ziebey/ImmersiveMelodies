@@ -76,7 +76,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             this.search.setSuggestion(null);
         });
         this.search.setBordered(false);
-        this.search.setTextColor(0x808080);
+        this.search.setTextColor(0xFF808080);
         this.search.setSuggestion("Search");
         setInitialFocus(this.search);
 
@@ -197,7 +197,7 @@ public class ImmersiveMelodiesScreen extends Screen {
             context.blit(BACKGROUND_TEXTURE, rightX, cy + 108, rightX + overlap + trackListWidth, cy + 208, u0 / 256.0f, 192.0f / 256.0f, 115.0f / 256.0f, 215.0f / 256.0f);
 
             // Track selection title
-            context.text(font, Component.translatable("immersive_melodies.tracks"), this.width / 2 + 100, this.height / 2 - 94, 0x000000, false);
+            context.text(font, Component.translatable("immersive_melodies.tracks"), this.width / 2 + 100, this.height / 2 - 94, 0xFF000000, false);
         }
 
         // Draw background
@@ -216,7 +216,7 @@ public class ImmersiveMelodiesScreen extends Screen {
 
         // Print error
         if (error != null && System.currentTimeMillis() - lastError < 5000) {
-            context.centeredText(font, error, width / 2, this.height / 2 - 103, 0xFF0000);
+            context.centeredText(font, error, width / 2, this.height / 2 - 103, 0xFFFF0000);
         }
 
         super.extractRenderState(context, mouseX, mouseY, delta);
@@ -227,8 +227,6 @@ public class ImmersiveMelodiesScreen extends Screen {
 
         addRenderableWidget(search);
         addRenderableWidget(list);
-
-        Common.LOGGER.info("Immersive Melodies: refreshPage, client melodies = {}", ClientMelodyManager.getMelodiesList().size());
 
         // Build the melody list
         list.clearEntries();

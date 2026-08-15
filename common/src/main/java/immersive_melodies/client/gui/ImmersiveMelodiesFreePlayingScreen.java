@@ -59,7 +59,7 @@ public class ImmersiveMelodiesFreePlayingScreen extends Screen {
                 TEXT,
                 this.width / 2,
                 this.height / 2 - 50,
-                0xFFFFFF
+                0xFFFFFFFF
         );
 
         if (!mappings.isEmpty()) {

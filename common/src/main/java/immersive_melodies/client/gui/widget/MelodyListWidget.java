@@ -105,8 +105,8 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
 
         @Override
         public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean isSelected, float partialTick) {
-            // Use the content-area coordinates like vanilla entries; the list already positions this entry
-            context.text(currentScreen.getTextRenderer(), name, getContentX() + (onPress == null ? -2 : 2), getContentY() + 1, 0x404040, false);
+            // 0xFF alpha prefix required: text() treats the color as ARGB, a 6-digit color is fully transparent
+            context.text(currentScreen.getTextRenderer(), name, getContentX() + (onPress == null ? -2 : 2), getContentY() + 1, 0xFF404040, false);
         }
 
         @Override

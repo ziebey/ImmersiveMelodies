@@ -91,7 +91,6 @@ public class MelodyLoader extends SimplePreparableReloadListener<Map<Identifier,
 
     @Override
     protected void apply(Map<Identifier, LazyMelody> prepared, ResourceManager manager, ProfilerFiller profiler) {
-        LOGGER.info("Immersive Melodies: loaded {} datapack melodies", prepared.size());
         ServerMelodyManager.setDatapackMelodies(prepared);
     }
 }
