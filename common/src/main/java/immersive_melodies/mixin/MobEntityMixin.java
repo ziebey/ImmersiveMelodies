@@ -39,6 +39,11 @@ public abstract class MobEntityMixin extends LivingEntity {
 
     @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
     private void immersiveMelodies$injectInteract(Player player, InteractionHand hand, Vec3 pos, CallbackInfoReturnable<InteractionResult> cir) {
+        // Mob.interact is also invoked on the client for interaction prediction; only act on the server
+        if (this.level().isClientSide()) {
+            return;
+        }
+
         if (!Utils.hasCommandLevel(player, Config.getInstance().rightClickToDropEntityInstrumentPermissionLevel)) {
             return;
         }
