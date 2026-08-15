@@ -180,13 +180,6 @@ public class ImmersiveMelodiesScreen extends Screen {
         updateTrackList();
     }
 
-    @Override
-    public void extractBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        super.extractBackground(context, mouseX, mouseY, delta);
-
-        renderPaperBackground(context);
-    }
-
     private void renderPaperBackground(GuiGraphicsExtractor context) {
         // Draw the track selection background
         int cx = (this.width - 192) / 2;
@@ -194,21 +187,28 @@ public class ImmersiveMelodiesScreen extends Screen {
         if (showTrackSelection) {
             int overlap = 10;
             int trackListWidth = 75;
-            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap, cy + 8, 32, 100, 0, 0, 32, 100);
-            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap, cy + 108, 32, 100, 0, 115, 32, 100);
-            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap + 32, cy + 8, overlap + trackListWidth, 100, 192 - overlap - trackListWidth, 0, overlap + trackListWidth, 100);
-            context.blit(BACKGROUND_TEXTURE, cx + 192 - overlap + 32, cy + 108, overlap + trackListWidth, 100, 192 - overlap - trackListWidth, 115, overlap + trackListWidth, 100);
+            // 26.2 blit: absolute endpoints (x0, y0, x1, y1) and normalized UVs (u0, u1, v0, v1)
+            int leftX = cx + 192 - overlap;
+            int rightX = leftX + 32;
+            int u0 = 192 - overlap - trackListWidth;
+            context.blit(BACKGROUND_TEXTURE, leftX, cy + 8, leftX + 32, cy + 108, 0.0f, 32.0f / 256.0f, 0.0f, 100.0f / 256.0f);
+            context.blit(BACKGROUND_TEXTURE, leftX, cy + 108, leftX + 32, cy + 208, 0.0f, 32.0f / 256.0f, 115.0f / 256.0f, 215.0f / 256.0f);
+            context.blit(BACKGROUND_TEXTURE, rightX, cy + 8, rightX + overlap + trackListWidth, cy + 108, u0 / 256.0f, 192.0f / 256.0f, 0.0f, 100.0f / 256.0f);
+            context.blit(BACKGROUND_TEXTURE, rightX, cy + 108, rightX + overlap + trackListWidth, cy + 208, u0 / 256.0f, 192.0f / 256.0f, 115.0f / 256.0f, 215.0f / 256.0f);
 
             // Track selection title
             context.text(font, Component.translatable("immersive_melodies.tracks"), this.width / 2 + 100, this.height / 2 - 94, 0x000000, false);
         }
 
         // Draw background
-        context.blit(BACKGROUND_TEXTURE, cx, cy, 192, 215, 0, 0, 192, 215);
+        context.blit(BACKGROUND_TEXTURE, cx, cy, cx + 192, cy + 215, 0.0f, 192.0f / 256.0f, 0.0f, 215.0f / 256.0f);
     }
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        // The paper background is drawn here (after the blur stratum) so it stays sharp over the blurred world
+        renderPaperBackground(context);
+
         // Print help for noobs
         if (!Config.getInstance().clickedHelp) {
             context.setTooltipForNextFrame(font, Component.translatable("immersive_melodies.read"), width / 2 + 55, height / 2 + 69 + 17);
