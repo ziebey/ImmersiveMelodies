@@ -34,6 +34,22 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
         super.clearEntries();
     }
 
+    @Override
+    protected void extractScrollbar(GuiGraphicsExtractor context, int mouseX, int mouseY) {
+        if (maxScrollAmount() <= 0) {
+            return;
+        }
+
+        int x = scrollBarX();
+        int width = scrollbarWidth();
+        int y = scrollBarY();
+        int height = scrollerHeight();
+
+        // Draw a colored track and thumb matching the paper scroll GUI instead of the default dark sprite
+        context.fill(x, getY(), x + width, getY() + getHeight(), 0x40B3A088);
+        context.fill(x, y, x + width, y + height, 0xFF8B7355);
+    }
+
     public void addEntry(Identifier identifier, Component name, Runnable onPress) {
         super.addEntry(new MelodyEntry(identifier, name, onPress));
     }
@@ -89,7 +105,8 @@ public class MelodyListWidget extends ObjectSelectionList<MelodyListWidget.Melod
 
         @Override
         public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean isSelected, float partialTick) {
-            context.text(currentScreen.getTextRenderer(), name, getX() + (onPress == null ? -2 : 2), getY() + 1, 0x404040, false);
+            // Use the content-area coordinates like vanilla entries; the list already positions this entry
+            context.text(currentScreen.getTextRenderer(), name, getContentX() + (onPress == null ? -2 : 2), getContentY() + 1, 0x404040, false);
         }
 
         @Override

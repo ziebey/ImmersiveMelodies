@@ -18,6 +18,7 @@ public class ClientNetworkManager implements NetworkManager {
 
     @Override
     public void handleMelodyListMessage(MelodyListMessage response) {
+        immersive_melodies.Common.LOGGER.info("Immersive Melodies: received melody list with {} entries", response.melodies().size());
         ClientMelodyManager.getMelodiesList().clear();
         ClientMelodyManager.getMelodiesList().putAll(response.melodies());
 

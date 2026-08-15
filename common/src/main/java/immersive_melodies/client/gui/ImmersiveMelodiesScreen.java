@@ -228,6 +228,8 @@ public class ImmersiveMelodiesScreen extends Screen {
         addRenderableWidget(search);
         addRenderableWidget(list);
 
+        Common.LOGGER.info("Immersive Melodies: refreshPage, client melodies = {}", ClientMelodyManager.getMelodiesList().size());
+
         // Build the melody list
         list.clearEntries();
         String lastPath = "";
