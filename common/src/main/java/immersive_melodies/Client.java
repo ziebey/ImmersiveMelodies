@@ -26,6 +26,14 @@ public class Client {
         MidiListener.launch();
     }
 
+    public static void shutdown() {
+        MidiListener.stop();
+
+        if (Common.soundManager != null) {
+            Common.soundManager.shutdown();
+        }
+    }
+
     private static final Map<Integer, CancelableSoundInstance> playingSounds = new ConcurrentHashMap<>();
 
     public static void playNote(int tone, int velocity) {

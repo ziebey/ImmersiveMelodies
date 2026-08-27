@@ -12,5 +12,6 @@ public final class ClientFabric implements ClientModInitializer {
         Network.registerClientSender(ClientPlayNetworking::send);
 
         ClientLifecycleEvents.CLIENT_STARTED.register(event -> Client.postLoad());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(event -> Client.shutdown());
     }
 }

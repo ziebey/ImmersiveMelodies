@@ -17,7 +17,17 @@ public class SoundManagerImpl implements SoundManager {
 
     public SoundManagerImpl(Minecraft client) {
         this.client = client;
-        this.executor = new ScheduledThreadPoolExecutor(1);
+        // The default factory produces non-daemon threads, which would keep the JVM alive on quit.
+        this.executor = new ScheduledThreadPoolExecutor(1, runnable -> {
+            Thread thread = new Thread(runnable, "Immersive Melodies Sound Scheduler");
+            thread.setDaemon(true);
+            return thread;
+        });
+    }
+
+    @Override
+    public void shutdown() {
+        executor.shutdownNow();
     }
 
     public CancelableSoundInstance playSound(double x, double y, double z, SoundEvent event, SoundSource category, float volume, float pitch, long length, long sustain, long delay, Entity entity) {

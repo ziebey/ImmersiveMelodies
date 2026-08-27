@@ -6,10 +6,51 @@ import net.minecraft.client.Minecraft;
 import javax.sound.midi.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MidiListener {
+    private static final Set<MidiDevice> openedDevices = ConcurrentHashMap.newKeySet();
+
+    private static volatile boolean running;
+    private static Thread thread;
+
     public static void launch() {
-        new Thread(new MidiListenerThread()).start();
+        running = true;
+
+        thread = new Thread(new MidiListenerThread(), "Immersive Melodies MIDI Listener");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    // Both the listener and the devices it opens (the Java Sound sequencer in particular) spawn
+    // non-daemon threads, which keep the JVM alive and trip the client shutdown watchdog.
+    public static void stop() {
+        running = false;
+
+        Thread listener = thread;
+        thread = null;
+        if (listener != null) {
+            listener.interrupt();
+        }
+
+        for (MidiDevice device : openedDevices) {
+            try {
+                if (device instanceof Sequencer sequencer && sequencer.isRunning()) {
+                    sequencer.stop();
+                }
+                for (Transmitter transmitter : device.getTransmitters()) {
+                    Receiver receiver = transmitter.getReceiver();
+                    if (receiver != null) {
+                        receiver.close();
+                    }
+                    transmitter.close();
+                }
+                device.close();
+            } catch (Exception e) {
+                Common.LOGGER.warn("Failed to close MIDI device: {}", device.getDeviceInfo().getName(), e);
+            }
+        }
+        openedDevices.clear();
     }
 
     static class MidiListenerThread implements Runnable {
@@ -17,12 +58,13 @@ public class MidiListener {
 
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (running) {
                 try {
                     //noinspection BusyWait
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    break;
                 }
 
                 try {
@@ -33,6 +75,7 @@ public class MidiListener {
                             MidiDevice device = MidiSystem.getMidiDevice(info);
                             if (device.getMaxTransmitters() != 0) {
                                 device.open();
+                                openedDevices.add(device);
                                 Transmitter transmitter = device.getTransmitter();
                                 transmitter.setReceiver(new MidiReceiver(connectedDevices, info));
 
@@ -63,6 +106,8 @@ public class MidiListener {
 
         @Override
         public void send(MidiMessage message, long timeStamp) {
+            if (!running) return;
+
             if (message instanceof ShortMessage sm) {
                 int command = sm.getCommand();
                 int data1 = sm.getData1();
