@@ -1,5 +1,8 @@
 # Immersive Melodies
 
+Claude Coded
+Working 26.2 
+
 [![Crowdin](https://badges.crowdin.net/immersive-collection/localized.svg)](https://crowdin.com/project/immersive-melodies)
 
 Hosted on CurseForge: https://www.curseforge.com/minecraft/mc-mods/immersive-melodies
