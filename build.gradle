@@ -3,21 +3,22 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.144' apply false
 }
 
+// Gradle 9 removed Project.exec(); providers.exec() is the supported replacement.
 def getAppVersion = { ->
+    def fallback = "${rootProject.mod_version}+${rootProject.minecraft_version}".toString()
     try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
+        def output = providers.exec {
             commandLine 'git', 'tag', '--points-at', 'HEAD'
-            standardOutput = stdout
+            ignoreExitValue = true
         }
-        def tag = stdout.toString().trim()
-        if (tag.isEmpty()) {
-            return rootProject.minecraft_version + "-SNAPSHOT"
+        if (output.result.get().exitValue != 0) {
+            return fallback
         }
-        return tag
+        def tag = output.standardOutput.asText.get().trim()
+        return tag.isEmpty() ? fallback : tag
     } catch (Exception e) {
-        println "Warning: ${e.message}, is git installed?"
-        return rootProject.minecraft_version + "-DEV"
+        println "Warning: could not determine version from git (${e.message}), using ${fallback}"
+        return fallback
     }
 } as Object
 
